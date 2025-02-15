@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import NoteDetails from '../components/NoteDetails'
 import { Note } from '../api/types'
+import { Sidebar } from '../components/Sidebar'
 
 import api, { Api } from '../api/api'
 

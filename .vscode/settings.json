@@ -1,9 +1,14 @@
 {
-    "editor.formatOnSave": true,
-    "prettier.documentSelectors": ["*.{ts,tsx,js,jsx,json,html}"],
-    "prettier.requireConfig": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnPaste": true,
-    "files.autoSave": "afterDelay"
+  "editor.formatOnSave": true,
+  "prettier.documentSelectors": ["*.{ts,tsx,js,jsx,json,html}"],
+  "prettier.requireConfig": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "files.autoSave": "afterDelay",
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "javascriptreact": "javascriptreact",
+    "typescript": "typescript",
+    "typescriptreact": "typescriptreact"
   }
-  
+}

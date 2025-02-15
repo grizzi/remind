@@ -1,1 +1,10 @@
 @import "tailwindcss";
+@tailwind css;
+@tailwind components;
+
+
+@layer components {
+    .sidebar-hr {
+        @apply border border-gray-400 rounded-full mx-2 
+    }
+}
