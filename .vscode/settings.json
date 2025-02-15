@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": true,
+    "prettier.documentSelectors": ["*.{ts,tsx,js,jsx,json,html}"],
+    "prettier.requireConfig": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": true,
+    "files.autoSave": "afterDelay"
+  }
+  

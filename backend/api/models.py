@@ -20,3 +20,11 @@ class Note(models.Model):
     def __str__(self):
         return self.title
     
+
+class Subscription(models.Model):
+    uid = models.UUIDField()
+    name = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    price = models.FloatField()
+    expiring_at = models.DateField()
+    last_cancelation = models.DateField()

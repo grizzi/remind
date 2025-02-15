@@ -1,7 +1,8 @@
+import Form from "../components/Form"
+
 const Register = () => {
-    return (
-        <div>Login</div>
-    )
+    return <Form route="/api/user/register/" method="register"/>
+
 }
 
 

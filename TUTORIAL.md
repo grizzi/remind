@@ -2,6 +2,7 @@
 
 * [Django + React](https://www.youtube.com/watch?v=c-QsfbznSXI&t=1s)
 * [React + Typescript](https://react.dev/learn/typescript)
+* [Another one](https://dev.to/koladev/django-rest-authentication-cmh)
 
 ## Install
 
