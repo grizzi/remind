@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -99,8 +98,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": 'mydatabase',
+        "HOST": '127.0.0.1',
+        "USER": "postgres",
+        "PASSWORD": '', # empty since we are trusting local connections
+        "PORT": '5432'
     }
 }
 
