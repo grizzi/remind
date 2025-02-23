@@ -15,4 +15,5 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "pytz>=2025.1",
     "sqlparse>=0.5.3",
+    "django-money>=3.5.3",
 ]

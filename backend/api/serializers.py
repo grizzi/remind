@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note
+# from .models import Note
 
 # We do not have to define the user model oursleves, 
 # this common definition is already provided by django
@@ -27,15 +27,15 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
     
-class NoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Note
-        fields = ["id", "title", "content", "created_at", "author"]
+# class NoteSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Note
+#         fields = ["id", "title", "content", "created_at", "author"]
         
-        # In this case we want to only be able to read this property
-        # when I am signed id, I am of course the author of this 
-        # entry. We want therefore to disallow to write it freely, but to 
-        # allow to only read this property. This property is instead written
-        # by the backend. These read_only/write_only entail what the 
-        # frontend can do
-        extra_kwargs = {"author": {"read_only": True}}
+#         # In this case we want to only be able to read this property
+#         # when I am signed id, I am of course the author of this 
+#         # entry. We want therefore to disallow to write it freely, but to 
+#         # allow to only read this property. This property is instead written
+#         # by the backend. These read_only/write_only entail what the 
+#         # frontend can do
+#         extra_kwargs = {"author": {"read_only": True}}

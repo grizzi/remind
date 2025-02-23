@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import Subscription, Label, SubscriptionLabel
 
-# Register your models here.
+
+admin.site.register(Subscription)
+admin.site.register(Label)
+admin.site.register(SubscriptionLabel)

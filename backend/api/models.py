@@ -1,30 +1,34 @@
 from django.db import models
 from django.contrib.auth.models import User
+from djmoney.models.fields import MoneyField
 
-class Note(models.Model):
-    title = models.CharField(max_length=100)
-    content = models.TextField()
-    
-    # we do not want to pass it but to create it everytime
-    # we create a new instance of this model object
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    # This is the place where we link the user and its notes
-    # * User: the object (table) to be linked to
-    # * on_delete=CASCADE : when the corresponding user is deleted, also all notes
-    #         that are linked to this user shall be deleted
-    # * related_names: the user is able to access its notes using the .notes field
-    #         notation 
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notes")
-    
-    def __str__(self):
-        return self.title
-    
+# See money django lib: https://github.com/django-money/django-money
+# TODO: give a string representation of models
 
 class Subscription(models.Model):
-    uid = models.UUIDField()
-    name = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    price = models.FloatField()
-    expiring_at = models.DateField()
-    last_cancelation = models.DateField()
+    title = models.CharField(max_length=100, default="")
+    amount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', null=True)
+    created_at = models.DateField(auto_now_add=True)
+    billed_at = models.DateField()
+    remind = models.BooleanField(default=False)
+    autorenewal = models.BooleanField(default=False)
+    expiration_at = models.DateField(null=True)
+    expiring_at = models.DateField(null=True)
+    external_link = models.URLField(default="")
+    archieved = models.BooleanField(default=False)
+    last_reminder_at = models.DateField(null=True)
+    total_reminders = models.SmallIntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Label(models.Model):
+    name = models.CharField(max_length=20)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class SubscriptionLabel(models.Model):
+    label = models.ForeignKey(Label, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    
+    def save(self, *args, **kwargs):
+        if self.subscription.user != self.label.user:
+            raise ValueError("Subscription and Label must belong to the same user.")
+        super().save(*args, **kwargs)

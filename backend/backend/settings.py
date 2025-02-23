@@ -56,9 +56,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
+    'djmoney',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -99,7 +100,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": 'django.db.backends.postgresql',
-        "NAME": 'mydatabase',
+        "NAME": 'remind',
         "HOST": '127.0.0.1',
         "USER": "postgres",
         "PASSWORD": '', # empty since we are trusting local connections
