@@ -12,7 +12,6 @@ class Subscription(models.Model):
     billed_at = models.DateField()
     remind = models.BooleanField(default=False)
     autorenewal = models.BooleanField(default=False)
-    expiration_at = models.DateField(null=True)
     expiring_at = models.DateField(null=True)
     external_link = models.URLField(default="")
     archieved = models.BooleanField(default=False)
