@@ -1,13 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from djmoney.models.fields import MoneyField
+from djmoney.models.validators import MinMoneyValidator
 
 # See money django lib: https://github.com/django-money/django-money
-# TODO: give a string representation of models
 
 class Subscription(models.Model):
     title = models.CharField(max_length=100, default="")
-    amount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', null=True)
+    amount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', null=True, validators=[MinMoneyValidator(0)])
     created_at = models.DateField(auto_now_add=True)
     billed_at = models.DateField()
     remind = models.BooleanField(default=False)
@@ -32,3 +32,24 @@ class SubscriptionLabel(models.Model):
         if self.subscription.user != self.label.user:
             raise ValueError("Subscription and Label must belong to the same user.")
         super().save(*args, **kwargs)
+
+class Transaction(models.Model):
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    date = models.DateField()
+    amount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', validators=[MinMoneyValidator(0)])
+
+class RemindFrequencyChoices(models.TextChoices):
+    WEEKLY = "W"
+    MONTHLY = "M"
+
+class UserSettings(models.Model):
+    class Meta:
+        verbose_name = 'User Settings'
+        verbose_name_plural = 'Users Settings'
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    remind_within_days = models.BigIntegerField(default=0)
+    remind_frequency = models.CharField(max_length=1, choices=RemindFrequencyChoices, default=RemindFrequencyChoices.MONTHLY)
+    remind_at_most = models.SmallIntegerField(default=1)
+    reminders_active = models.BooleanField(default=True) 
+    budget = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', validators=[MinMoneyValidator(0)])
