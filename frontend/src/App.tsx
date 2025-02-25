@@ -1,9 +1,4 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -11,6 +6,7 @@ import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import Summary from './pages/Summary'
 import Configure from './pages/Configure'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function Logout() {
   localStorage.clear()
@@ -22,23 +18,20 @@ function RegisterAndLogout() {
   return <Register />
 }
 
-/**
- * TODO(giuseppe)
- * We have to put everything back in protected routes using
- * this trick
- * import ProtectedRoute from './components/ProtectedRoute'
- *
- * <ProtectedRoute>
- *   <Home />
- *  </ProtectedRoute>
- * @returns
- */
 function App() {
   return (
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<Home />} />
+          <Route
+            path='/'
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path='/login' element={<Login />}></Route>
           <Route path='/logout' element={<Logout />}></Route>
           <Route path='/register' element={<RegisterAndLogout />}></Route>

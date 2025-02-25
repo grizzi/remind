@@ -30,7 +30,7 @@ class SubscriptionDelete(generics.DestroyAPIView):
     
     def get_queryset(self):
         user = self.request.user
-        return Subscription.objects.filter(author=user)
+        return Subscription.objects.filter(user=user)
            
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()

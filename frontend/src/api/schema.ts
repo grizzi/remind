@@ -15,3 +15,6 @@ export const SubscriptionSchema = z.object({
   total_reminders: z.number(),
   user_id: z.number(),
 })
+
+
+export type Subscription = z.infer<typeof SubscriptionSchema>;
