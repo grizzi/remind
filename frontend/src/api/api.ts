@@ -1,7 +1,9 @@
+import { z } from 'zod'
 import axios from 'axios'
 import { ACCESS_TOKEN } from '../constants'
 
 import { User, Note } from './types'
+import { SubscriptionSchema } from './schema'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_URL,
@@ -37,6 +39,24 @@ export namespace Api {
         console.error('Error fetching notes:', error)
       })
   }
+
+  function createEndpoint<T extends z.ZodType>(path: string, schema: T) {
+    return async (): Promise<z.infer<T>> => {
+      const response = await api.get(path)
+      const result = schema.safeParse(response.data)
+
+      if (!result.success) {
+        throw new Error(`API response validation failed: ${result.error}`)
+      }
+
+      return result.data
+    }
+  }
+
+  export const getSubscriptions = createEndpoint(
+    '/subscriptions',
+    z.array(SubscriptionSchema),
+  )
 }
 
 export default api
