@@ -15,12 +15,12 @@ class SubscriptionsListCreate(generics.ListCreateAPIView):
         # want to access the request object to be able to filter
         # the data by the currently logged in user
         user = self.request.user
-        return Subscription.objects.filter(author=user)
+        return Subscription.objects.filter(user=user)
     
     
     def perform_create(self, serializer):
         if serializer.is_valid():
-            serializer.save(author=self.request.user)
+            serializer.save(user=self.request.user)
         else:
             print(serializer.errors)
     

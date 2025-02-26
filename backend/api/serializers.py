@@ -31,5 +31,5 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         # allow to only read this property. This property is instead written
         # by the backend. These read_only/write_only entail what the 
         # frontend can do
-        extra_kwargs = {"author": {"read_only": True}}
+        extra_kwargs = {"user": {"read_only": True}}
   

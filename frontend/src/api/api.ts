@@ -54,7 +54,7 @@ export namespace Api {
   }
 
   export const getSubscriptions = createEndpoint(
-    '/subscriptions',
+    '/api/subscriptions',
     z.array(SubscriptionSchema),
   )
 }
