@@ -8,7 +8,7 @@ const Home = () => {
   useEffect(() => {
     Api.getSubscriptions()
       .then(data => setSubscriptions(data))
-      .catch(error => console.log(error.message));
+      .catch(error => alert(error.message));
   }, [])
   return (
     <div>

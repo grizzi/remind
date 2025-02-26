@@ -23,6 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
+        fields = "__all__"
         
     
         # In this case we want to only be able to read this property
