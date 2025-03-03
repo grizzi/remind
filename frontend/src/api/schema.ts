@@ -16,5 +16,16 @@ export const SubscriptionSchema = z.object({
   user: z.number(),
 })
 
+export type Subscription = z.infer<typeof SubscriptionSchema>
 
-export type Subscription = z.infer<typeof SubscriptionSchema>;
+export const UserSettingsSchema = z.object({
+  user: z.number(),
+  remind_within_days: z.number(),
+  remind_frequency: z.string(),
+  remind_at_most: z.number(),
+  reminders_active: z.boolean(),
+  budget: z.coerce.number(),
+  budget_currency: z.string()
+})
+
+export type UserSettings = z.infer<typeof UserSettingsSchema>;

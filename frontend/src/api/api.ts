@@ -3,7 +3,7 @@ import axios from 'axios'
 import { ACCESS_TOKEN } from '../constants'
 
 import { User, Note } from './types'
-import { SubscriptionSchema } from './schema'
+import { SubscriptionSchema, UserSettingsSchema } from './schema'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_URL,
@@ -56,6 +56,11 @@ export namespace Api {
   export const getSubscriptions = createEndpoint(
     '/api/subscriptions',
     z.array(SubscriptionSchema),
+  )
+
+  export const getUserSettings = createEndpoint(
+    '/api/settings',
+    z.array(UserSettingsSchema),
   )
 }
 

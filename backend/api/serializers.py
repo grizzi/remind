@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Subscription
+from .models import Subscription, UserSettings
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,5 +32,12 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         # allow to only read this property. This property is instead written
         # by the backend. These read_only/write_only entail what the 
         # frontend can do
+        extra_kwargs = {"user": {"read_only": True}}
+
+class UserSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSettings
+        fields = "__all__"
+        
         extra_kwargs = {"user": {"read_only": True}}
   
