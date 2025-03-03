@@ -1,8 +1,8 @@
+import SubscriptionForm from "../components/SubscriptionForm"
+
 const Configure = () => {
   return (
-    <div>
-      <h1>Configure</h1>
-    </div>
+    <SubscriptionForm />
   )
 }
 

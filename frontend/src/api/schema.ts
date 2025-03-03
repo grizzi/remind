@@ -25,7 +25,7 @@ export const UserSettingsSchema = z.object({
   remind_at_most: z.number(),
   reminders_active: z.boolean(),
   budget: z.coerce.number(),
-  budget_currency: z.string()
+  budget_currency: z.string(),
 })
 
-export type UserSettings = z.infer<typeof UserSettingsSchema>;
+export type UserSettings = z.infer<typeof UserSettingsSchema>
