@@ -1,61 +1,87 @@
-import { z } from 'zod'
 import { toFormikValidationSchema } from '../shared/zod_utilities'
-import { Formik, ErrorMessage, Form, Field } from 'formik'
+import { Formik, Form } from 'formik'
+import { useEffect, useState } from 'react'
 
-const RegisterFormSchema = z
-  .object({
-    name: z
-      .string()
-      .min(2, 'Name must be at least 2 characters long')
-      .max(25, 'Name should be at most 25 characters long'),
-    dateOfBirth: z.string(),
-    email: z.string().email('Invalid email'),
-    password: z
-      .string()
-      .min(8, 'Password should be at least 8 characters long')
-      .max(16, 'Password should be at most 16 characters long'),
-    repeatPassword: z.string(),
-  })
-  .refine(data => data.password === data.repeatPassword, {
-    message: "Passwords don't match",
-    path: ['repeatPassword'], // Path of the error
-  })
+import { useAppContext } from '../context'
+import { SubscriptionSchema } from '../api/schema'
+import SelectField, { SelectOption } from './inputs/SelectField'
+import TextField from './inputs/TextField'
 
-const initialValues = {
-  name: '',
-  dateOfBirth: '',
-  email: '',
-  password: '',
-  repeatPassword: '',
+type SubscriptionFormValuesInterface = {
+  title: string
+  amount: number
+  amount_currency: string
+  billed_at: string
+  remind: boolean
+  autorenewal: boolean
+  expiring_at: string
+  external_link: string
 }
 
-const InputField = (props: { label: string; id: string }) => {
-  return (
-    <div>
-      <label htmlFor='name'>{props.label}</label>
-      <Field id={props.id} name={props.id} placeholder={props.label} />
-      <ErrorMessage name={props.id} />
-    </div>
-  )
-}
+const SubscriptionForm = ({ onSubmit }: { onSubmit: () => void }) => {
+  const context = useAppContext()
+  const [currenciesOptions, setCurrenciesOptions] = useState<SelectOption[]>([])
 
-const SubscriptionForm = () => {
+  const [initialValues, setInitialValues] =
+    useState<SubscriptionFormValuesInterface>({
+      title: '',
+      amount: 0,
+      amount_currency: '',
+      billed_at: new Date(Date.now()).toISOString(),
+      remind: false,
+      autorenewal: false,
+      expiring_at: new Date(Date.now()).toISOString(),
+      external_link: '',
+    })
+
+  useEffect(() => {
+    const sub = context!.getCurrentSubscription()
+    console.log('In effect')
+    if (sub !== undefined) {
+      console.log('Setting the initial values')
+      setInitialValues({
+        ...initialValues,
+        title: sub.title,
+        amount: sub.amount,
+        amount_currency: sub.amount_currency,
+        billed_at: sub.billed_at.toDateString(),
+        remind: sub.remind,
+        autorenewal: sub.autorenewal,
+        expiring_at: sub.expiring_at.toDateString(),
+        external_link: sub.external_link,
+      })
+    }
+
+    setCurrenciesOptions(
+      context!.getCurrencies().map(el => {
+        return { value: el.code, label: el.name }
+      }),
+    )
+  }, [])
+
   return (
     <div>
       <Formik
         initialValues={initialValues}
+        enableReinitialize
         onSubmit={(values, actions) => {
-          alert(JSON.stringify(values))
-          actions.setSubmitting(false);
+          // onSubmit(values)
+          actions.setSubmitting(false)
         }}
-        validationSchema={toFormikValidationSchema(RegisterFormSchema)}
+        validationSchema={toFormikValidationSchema(SubscriptionSchema)}
       >
         <Form>
-          <InputField id='name' label='First Name' />
-          <InputField id='dateOfBirth' label='dateOfBirth' />
-          <InputField id='email' label='email' />
-          <InputField id='password' label='password' />
-          <InputField id='repeatPassword' label='repeatPassword' />
+          <TextField id='title' label='Title' />
+          <TextField id='amount' label='Amount' />
+          <SelectField
+            id='amount_currency'
+            label='Currency'
+            options={currenciesOptions}
+          />
+          <TextField id='billed_at' label='Billed' />
+          <TextField id='autorenewal' label='Autorenewal' />
+          <TextField id='expiring_at' label='Expiring' />
+          <TextField id='external_link' label='External Link' />
           <button type='submit'>Submit</button>
         </Form>
       </Formik>

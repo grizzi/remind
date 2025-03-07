@@ -3,8 +3,10 @@ import { Api } from '../api/api'
 import { Subscription } from '../api/schema'
 import { useNavigate } from 'react-router'
 import SubscriptionDetails from '../components/SubscriptionDetails'
+import { useAppContext } from '../context'
 
 const Home = () => {
+  const context = useAppContext()
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [detailedSubscription, setDetailedSubscription] =
     useState<Subscription | null>(null)
@@ -35,7 +37,17 @@ const Home = () => {
           ))}
         </div>
       ) : (
-        <SubscriptionDetails subscription={detailedSubscription!} />
+        <div>
+          <button
+            onClick={() => {
+              context?.setCurrentSubscription(detailedSubscription)
+              navigate('/configure')
+            }}
+          >
+            Configure
+          </button>
+          <SubscriptionDetails subscription={detailedSubscription!} />
+        </div>
       )}
     </div>
   )

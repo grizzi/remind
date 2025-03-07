@@ -6,6 +6,11 @@
 sudo apt update
 sudo apt install postgresql
 ```
+### Access DB
+
+```
+sudo -u postgres psql
+```
 
 ### Run Server
 python manage.py runserver

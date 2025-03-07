@@ -2,8 +2,12 @@ import { z } from 'zod'
 import axios from 'axios'
 import { ACCESS_TOKEN } from '../constants'
 
-import { User, Note } from './types'
-import { SubscriptionSchema, UserSettingsSchema } from './schema'
+import { User } from './types'
+import {
+  SubscriptionSchema,
+  UserSettingsSchema,
+  CurrencySchema,
+} from './schema'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_URL,
@@ -28,19 +32,7 @@ export namespace Api {
     return await api.post('/api/token/', user)
   }
 
-  export const fetchNotes = (onNotes: (notes: Note[]) => void) => {
-    api
-      .get<Note[]>('/api/notes/')
-      .then(res => {
-        onNotes(res.data)
-        console.log(JSON.stringify(res.data))
-      })
-      .catch(error => {
-        console.error('Error fetching notes:', error)
-      })
-  }
-
-  function createEndpoint<T extends z.ZodType>(path: string, schema: T) {
+  function createGetEndpoint<T extends z.ZodType>(path: string, schema: T) {
     return async (): Promise<z.infer<T>> => {
       const response = await api.get(path)
       const result = schema.safeParse(response.data)
@@ -53,13 +45,18 @@ export namespace Api {
     }
   }
 
-  export const getSubscriptions = createEndpoint(
-    '/api/subscriptions',
+  export const getSupportedCurrencies = createGetEndpoint(
+    '/api/currencies',
+    z.array(CurrencySchema),
+  )
+
+  export const getSubscriptions = createGetEndpoint(
+    '/api/subscriptions/',
     z.array(SubscriptionSchema),
   )
 
-  export const getUserSettings = createEndpoint(
-    '/api/settings',
+  export const getUserSettings = createGetEndpoint(
+    '/api/settings/',
     z.array(UserSettingsSchema),
   )
 }

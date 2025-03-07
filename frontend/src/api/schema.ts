@@ -1,5 +1,12 @@
 import { z } from 'zod'
 
+export const CurrencySchema = z.object({
+  code: z.string(),
+  name: z.string(),
+})
+
+export type Currency = z.infer<typeof CurrencySchema>
+
 export const SubscriptionSchema = z.object({
   title: z.string(),
   amount: z.coerce.number(),

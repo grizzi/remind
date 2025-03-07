@@ -2,9 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
+from djmoney.settings import CURRENCY_CHOICES
 
 # See money django lib: https://github.com/django-money/django-money
-
+    
 class Subscription(models.Model):
     title = models.CharField(max_length=100, default="")
     amount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', null=True, validators=[MinMoneyValidator(0)])

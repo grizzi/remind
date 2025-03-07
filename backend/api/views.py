@@ -1,11 +1,22 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from rest_framework import generics
+from djmoney.settings import CURRENCY_CHOICES
+
+from rest_framework import generics, views
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .serializers import UserSerializer, SubscriptionSerializer, UserSettingsSerializer
 from .models import Subscription, UserSettings
 
+class CurrencyChoicesView(views.APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        _ = request
+        currencies = [{"code": code, "name": name} for code, name in CURRENCY_CHOICES]
+        return Response(currencies)
+      
 class SubscriptionsListCreate(generics.ListCreateAPIView):
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated]
