@@ -21,6 +21,14 @@ const Home = () => {
   return (
     <div>
       <button onClick={() => navigate('/settings')}>Settings</button>
+      <button
+        onClick={() => {
+          context!.setCurrentSubscription(undefined)
+          navigate('/configure')
+        }}
+      >
+        Add Subscription
+      </button>
       <button onClick={() => setDetailedSubscription(null)}>
         {detailedSubscription ? 'Back' : 'Home'}
       </button>

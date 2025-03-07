@@ -9,7 +9,7 @@ import {
 import { Api } from './api/api'
 
 interface AppContextInterface {
-  setCurrentSubscription: (sub: Subscription) => void
+  setCurrentSubscription: (sub: Subscription | undefined) => void
   getCurrentSubscription: () => Subscription | undefined
   getCurrencies: () => Currency[]
 }
