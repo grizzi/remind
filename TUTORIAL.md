@@ -74,3 +74,7 @@ python mange.py runserver
 # in the root, above backend
 npm create vite@latest frontend -- --template react-ts
 ```
+
+
+TODO:
+  - get a max of subscriptions per user allowed with a "free" plan
