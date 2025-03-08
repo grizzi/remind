@@ -24,7 +24,7 @@ const Home = () => {
       <button
         onClick={() => {
           context!.setCurrentSubscription(undefined)
-          navigate('/configure')
+          navigate('/edit')
         }}
       >
         Add Subscription

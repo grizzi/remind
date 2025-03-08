@@ -59,6 +59,7 @@ const SubscriptionForm = ({ onSubmit }: { onSubmit: () => void }) => {
     )
   }, [])
 
+  
   return (
     <div>
       <Formik

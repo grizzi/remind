@@ -15,6 +15,13 @@ const UserSettingsPage = () => {
     console.log('resetting settings', JSON.stringify(settings))
   }, [settings])
 
+  if (!settings){
+    return (
+      <div>
+        No settings!
+      </div>
+    )
+  }
   return (
     <div>
       <button onClick={() => navigate('/')}>Home</button>

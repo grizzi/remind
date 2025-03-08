@@ -31,6 +31,7 @@ export default function AppContextProvider({
   const [currencies, setCurrencies] = useState<Currency[]>([])
 
   useEffect(() => {
+    console.log('Mounting App Context provider')
     Api.getSupportedCurrencies()
       .then(data => setCurrencies(data))
       .catch(error => alert(error.message))
