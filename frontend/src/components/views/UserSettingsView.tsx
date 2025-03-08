@@ -1,4 +1,4 @@
-import { UserSettings } from '../api/schema'
+import { UserSettings } from '../../api/schema'
 
 const UserSettingsView = ({ settings }: { settings: UserSettings }) => {
   console.log(JSON.stringify(settings))

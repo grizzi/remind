@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAppContext } from '../context'
 
-import UserSettingsView from '../components/UserSettingsView'
+import UserSettingsView from '../components/views/UserSettingsView'
 import UserSettingsForm from '../components/forms/UserSettingsForm'
 
 const UserSettingsPage = () => {

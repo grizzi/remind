@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Api } from '../api/api'
 import { Subscription } from '../api/schema'
 import { useNavigate } from 'react-router'
-import SubscriptionDetails from '../components/SubscriptionDetails'
+import SubscriptionView from '../components/views/SubscriptionView'
 import { useAppContext } from '../context'
 
 const Home = () => {
@@ -54,7 +54,7 @@ const Home = () => {
           >
             Edit
           </button>
-          <SubscriptionDetails subscription={detailedSubscription!} />
+          <SubscriptionView subscription={detailedSubscription!} />
         </div>
       )}
     </div>
