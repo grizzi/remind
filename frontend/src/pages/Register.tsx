@@ -1,9 +1,7 @@
-import Form from "../components/Form"
+import LoginForm from '../components/forms/LoginForm'
 
 const Register = () => {
-    return <Form route="/api/user/register/" method="register"/>
-
+  return <LoginForm route='/api/user/register/' method='register' />
 }
 
-
-export default Register;
+export default Register

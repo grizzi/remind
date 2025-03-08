@@ -1,8 +1,7 @@
-import Form from "../components/Form"
+import LoginForm from '../components/forms/LoginForm'
 
 const Login = () => {
-    return <Form route="/api/token/" method="login"/>
+  return <LoginForm route='/api/token/' method='login' />
 }
 
-
-export default Login;
+export default Login

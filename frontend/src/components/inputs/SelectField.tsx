@@ -21,7 +21,9 @@ const SelectField = (props: {
           placeholder={props.label}
         >
           {props.options.map(opt => (
-            <option value={opt.value}>{opt.label}</option>
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
           ))}
         </Field>
         <ErrorMessage name={props.id} />

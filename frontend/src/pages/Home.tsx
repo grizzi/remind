@@ -49,10 +49,10 @@ const Home = () => {
           <button
             onClick={() => {
               context?.setCurrentSubscription(detailedSubscription)
-              navigate('/configure')
+              navigate('/edit')
             }}
           >
-            Configure
+            Edit
           </button>
           <SubscriptionDetails subscription={detailedSubscription!} />
         </div>

@@ -5,7 +5,7 @@ import Register from './pages/Register'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import UserSettingsPage from './pages/UserSettings'
-import Configure from './pages/Configure'
+import EditSubscription from './pages/EditSubscription'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function Logout() {
@@ -36,7 +36,7 @@ function App() {
           <Route path='/login' element={<Login />}></Route>
           <Route path='/logout' element={<Logout />}></Route>
           <Route path='/register' element={<RegisterAndLogout />}></Route>
-          <Route path='/configure' element={<Configure />}></Route>
+          <Route path='/edit' element={<EditSubscription />}></Route>
           <Route path='*' element={<NotFound />}></Route>
         </Routes>
       </BrowserRouter>

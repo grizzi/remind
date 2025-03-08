@@ -46,7 +46,7 @@ export namespace Api {
   }
 
   export const getSupportedCurrencies = createGetEndpoint(
-    '/api/currencies',
+    '/api/currencies/',
     z.array(CurrencySchema),
   )
 

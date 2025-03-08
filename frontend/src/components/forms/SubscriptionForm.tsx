@@ -1,11 +1,11 @@
-import { toFormikValidationSchema } from '../shared/zod_utilities'
+import { toFormikValidationSchema } from '../../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
 
-import { useAppContext } from '../context'
-import { SubscriptionSchema } from '../api/schema'
-import SelectField, { SelectOption } from './inputs/SelectField'
-import TextField from './inputs/TextField'
+import { useAppContext } from '../../context'
+import { SubscriptionSchema } from '../../api/schema'
+import SelectField, { SelectOption } from '../inputs/SelectField'
+import TextField from '../inputs/TextField'
 
 type SubscriptionFormValuesInterface = {
   title: string
@@ -27,10 +27,10 @@ const SubscriptionForm = ({ onSubmit }: { onSubmit: () => void }) => {
       title: '',
       amount: 0,
       amount_currency: '',
-      billed_at: new Date(Date.now()).toISOString(),
+      billed_at: '',
       remind: false,
       autorenewal: false,
-      expiring_at: new Date(Date.now()).toISOString(),
+      expiring_at: '',
       external_link: '',
     })
 

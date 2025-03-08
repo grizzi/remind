@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import api from '../api/api'
+import api from '../../api/api'
 import { useNavigate } from 'react-router'
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants'
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants'
 
-function Form({
+function LoginForm({
   route,
   method,
 }: {
@@ -66,4 +66,4 @@ function Form({
   )
 }
 
-export default Form
+export default LoginForm
