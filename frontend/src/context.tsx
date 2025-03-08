@@ -13,6 +13,8 @@ interface AppContextInterface {
   getCurrentSubscription: () => Subscription | undefined
   getCurrencies: () => Currency[]
   getUserSettings: () => UserSettings
+  updateSubscriptions: () => void;
+  getSubscriptions: () => Subscription[]
 }
 
 const AppContext = createContext<AppContextInterface | undefined>(undefined)
@@ -23,11 +25,9 @@ export default function AppContextProvider({
 }: {
   children: ReactNode
 }) {
-  const [subscription, setSubscription] = useState<Subscription | undefined>(
-    undefined,
-  )
+  const [subscription, setSubscription] = useState<Subscription>()
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [userSettings, setUserSettings] = useState<UserSettings>()
-
   const [currencies, setCurrencies] = useState<Currency[]>([])
 
   useEffect(() => {
@@ -50,6 +50,15 @@ export default function AppContextProvider({
   const getCurrentSubscription = () => subscription
   const getCurrencies = () => currencies
   const getUserSettings = () => userSettings!
+  const updateSubscriptions = () => {
+    Api.getSubscriptions()
+      .then(subs => {
+        console.log(JSON.stringify(subs))
+        setSubscriptions(subs)}
+      )
+      .catch(err => alert(err))
+  }
+  const getSubscriptions = () => subscriptions;
 
   return (
     <AppContext.Provider
@@ -58,6 +67,8 @@ export default function AppContextProvider({
         getCurrentSubscription,
         getCurrencies,
         getUserSettings,
+        updateSubscriptions,
+        getSubscriptions,
       }}
     >
       {children}

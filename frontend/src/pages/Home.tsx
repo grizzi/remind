@@ -1,23 +1,28 @@
 import { useEffect, useState } from 'react'
-import { Api } from '../api/api'
 import { Subscription } from '../api/schema'
 import { useNavigate } from 'react-router'
-import SubscriptionView from '../components/views/SubscriptionView'
 import { useAppContext } from '../context'
+
+import SubscriptionView from '../components/views/SubscriptionView'
+import SubscriptionCardView from '../components/views/SubscriptionCardView'
 
 const Home = () => {
   const context = useAppContext()
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
+  const subscriptions = context?.getSubscriptions()
+
   const [detailedSubscription, setDetailedSubscription] =
     useState<Subscription | null>(null)
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    Api.getSubscriptions()
-      .then(data => setSubscriptions(data))
-      .catch(error => alert(error.message))
+    context?.updateSubscriptions()
   }, [])
+
+  if (!subscriptions) {
+    return <div>Loading...</div>
+  }
+
   return (
     <div>
       <button onClick={() => navigate('/settings')}>Settings</button>
@@ -35,19 +40,32 @@ const Home = () => {
       {detailedSubscription === null ? (
         <div>
           <h1>Summary</h1>
-          {subscriptions.map(sub => (
-            <div key={sub.title}>
-              <button onClick={() => setDetailedSubscription(sub)}>
-                Expand
-              </button>
-              <p>{JSON.stringify(sub)}</p>
-            </div>
+          {subscriptions.sort((a, b) => {
+            if (a.created_at < b.created_at){
+              return -1
+            }
+            if (a.created_at > b.created_at) {
+              return 1
+            } 
+            if (a.id < b.id){
+              return -1
+            }
+            if (a.id > b.id){
+              return 1
+            }
+            return 0;
+          }).map(sub => (
+            <SubscriptionCardView
+              subscription={sub}
+              onClick={() => setDetailedSubscription(sub)}
+            />
           ))}
         </div>
       ) : (
         <div>
           <button
             onClick={() => {
+              console.log('Setting current subscription')
               context?.setCurrentSubscription(detailedSubscription)
               navigate('/edit')
             }}

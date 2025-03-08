@@ -1,75 +1,84 @@
-import { toFormikValidationSchema } from '../../shared/zod_utilities'
+import { toFormikValidate } from '../../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
 
 import { useAppContext } from '../../context'
-import { SubscriptionSchema } from '../../api/schema'
+import {
+  SubscriptionReadWrite,
+  SubscriptionReadWriteSchema,
+} from '../../api/schema'
 import SelectField, { SelectOption } from '../inputs/SelectField'
 import TextField from '../inputs/TextField'
+import CheckboxField from '../inputs/CheckboxField'
 
-type SubscriptionFormValuesInterface = {
-  title: string
-  amount: number
-  amount_currency: string
-  billed_at: string
-  remind: boolean
-  autorenewal: boolean
-  expiring_at: string
-  external_link: string
-}
-
-const SubscriptionForm = ({ onSubmit }: { onSubmit: () => void }) => {
+const SubscriptionForm = ({
+  onSubmit,
+}: {
+  onSubmit: (
+    id: number | undefined,
+    subscription: SubscriptionReadWrite,
+  ) => void
+}) => {
   const context = useAppContext()
+  const settings = context?.getUserSettings()
+  const subscription = context?.getCurrentSubscription()
+  const currencies = context?.getCurrencies()
+
   const [currenciesOptions, setCurrenciesOptions] = useState<SelectOption[]>([])
 
-  const [initialValues, setInitialValues] =
-    useState<SubscriptionFormValuesInterface>({
-      title: '',
-      amount: 0,
-      amount_currency: '',
-      billed_at: '',
-      remind: false,
-      autorenewal: false,
-      expiring_at: '',
-      external_link: '',
-    })
+  const [initialValues, setInitialValues] = useState<SubscriptionReadWrite>({
+    title: '',
+    amount: 0,
+    amount_currency: '',
+    billed_at: new Date(),
+    remind: false,
+    autorenewal: false,
+    expiring_at: new Date(),
+    external_link: '',
+  })
 
   useEffect(() => {
-    const sub = context!.getCurrentSubscription()
-    console.log('In effect')
-    if (sub !== undefined) {
-      console.log('Setting the initial values')
-      setInitialValues({
-        ...initialValues,
-        title: sub.title,
-        amount: sub.amount,
-        amount_currency: sub.amount_currency,
-        billed_at: sub.billed_at.toDateString(),
-        remind: sub.remind,
-        autorenewal: sub.autorenewal,
-        expiring_at: sub.expiring_at.toDateString(),
-        external_link: sub.external_link,
-      })
+    if (subscription || settings) {
+      // TODO: try to loop through the keys instead of having a manually filled object
+      setInitialValues(prevValues => ({
+        ...prevValues,
+        ...(subscription && {
+          title: subscription.title,
+          amount: subscription.amount,
+          amount_currency: subscription.amount_currency,
+          billed_at: subscription.billed_at,
+          remind: subscription.remind,
+          autorenewal: subscription.autorenewal,
+          expiring_at: subscription.expiring_at,
+          external_link: subscription.external_link,
+        }),
+        ...(settings && {
+          amount_currency: settings.budget_currency,
+        }),
+      }))
     }
 
-    setCurrenciesOptions(
-      context!.getCurrencies().map(el => {
-        return { value: el.code, label: el.name }
-      }),
-    )
-  }, [])
+    if (currencies) {
+      setCurrenciesOptions(
+        currencies.map(el => ({
+          value: el.code,
+          label: el.name,
+        })),
+      )
+    }
+  }, [settings, subscription, currencies])
 
-  
   return (
     <div>
       <Formik
         initialValues={initialValues}
         enableReinitialize
-        onSubmit={(values, actions) => {
-          // onSubmit(values)
-          actions.setSubmitting(false)
+        onSubmit={values => {
+          alert('New subscription submission')
+          onSubmit(subscription?.id, values)
+          context?.updateSubscriptions();
         }}
-        validationSchema={toFormikValidationSchema(SubscriptionSchema)}
+        validate={toFormikValidate(SubscriptionReadWriteSchema)}
       >
         <Form>
           <TextField id='title' label='Title' />
@@ -80,7 +89,7 @@ const SubscriptionForm = ({ onSubmit }: { onSubmit: () => void }) => {
             options={currenciesOptions}
           />
           <TextField id='billed_at' label='Billed' />
-          <TextField id='autorenewal' label='Autorenewal' />
+          <CheckboxField id='autorenewal' label='Autorenewal'/>
           <TextField id='expiring_at' label='Expiring' />
           <TextField id='external_link' label='External Link' />
           <button type='submit'>Submit</button>

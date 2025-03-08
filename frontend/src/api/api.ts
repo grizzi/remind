@@ -7,6 +7,8 @@ import {
   SubscriptionSchema,
   UserSettingsSchema,
   CurrencySchema,
+  Subscription,
+  SubscriptionReadWriteSchema,
 } from './schema'
 
 const api = axios.create({
@@ -21,44 +23,115 @@ api.interceptors.request.use(
     }
     return config
   },
-  // TODO: I have to read about async JS
+
   error => {
     return Promise.reject(error)
   },
 )
 
+// const deleteNote = id => {
+//   api
+//     .delete(`/api/notes/delete/${id}/`)
+//     .then(res => {
+//       if (res.status === 204) alert('Note deleted!')
+//       else alert('Failed to delete note.')
+//       getNotes()
+//     })
+//     .catch(error => alert(error))
+// }
+
 export namespace Api {
+  const CurrenciesListSchema = z.array(CurrencySchema)
+  const SubscriptionsListSchema = z.array(SubscriptionSchema)
+  const UserSettingsListSchema = z.array(UserSettingsSchema)
+
   export const login = async (user: User) => {
     return await api.post('/api/token/', user)
   }
 
-  function createGetEndpoint<T extends z.ZodType>(path: string, schema: T) {
-    return async (): Promise<z.infer<T>> => {
-      const response = await api.get(path)
-      const result = schema.safeParse(response.data)
-
-      if (!result.success) {
-        throw new Error(`API response validation failed: ${result.error}`)
-      }
-
-      return result.data
-    }
+  interface Result {
+    success: boolean
+    data: any
+    error: any
   }
 
-  export const getSupportedCurrencies = createGetEndpoint(
-    '/api/currencies/',
-    z.array(CurrencySchema),
-  )
+  function throwOnError(result: Partial<Result>) {
+    if (!result.success) {
+      throw new Error(`API response validation failed: ${result.error}`)
+    }
+    return result.data
+  }
 
-  export const getSubscriptions = createGetEndpoint(
-    '/api/subscriptions/',
-    z.array(SubscriptionSchema),
-  )
+  export const getSupportedCurrencies = async (): Promise<
+    z.infer<typeof CurrenciesListSchema>
+  > => {
+    const response = await api.get('/api/currencies/')
+    const result = CurrenciesListSchema.safeParse(response.data)
+    return throwOnError(result)
+  }
 
-  export const getUserSettings = createGetEndpoint(
-    '/api/settings/',
-    z.array(UserSettingsSchema),
-  )
+  export const getSubscriptions = async (): Promise<
+    z.infer<typeof SubscriptionsListSchema>
+  > => {
+    const response = await api.get('/api/subscriptions/')
+    console.log(JSON.stringify(response.data))
+    const result = SubscriptionsListSchema.safeParse(response.data)
+    return throwOnError(result)
+  }
+
+  export const getUserSettings = async (): Promise<
+    z.infer<typeof UserSettingsListSchema>
+  > => {
+    const response = await api.get('/api/settings/')
+    const result = UserSettingsListSchema.safeParse(response.data)
+    return throwOnError(result)
+  }
+
+  export const createSubscription = async (
+    sub: Partial<Subscription>,
+  ): Promise<void> => {
+    console.log(sub.expiring_at)
+    const result = SubscriptionReadWriteSchema.safeParse(sub)
+    throwOnError(result)
+    api
+      .post('/api/subscriptions/', sub)
+      .catch(error =>
+        alert(
+          `Failed to create subscription: ${error.message} ${JSON.stringify(
+            error,
+          )}`,
+        ),
+      )
+  }
+
+  export const updateSubscription = async (
+    id: number,
+    sub: Partial<Subscription>,
+  ): Promise<void> => {
+    const result = SubscriptionReadWriteSchema.safeParse(sub)
+    throwOnError(result)
+    api
+      .put(`/api/subscriptions/${id}/`, sub)
+      .catch(error =>
+        alert(
+          `Failed to update subscription: ${error.message} ${JSON.stringify(
+            error,
+          )}`,
+        ),
+      )
+  }
+
+  export const deleteSubscription = async (id: number) => {
+    api
+      .delete(`/api/subscriptions/${id}/`)
+      .catch(error =>
+        alert(
+          `Failed to delete subscription: ${error.message} ${JSON.stringify(
+            error,
+          )}`,
+        ),
+      )
+  }
 }
 
 export default api

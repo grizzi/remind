@@ -7,22 +7,32 @@ export const CurrencySchema = z.object({
 
 export type Currency = z.infer<typeof CurrencySchema>
 
-export const SubscriptionSchema = z.object({
-  title: z.string(),
-  amount: z.coerce.number(),
-  amount_currency: z.string(),
+// TODO: investigate the use of readonly variables
+export const SubscriptionReadOnlySchema = z.object({
+  id: z.number(),
   created_at: z.coerce.date(),
+  last_reminder_at: z.coerce.date().nullable(),
+  total_reminders: z.number(),
+  user: z.number(),
+  archieved: z.boolean(),
+})
+
+export const SubscriptionReadWriteSchema = z.object({
+  title: z.string().nonempty("Title should not be empty!"),
+  amount: z.coerce.number().gt(0, "Insert a positive amount"),
+  amount_currency: z.string(),
   billed_at: z.coerce.date(),
   remind: z.boolean(),
   autorenewal: z.boolean(),
   expiring_at: z.coerce.date(),
   external_link: z.string(),
-  archieved: z.boolean(),
-  last_reminder_at: z.coerce.date().nullable(),
-  total_reminders: z.number(),
-  user: z.number(),
 })
 
+export const SubscriptionSchema = SubscriptionReadOnlySchema.merge(
+  SubscriptionReadWriteSchema,
+)
+export type SubscriptionReadWrite = z.infer<typeof SubscriptionReadWriteSchema>
+export type SubscriptionReadOnly = z.infer<typeof SubscriptionReadOnlySchema>
 export type Subscription = z.infer<typeof SubscriptionSchema>
 
 export const UserSettingsSchema = z.object({

@@ -8,15 +8,15 @@ from djmoney.settings import CURRENCY_CHOICES
     
 class Subscription(models.Model):
     title = models.CharField(max_length=100, default="")
-    amount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', null=True, validators=[MinMoneyValidator(0)])
-    created_at = models.DateField(auto_now_add=True)
-    billed_at = models.DateField()
+    amount = MoneyField(max_digits=10, decimal_places=2, default_currency='CHF', null=True, validators=[MinMoneyValidator(0)])
+    created_at = models.DateTimeField(auto_now_add=True)
+    billed_at = models.DateTimeField()
     remind = models.BooleanField(default=False)
     autorenewal = models.BooleanField(default=False)
-    expiring_at = models.DateField(null=True)
+    expiring_at = models.DateTimeField(null=True)
     external_link = models.URLField(default="")
     archieved = models.BooleanField(default=False)
-    last_reminder_at = models.DateField(null=True)
+    last_reminder_at = models.DateTimeField(null=True)
     total_reminders = models.SmallIntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -35,7 +35,7 @@ class SubscriptionLabel(models.Model):
 
 class Transaction(models.Model):
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
-    date = models.DateField()
+    date = models.DateTimeField()
     amount = MoneyField(max_digits=10, decimal_places=2, default_currency='USD', validators=[MinMoneyValidator(0)])
 
 class RemindFrequencyChoices(models.TextChoices):
