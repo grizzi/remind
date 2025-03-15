@@ -102,6 +102,10 @@ export namespace Api {
   ): Promise<void> => {
     await api.put(`/api/settings/`, settings)
   }
+
+  export const deleteUser = async () => {
+    await api.delete(`/api/delete/`)
+  }
 }
 
 export default api

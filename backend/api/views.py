@@ -127,12 +127,27 @@ class CreateUserView(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        
         logger.error(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @receiver(post_save, sender=User)
 def create_user_picks(sender, instance, created, **kwargs):
     if created:
         UserSettings.objects.create(user=instance)
-        
+
+
+class DeleteUserView(generics.DestroyAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        """Return the authenticated user instead of querying by ID"""
+        return self.request.user
+
+    def destroy(self, request, *args, **kwargs):
+        _ = request, args, kwargs
+        user = self.get_object()
+        user.delete()
+        return Response({"message": "User deleted successfully"},
+                        status=status.HTTP_204_NO_CONTENT)
