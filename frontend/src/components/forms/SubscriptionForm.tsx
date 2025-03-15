@@ -2,6 +2,7 @@ import { toFormikValidate } from '../../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
 
+import { Subscription } from '../../api/schema'
 import { useAppContext } from '../../context'
 import {
   SubscriptionReadWrite,
@@ -12,17 +13,15 @@ import TextField from '../inputs/TextField'
 import CheckboxField from '../inputs/CheckboxField'
 
 const SubscriptionForm = ({
+  subscription,
   onSubmit,
 }: {
-  onSubmit: (
-    id: number | undefined,
-    subscription: SubscriptionReadWrite,
-  ) => void
+  subscription: Subscription | undefined
+  onSubmit: (subscription: SubscriptionReadWrite) => Promise<void>
 }) => {
   const context = useAppContext()
-  const settings = context?.getUserSettings()
-  const subscription = context?.getCurrentSubscription()
-  const currencies = context?.getCurrencies()
+  const settings = context.getUserSettings()
+  const currencies = context.getCurrencies()
 
   const [currenciesOptions, setCurrenciesOptions] = useState<SelectOption[]>([])
 
@@ -73,10 +72,8 @@ const SubscriptionForm = ({
       <Formik
         initialValues={initialValues}
         enableReinitialize
-        onSubmit={values => {
-          alert('New subscription submission')
-          onSubmit(subscription?.id, values)
-          context?.updateSubscriptions();
+        onSubmit={async (values) => {
+          await onSubmit(values)
         }}
         validate={toFormikValidate(SubscriptionReadWriteSchema)}
       >
@@ -89,7 +86,7 @@ const SubscriptionForm = ({
             options={currenciesOptions}
           />
           <TextField id='billed_at' label='Billed' />
-          <CheckboxField id='autorenewal' label='Autorenewal'/>
+          <CheckboxField id='autorenewal' label='Autorenewal' />
           <TextField id='expiring_at' label='Expiring' />
           <TextField id='external_link' label='External Link' />
           <button type='submit'>Submit</button>

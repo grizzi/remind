@@ -42,6 +42,10 @@ function LoginForm({
     }
   }
 
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
   return (
     <form onSubmit={handleSubmit} className='form-container'>
       <h1>{name}</h1>
@@ -54,7 +58,7 @@ function LoginForm({
       />
       <input
         className='form-input'
-        type='text'
+        type='password'
         value={password}
         onChange={e => setPassword(e.target.value)}
         placeholder='Password'

@@ -36,10 +36,9 @@ export type SubscriptionReadOnly = z.infer<typeof SubscriptionReadOnlySchema>
 export type Subscription = z.infer<typeof SubscriptionSchema>
 
 export const UserSettingsSchema = z.object({
-  user: z.number(),
-  remind_within_days: z.number(),
+  remind_within_days: z.coerce.number(),
   remind_frequency: z.string(),
-  remind_at_most: z.number(),
+  remind_at_most: z.coerce.number(),
   reminders_active: z.boolean(),
   budget: z.coerce.number(),
   budget_currency: z.string(),

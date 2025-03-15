@@ -3,6 +3,7 @@ import { Subscription } from '../../api/schema'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Api } from '../../api/api'
+
 import { useNavigate } from 'react-router'
 
 function ModalContent({
@@ -41,12 +42,19 @@ function ModalContent({
 
 const SubscriptionView = ({ subscription }: { subscription: Subscription }) => {
   const [showModal, setShowModal] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <div>
       <h1>{subscription.title}</h1>
 
       <button onClick={() => setShowModal(true)}>Delete</button>
+      <button
+        onClick={() => navigate(`/subscriptions/${subscription.id}/edit`)}
+      >
+        Edit
+      </button>
+
       {showModal &&
         createPortal(
           <ModalContent

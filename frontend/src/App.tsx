@@ -2,11 +2,13 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 import Login from './pages/Login'
 import Register from './pages/Register'
-import Home from './pages/Home'
+import SubscriptionsPage from './pages/SubscriptionsPage'
 import NotFound from './pages/NotFound'
-import UserSettingsPage from './pages/UserSettings'
-import EditSubscription from './pages/EditSubscription'
+import UserSettingsPage from './pages/UserSettingsPage'
+import SiteLayout from './components/SiteLayout'
+import SubscriptionEditPage from './pages/SubscriptionEditPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import SubscriptionViewPage from './pages/SubscriptionViewPage'
 
 function Logout() {
   localStorage.clear()
@@ -23,20 +25,24 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route
-            path='/'
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
+          <Route path='' element={<SiteLayout />}>
+            <Route path='' element={<ProtectedRoute />}>
+              <Route path='subscriptions' element={<SubscriptionsPage />} />
+              <Route
+                path='subscriptions/:subId'
+                element={<SubscriptionViewPage />}
+              />
+              <Route
+                path='subscriptions/:subId/edit'
+                element={<SubscriptionEditPage />}
+              />
+              <Route path='/settings' element={<UserSettingsPage />}></Route>
+            </Route>
+          </Route>
 
-          <Route path='/settings' element={<UserSettingsPage />}></Route>
           <Route path='/login' element={<Login />}></Route>
           <Route path='/logout' element={<Logout />}></Route>
           <Route path='/register' element={<RegisterAndLogout />}></Route>
-          <Route path='/edit' element={<EditSubscription />}></Route>
           <Route path='*' element={<NotFound />}></Route>
         </Routes>
       </BrowserRouter>

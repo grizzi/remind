@@ -9,15 +9,22 @@ import {
 import { Api } from './api/api'
 
 interface AppContextInterface {
-  setCurrentSubscription: (sub: Subscription | undefined) => void
-  getCurrentSubscription: () => Subscription | undefined
   getCurrencies: () => Currency[]
   getUserSettings: () => UserSettings
-  updateSubscriptions: () => void;
+  updateSubscriptions: () => Promise<void>
   getSubscriptions: () => Subscription[]
 }
 
-const AppContext = createContext<AppContextInterface | undefined>(undefined)
+const defaultContext: AppContextInterface = {
+  getCurrencies: () => [],
+  getUserSettings: () => {
+    throw new Error('User settings are not available yet')
+  },
+  updateSubscriptions: async () => {},
+  getSubscriptions: () => [],
+}
+
+const AppContext = createContext<AppContextInterface>(defaultContext)
 export const useAppContext = () => useContext(AppContext)
 
 export default function AppContextProvider({
@@ -25,7 +32,6 @@ export default function AppContextProvider({
 }: {
   children: ReactNode
 }) {
-  const [subscription, setSubscription] = useState<Subscription>()
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [userSettings, setUserSettings] = useState<UserSettings>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
@@ -38,33 +44,30 @@ export default function AppContextProvider({
     Api.getUserSettings()
       .then(data => {
         console.log(JSON.stringify(data))
-        setUserSettings(data[0])
+        setUserSettings(data)
       })
       .catch(error => alert(error.message))
   }, [])
 
-  const setCurrentSubscription = (sub: Subscription | undefined) => {
-    setSubscription(sub)
+  const getCurrencies = () => currencies
+
+  const getUserSettings = () => userSettings
+
+  const updateSubscriptions = async () => {
+    try {
+      const subs = await Api.getSubscriptions()
+      console.log(JSON.stringify(subs))
+      setSubscriptions(subs)
+    } catch (err) {
+      alert(err)
+    }
   }
 
-  const getCurrentSubscription = () => subscription
-  const getCurrencies = () => currencies
-  const getUserSettings = () => userSettings!
-  const updateSubscriptions = () => {
-    Api.getSubscriptions()
-      .then(subs => {
-        console.log(JSON.stringify(subs))
-        setSubscriptions(subs)}
-      )
-      .catch(err => alert(err))
-  }
-  const getSubscriptions = () => subscriptions;
+  const getSubscriptions = () => subscriptions
 
   return (
     <AppContext.Provider
       value={{
-        setCurrentSubscription,
-        getCurrentSubscription,
         getCurrencies,
         getUserSettings,
         updateSubscriptions,

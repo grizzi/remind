@@ -1,61 +1,52 @@
-import { toFormikValidationSchema } from '../../shared/zod_utilities'
+import { toFormikValidate } from '../../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
 
 import { useAppContext } from '../../context'
-import { SubscriptionSchema } from '../../api/schema'
+import { UserSettings, UserSettingsSchema } from '../../api/schema'
 import SelectField, { SelectOption } from '../inputs/SelectField'
 import TextField from '../inputs/TextField'
 
-type UserSettingsFormInitialValuesInterface = {
-  remind_within_days: number
-  remind_frequency: string
-  remind_at_most: number
-  reminders_active: boolean
-  budget: number
-  budget_currency: string
-}
-
-const UserSettingsForm = ({ onSubmit }: { onSubmit: () => void }) => {
-  const context = useAppContext()
+const UserSettingsForm = ({
+  onSubmit,
+}: {
+  onSubmit: (settings: UserSettings) => Promise<void>
+}) => {
+  const settings = useAppContext().getUserSettings()
+  const currencies = useAppContext().getCurrencies()
   const [currenciesOptions, setCurrenciesOptions] = useState<SelectOption[]>([])
 
-  const [initialValues, setInitialValues] =
-    useState<UserSettingsFormInitialValuesInterface | null>(null)
+  const [initialValues, setInitialValues] = useState<UserSettings>({
+    remind_within_days: 0,
+    remind_frequency: '',
+    remind_at_most: 0,
+    reminders_active: false,
+    budget: 0,
+    budget_currency: '',
+  })
 
   useEffect(() => {
-    const settings = context!.getUserSettings()
-    console.log('In effect')
-    setInitialValues({
-      remind_within_days: settings.remind_within_days,
-      remind_frequency: settings.remind_frequency,
-      remind_at_most: settings.remind_at_most,
-      reminders_active: settings.reminders_active,
-      budget: settings.budget,
-      budget_currency: settings.budget_currency,
-    })
+    setInitialValues(settings)
+  }, [settings])
 
+  useEffect(() => {
+    if (!currencies) {
+      return
+    }
     setCurrenciesOptions(
-      context!.getCurrencies().map(el => {
+      currencies.map(el => {
         return { value: el.code, label: el.name }
       }),
     )
   }, [])
-
-  if (!initialValues) {
-    return <div>Loading...</div> // Prevents rendering Formik until initialValues is set
-  }
 
   return (
     <div>
       <Formik
         initialValues={initialValues}
         enableReinitialize
-        onSubmit={(values, actions) => {
-          // onSubmit(values)
-          actions.setSubmitting(false)
-        }}
-        validationSchema={toFormikValidationSchema(SubscriptionSchema)}
+        onSubmit={async values => await onSubmit(values)}
+        validate={toFormikValidate(UserSettingsSchema)}
       >
         <Form>
           <TextField id='remind_within_days' label='Remind within days' />

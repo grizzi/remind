@@ -1,5 +1,4 @@
-import { ReactNode } from 'react'
-import { Navigate } from 'react-router'
+import { Navigate, Outlet } from 'react-router'
 import { jwtDecode } from 'jwt-decode'
 import api from '../api/api'
 import { REFRESH_TOKEN, ACCESS_TOKEN } from '../constants'
@@ -18,12 +17,13 @@ type RefreshTokenResponse = {
   }
 }
 
-const ProtectedRoute = ({ children }: { children: ReactNode }) => {
+const ProtectedRoute = () => {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null)
 
   useEffect(() => {
     auth().catch(() => setIsAuthorized(false))
   }, [])
+
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN)
     try {
@@ -31,7 +31,9 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
         refresh: refreshToken,
       })
       if (res.status === 200) {
+        console.log('Token refreshed')
         localStorage.setItem(ACCESS_TOKEN, res.data.access)
+        setIsAuthorized(true)
       }
     } catch (error) {
       console.log(error)
@@ -56,13 +58,13 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
       setIsAuthorized(true)
     }
   }
+  console.log(isAuthorized)
 
   if (isAuthorized === null) {
     return <div>Loading...</div>
   }
 
-  // TODO: read about navigation and react routing
-  return isAuthorized ? children : <Navigate to='/login' />
+  return isAuthorized ? <Outlet /> : <Navigate to='/login' />
 }
 
 export default ProtectedRoute
