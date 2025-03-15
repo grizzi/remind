@@ -8,6 +8,7 @@ import {
   Subscription,
   UserSettings,
   Currency,
+  Label,
 } from '../../api/schema'
 
 import SelectField, { SelectOption } from '../inputs/SelectField'
@@ -18,11 +19,13 @@ const SubscriptionForm = ({
   subscription,
   settings,
   currencies,
+  labels,
   onSubmit,
 }: {
   settings: UserSettings
   currencies: Currency[]
   subscription: Subscription | undefined
+  labels: Label[]
   onSubmit: (subscription: SubscriptionReadWrite) => Promise<void>
 }) => {
   const [currenciesOptions, setCurrenciesOptions] = useState<SelectOption[]>([])
@@ -92,6 +95,22 @@ const SubscriptionForm = ({
           <TextField id='expiring_at' label='Expiring' />
           <TextField id='external_link' label='External Link' />
           <button type='submit'>Submit</button>
+
+          <div>
+            <SelectField
+              id='label'
+              label='Labels'
+              options={labels.map(l => {
+                return {
+                  value: l.name,
+                  label: l.name,
+                }
+              })}
+            />
+            {labels.map(l => (
+              <button type='button'>{l.name}</button>
+            ))}
+          </div>
         </Form>
       </Formik>
     </div>

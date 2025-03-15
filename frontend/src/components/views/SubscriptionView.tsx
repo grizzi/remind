@@ -1,4 +1,4 @@
-import { Subscription } from '../../api/schema'
+import { Label, Subscription } from '../../api/schema'
 
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -40,14 +40,24 @@ function ModalContent({
   )
 }
 
-const SubscriptionView = ({ subscription }: { subscription: Subscription }) => {
+const SubscriptionView = ({
+  subscription,
+  labels,
+}: {
+  subscription: Subscription
+  labels: Label[]
+}) => {
   const [showModal, setShowModal] = useState(false)
   const navigate = useNavigate()
 
   return (
     <div>
       <h1>{subscription.title}</h1>
-
+      <ul>
+        {labels.map(l => (
+          <li>{l.name}</li>
+        ))}
+      </ul>
       <button onClick={() => setShowModal(true)}>Delete</button>
       <button
         onClick={() => navigate(`/subscriptions/${subscription.id}/edit`)}

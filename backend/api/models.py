@@ -25,31 +25,6 @@ class Subscription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
-class Label(models.Model):
-    name = models.CharField(max_length=20)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
-class SubscriptionLabel(models.Model):
-    label = models.ForeignKey(Label, on_delete=models.CASCADE)
-    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
-
-    def save(self, *args, **kwargs):
-        if self.subscription.user != self.label.user:
-            raise ValueError(
-                "Subscription and Label must belong to the same user.")
-        super().save(*args, **kwargs)
-
-
-class Transaction(models.Model):
-    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
-    date = models.DateTimeField()
-    amount = MoneyField(max_digits=10,
-                        decimal_places=2,
-                        default_currency='USD',
-                        validators=[MinMoneyValidator(0)])
-
-
 class RemindFrequencyChoices(models.TextChoices):
     WEEKLY = "W"
     MONTHLY = "M"
@@ -71,5 +46,20 @@ class UserSettings(models.Model):
     budget = MoneyField(max_digits=10,
                         decimal_places=2,
                         default=100.0,
+                        default_currency='USD',
+                        validators=[MinMoneyValidator(0)])
+
+
+class Label(models.Model):
+    name = models.CharField(max_length=20)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+
+
+class Transaction(models.Model):
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    date = models.DateTimeField()
+    amount = MoneyField(max_digits=10,
+                        decimal_places=2,
                         default_currency='USD',
                         validators=[MinMoneyValidator(0)])

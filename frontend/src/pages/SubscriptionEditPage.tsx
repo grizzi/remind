@@ -8,6 +8,7 @@ import {
   SubscriptionReadWrite,
   UserSettings,
   Currency,
+  Label,
 } from '../api/schema'
 import { useAppContext } from '../context'
 
@@ -15,6 +16,8 @@ const SubscriptionEditPage = () => {
   const context = useAppContext()
   const { subId } = useParams()
   const [subscription, setSubscription] = useState<Subscription>()
+  const [labels, setLabels] = useState<Label[]>([])
+
   const [settings, setSettings] = useState<UserSettings>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
 
@@ -23,10 +26,14 @@ const SubscriptionEditPage = () => {
   console.log('Subscription Edit Page')
 
   useEffect(() => {
+    const id = Number(subId)
+
     const forceUpdate = true
     context.getSubscriptions(forceUpdate).then(subs => {
-      setSubscription(subs.find(sub => sub.id === Number(subId)))
+      setSubscription(subs.find(sub => sub.id === id))
     })
+
+    context.getLabels(id).then(l => setLabels(l))
   }, [subId])
 
   useEffect(() => {
@@ -64,7 +71,9 @@ const SubscriptionEditPage = () => {
         })
         .catch(error => {
           alert(
-            `Failed to create subscription!: ${JSON.stringify(error.response.data)}`,
+            `Failed to create subscription!: ${JSON.stringify(
+              error.response.data,
+            )}`,
           )
         })
     } else {
@@ -98,6 +107,7 @@ const SubscriptionEditPage = () => {
         currencies={currencies}
         subscription={subscription}
         onSubmit={onSubmit}
+        labels={labels}
       />
     </div>
   )

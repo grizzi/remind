@@ -18,8 +18,8 @@ export const SubscriptionReadOnlySchema = z.object({
 })
 
 export const SubscriptionReadWriteSchema = z.object({
-  title: z.string().nonempty("Title should not be empty!"),
-  amount: z.coerce.number().gt(0, "Insert a positive amount"),
+  title: z.string().nonempty('Title should not be empty!'),
+  amount: z.coerce.number().gt(0, 'Insert a positive amount'),
   amount_currency: z.string(),
   billed_at: z.coerce.date(),
   remind: z.boolean(),
@@ -34,6 +34,13 @@ export const SubscriptionSchema = SubscriptionReadOnlySchema.merge(
 export type SubscriptionReadWrite = z.infer<typeof SubscriptionReadWriteSchema>
 export type SubscriptionReadOnly = z.infer<typeof SubscriptionReadOnlySchema>
 export type Subscription = z.infer<typeof SubscriptionSchema>
+
+export const LabelSchema = z.object({
+  subscription: z.number(),
+  name: z.string(),
+})
+
+export type Label = z.infer<typeof LabelSchema>
 
 export const UserSettingsSchema = z.object({
   remind_within_days: z.coerce.number(),

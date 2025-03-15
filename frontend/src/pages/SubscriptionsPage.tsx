@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router'
 import { useAppContext } from '../context'
 
-import { Subscription } from '../api/schema'
+import { Label, Subscription } from '../api/schema'
 import SubscriptionCardView from '../components/views/SubscriptionCardView'
+import { set } from 'zod'
 
 const SubscriptionsPage = () => {
   const context = useAppContext()
 
   const [subscriptions, setSubscriptions] = useState<Subscription[]>()
   const [addSubscription, setAddSubscription] = useState<boolean>(false)
+  const [labels, setLabels] = useState<Label[]>([])
   const [focusSubscriptionId, setFocusSubscriptionId] = useState<number | null>(
     null,
   )
@@ -20,6 +22,8 @@ const SubscriptionsPage = () => {
       .getSubscriptions(forceUpdate)
       .then(subs => setSubscriptions(subs))
       .catch(err => alert(`Failed to get subscriptions: ${err.message}`))
+
+    context.getLabels().then(l => setLabels(l))
   }, [])
 
   if (!subscriptions) {
@@ -59,6 +63,7 @@ const SubscriptionsPage = () => {
           .map(sub => (
             <SubscriptionCardView
               subscription={sub}
+              labels={labels.filter(l => l.subscription === sub.id)}
               key={sub.id}
               onClick={() => {
                 setFocusSubscriptionId(sub.id)

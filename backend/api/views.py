@@ -3,14 +3,15 @@ from django.contrib.auth.models import User
 from djmoney.settings import CURRENCY_CHOICES
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import generics, views
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from .serializers import UserSerializer, SubscriptionSerializer, UserSettingsSerializer
-from .models import Subscription, UserSettings
+from .serializers import UserSerializer, SubscriptionSerializer, UserSettingsSerializer, LabelSerializer
+from .models import Subscription, UserSettings, Label
 
 from loguru import logger
 
@@ -151,3 +152,44 @@ class DeleteUserView(generics.DestroyAPIView):
         user.delete()
         return Response({"message": "User deleted successfully"},
                         status=status.HTTP_204_NO_CONTENT)
+
+
+class LabelsList(generics.ListAPIView):
+    serializer_class = LabelSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['subscription']
+
+    def get_queryset(self):
+        return Label.objects.filter(user=self.request.user)
+
+
+# class LabelDetails(views.APIView):
+#     serializer_class = LabelSerializer
+#     permission_classes = [IsAuthenticated]
+#     filter_backends = [DjangoFilterBackend]
+#     filterset_fields = ['subscription']
+
+#     def get_queryset(self):
+#         return Label.objects.filter(user=self.request.user)
+
+#     def get(self, request, format=None):
+#         settings = self.get_queryset()
+#         serializer = UserSettingsSerializer(settings)
+#         logger.info(f"Returning settings: {serializer.data}")
+#         return Response(serializer.data)
+
+#     def put(self, request, format=None):
+#         settings = self.get_queryset().first()
+#         serializer = UserSettingsSerializer(settings, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(user=self.request.user)
+#             return Response(serializer.data)
+#         logger.error(serializer.errors)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def perform_create(self, serializer):
+#         if serializer.is_valid():
+#             serializer.save(user=self.request.user)
+#         else:
+#             print(serializer.errors)

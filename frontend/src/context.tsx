@@ -1,4 +1,4 @@
-import { Currency, Subscription, UserSettings } from './api/schema'
+import { Currency, Label, Subscription, UserSettings } from './api/schema'
 import { createContext, useState, useContext, ReactNode } from 'react'
 import { Api } from './api/api'
 
@@ -6,6 +6,7 @@ interface AppContextInterface {
   getCurrencies: () => Promise<Currency[]>
   getUserSettings: () => Promise<UserSettings>
   getSubscriptions: (forceUpdate: boolean) => Promise<Subscription[]>
+  getLabels: (subscription?: number) => Promise<Label[]>
 }
 
 const defaultContext: AppContextInterface = {
@@ -14,6 +15,7 @@ const defaultContext: AppContextInterface = {
     throw new Error('User settings are not available yet')
   },
   getSubscriptions: async () => [],
+  getLabels: async () => [],
 }
 
 const AppContext = createContext<AppContextInterface>(defaultContext)
@@ -27,6 +29,7 @@ export default function AppContextProvider({
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [, setUserSettings] = useState<UserSettings | undefined>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
+  const [labels, setLabels] = useState<Label[]>([])
 
   // Get currencies lazily and cache them
   const getCurrencies = async () => {
@@ -64,12 +67,20 @@ export default function AppContextProvider({
     return subs
   }
 
+  const getLabels = async (subscription?: number) => {
+    const labs = await Api.getLabels(subscription)
+    console.log(JSON.stringify(labs))
+    setLabels(labs)
+    return labs
+  }
+
   return (
     <AppContext.Provider
       value={{
         getCurrencies,
         getUserSettings,
         getSubscriptions,
+        getLabels,
       }}
     >
       {children}
