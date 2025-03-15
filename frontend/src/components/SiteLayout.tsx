@@ -12,8 +12,10 @@ const SiteLayout = () => {
         <li>
           <Link to='/settings'>Settings</Link>
         </li>
+        <li>
+          <Link to='/logout'>Logout</Link>
+        </li>
       </ul>
-
 
       <Outlet />
     </div>

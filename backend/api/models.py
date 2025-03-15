@@ -70,5 +70,6 @@ class UserSettings(models.Model):
     reminders_active = models.BooleanField(default=True)
     budget = MoneyField(max_digits=10,
                         decimal_places=2,
+                        default=100.0,
                         default_currency='USD',
                         validators=[MinMoneyValidator(0)])

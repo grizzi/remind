@@ -1,6 +1,8 @@
 from django.http import Http404
 from django.contrib.auth.models import User
 from djmoney.settings import CURRENCY_CHOICES
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from rest_framework import generics, views
 from rest_framework.response import Response
@@ -114,11 +116,23 @@ class UserSettingsDetails(views.APIView):
             print(serializer.errors)
 
 
-class CreateUserView(generics.CreateAPIView):
+class CreateUserView(views.APIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-    # TODO(giuseppe)
-    # Implement post creation, generation of user settings
-    # def post_save(self, obj, created=False):
+    def post(self, request, format=None):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        
+        logger.error(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@receiver(post_save, sender=User)
+def create_user_picks(sender, instance, created, **kwargs):
+    if created:
+        UserSettings.objects.create(user=instance)
+        
