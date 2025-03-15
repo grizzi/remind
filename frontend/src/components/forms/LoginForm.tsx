@@ -31,7 +31,7 @@ function LoginForm({
       if (method === 'login') {
         localStorage.setItem(ACCESS_TOKEN, res.data.access)
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
-        navigate('/') // go home
+        navigate('/subscriptions') // go home
       } else {
         navigate('/login') // if we just registered, then we have to login to access the webapp
       }

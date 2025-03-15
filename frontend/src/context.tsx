@@ -1,27 +1,19 @@
 import { Currency, Subscription, UserSettings } from './api/schema'
-import {
-  createContext,
-  useState,
-  useContext,
-  ReactNode,
-  useEffect,
-} from 'react'
+import { createContext, useState, useContext, ReactNode } from 'react'
 import { Api } from './api/api'
 
 interface AppContextInterface {
-  getCurrencies: () => Currency[]
-  getUserSettings: () => UserSettings
-  updateSubscriptions: () => Promise<void>
-  getSubscriptions: () => Subscription[]
+  getCurrencies: () => Promise<Currency[]>
+  getUserSettings: () => Promise<UserSettings>
+  getSubscriptions: (forceUpdate: boolean) => Promise<Subscription[]>
 }
 
 const defaultContext: AppContextInterface = {
-  getCurrencies: () => [],
+  getCurrencies: async () => [],
   getUserSettings: () => {
     throw new Error('User settings are not available yet')
   },
-  updateSubscriptions: async () => {},
-  getSubscriptions: () => [],
+  getSubscriptions: async () => [],
 }
 
 const AppContext = createContext<AppContextInterface>(defaultContext)
@@ -33,44 +25,50 @@ export default function AppContextProvider({
   children: ReactNode
 }) {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
-  const [userSettings, setUserSettings] = useState<UserSettings>()
+  const [, setUserSettings] = useState<UserSettings | undefined>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
 
-  useEffect(() => {
-    console.log('Mounting App Context provider')
-    Api.getSupportedCurrencies()
-      .then(data => setCurrencies(data))
-      .catch(error => alert(error.message))
-    Api.getUserSettings()
-      .then(data => {
-        console.log(JSON.stringify(data))
-        setUserSettings(data)
-      })
-      .catch(error => alert(error.message))
-  }, [])
+  // Get currencies lazily and cache them
+  const getCurrencies = async () => {
+    if (currencies.length > 0) {
+      console.log('Returning cached currencies')
+      return currencies
+    }
 
-  const getCurrencies = () => currencies
-
-  const getUserSettings = () => userSettings
-
-  const updateSubscriptions = async () => {
     try {
-      const subs = await Api.getSubscriptions()
-      console.log(JSON.stringify(subs))
-      setSubscriptions(subs)
+      const curr = await Api.getSupportedCurrencies()
+      setCurrencies(curr)
+      return curr // Ensure this resolves to the new currencies
     } catch (err) {
       alert(err)
+      return []
     }
   }
 
-  const getSubscriptions = () => subscriptions
+  // Always fetch the freshest user settings
+  const getUserSettings = async () => {
+    const settings = await Api.getUserSettings()
+    setUserSettings(settings)
+    return settings
+  }
+
+  const getSubscriptions = async (forceUpdate = false) => {
+    if (!forceUpdate && subscriptions.length > 0) {
+      console.log('Returning cached subscriptions')
+      return subscriptions
+    }
+
+    const subs = await Api.getSubscriptions()
+    console.log(JSON.stringify(subs))
+    setSubscriptions(subs)
+    return subs
+  }
 
   return (
     <AppContext.Provider
       value={{
         getCurrencies,
         getUserSettings,
-        updateSubscriptions,
         getSubscriptions,
       }}
     >

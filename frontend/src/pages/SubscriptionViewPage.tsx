@@ -10,25 +10,16 @@ const SubscriptionViewPage = () => {
   const { subId } = useParams()
   const context = useAppContext()
 
-
-  console.log('Subscription View Page')
   useEffect(() => {
-    const fetchAndUpdate = async () => {
-      await context.updateSubscriptions()
-    }
-
-    fetchAndUpdate()
+    const forceUpdate = true
+    context
+      .getSubscriptions(forceUpdate)
+      .then(subs => setSubscription(subs.find(sub => sub.id === Number(subId))))
+      .catch(err => alert(err.message))
   }, [])
 
-  useEffect(() => {
-    const sub = context!
-      .getSubscriptions()
-      .find(sub => sub.id === Number(subId))
-    setSubscription(sub)
-  }, [context.getSubscriptions(), subId])
-
   if (!subscription) {
-    return <div>Loading...</div>
+    return <div></div>
   }
 
   return (

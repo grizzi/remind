@@ -1,24 +1,29 @@
 import { useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router'
+import { Navigate } from 'react-router'
 import { useAppContext } from '../context'
 
+import { Subscription } from '../api/schema'
 import SubscriptionCardView from '../components/views/SubscriptionCardView'
 
 const SubscriptionsPage = () => {
   const context = useAppContext()
-  const subscriptions = context.getSubscriptions()
 
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>()
   const [addSubscription, setAddSubscription] = useState<boolean>(false)
   const [focusSubscriptionId, setFocusSubscriptionId] = useState<number | null>(
     null,
   )
 
   useEffect(() => {
-    context.updateSubscriptions()
+    const forceUpdate = true
+    context
+      .getSubscriptions(forceUpdate)
+      .then(subs => setSubscriptions(subs))
+      .catch(err => alert(`Failed to get subscriptions: ${err.message}`))
   }, [])
 
   if (!subscriptions) {
-    return <div>Loading...</div>
+    return <div></div>
   }
 
   console.log('Subscriptions Page')
@@ -54,6 +59,7 @@ const SubscriptionsPage = () => {
           .map(sub => (
             <SubscriptionCardView
               subscription={sub}
+              key={sub.id}
               onClick={() => {
                 setFocusSubscriptionId(sub.id)
               }}

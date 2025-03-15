@@ -1,0 +1,70 @@
+import { useEffect, useState } from 'react'
+import { useAppContext } from '../context'
+import { Navigate } from 'react-router-dom'
+
+import { Api } from '../api/api'
+import { Currency, UserSettings } from '../api/schema'
+import UserSettingsForm from '../components/forms/UserSettingsForm'
+
+const UserSettingsEditPage = () => {
+  const context = useAppContext()
+
+  // State is managed in the context
+  const [submit, setSubmit] = useState(false)
+  const [settings, setSettings] = useState<UserSettings>()
+  const [currencies, setCurrencies] = useState<Currency[]>([])
+
+  useEffect(() => {
+    context
+      .getCurrencies()
+      .then(curr => {
+        setCurrencies(curr)
+        console.log('Currencies:', curr)
+      })
+      .catch(err => {
+        alert(err)
+      })
+
+    context
+      .getUserSettings()
+      .then(settings => {
+        setSettings(settings)
+      })
+      .catch(err => {
+        alert(err)
+      })
+  }, [])
+
+  const onSubmit = async (settings: UserSettings): Promise<void> => {
+    console.log('Submitting settings', JSON.stringify(settings))
+    Api.updateUserSettings(settings)
+      .then(() => setSubmit(true))
+      .catch(error => {
+        alert(
+          `Failed to update user settings!: ${error.message} ${JSON.stringify(
+            error,
+          )}`,
+        )
+      })
+  }
+
+  if (!settings) {
+    return <div></div>
+  }
+
+  if (submit) {
+    return <Navigate to='/settings' />
+  }
+
+  return (
+    <div>
+      <UserSettingsForm
+        currentSettings={settings}
+        onSubmit={onSubmit}
+        currencies={currencies}
+      />
+    </div>
+  )
+}
+
+export default UserSettingsEditPage

@@ -3,34 +3,55 @@ import { Api } from '../api/api'
 import { Navigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 
-import { Subscription, SubscriptionReadWrite } from '../api/schema'
+import {
+  Subscription,
+  SubscriptionReadWrite,
+  UserSettings,
+  Currency,
+} from '../api/schema'
 import { useAppContext } from '../context'
 
 const SubscriptionEditPage = () => {
   const context = useAppContext()
   const { subId } = useParams()
   const [subscription, setSubscription] = useState<Subscription>()
+  const [settings, setSettings] = useState<UserSettings>()
+  const [currencies, setCurrencies] = useState<Currency[]>([])
+
   const [editing, setEditing] = useState(true)
 
   console.log('Subscription Edit Page')
+
+  useEffect(() => {
+    const forceUpdate = true
+    context.getSubscriptions(forceUpdate).then(subs => {
+      setSubscription(subs.find(sub => sub.id === Number(subId)))
+    })
+  }, [subId])
+
   useEffect(() => {
     const fetchAndUpdate = async () => {
-      await context.updateSubscriptions()
+      context
+        .getUserSettings()
+        .then(settings => {
+          setSettings(settings)
+        })
+        .catch(err => {
+          alert(err)
+        })
+
+      context
+        .getCurrencies()
+        .then(curr => {
+          setCurrencies(curr)
+        })
+        .catch(err => {
+          alert(err)
+        })
     }
 
     fetchAndUpdate()
-
-    if (subId) {
-      const id = Number(subId)
-      if (id !== undefined) {
-        const sub = context
-          .getSubscriptions()
-          .find(sub => sub.id === Number(subId))
-        console.log('Found subscription: ' + JSON.stringify(sub))
-        setSubscription(sub)
-      }
-    }
-  }, [subId])
+  }, [])
 
   const onSubmit = async (
     subscription: SubscriptionReadWrite,
@@ -67,10 +88,19 @@ const SubscriptionEditPage = () => {
     return <Navigate to={'/subscriptions'} />
   }
 
+  if (!settings || !currencies) {
+    return <div></div>
+  }
+
   return (
     <div>
       <h1>Edit Subscription</h1>
-      <SubscriptionForm subscription={subscription} onSubmit={onSubmit} />
+      <SubscriptionForm
+        settings={settings}
+        currencies={currencies}
+        subscription={subscription}
+        onSubmit={onSubmit}
+      />
     </div>
   )
 }

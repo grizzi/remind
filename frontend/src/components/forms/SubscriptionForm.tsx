@@ -2,27 +2,29 @@ import { toFormikValidate } from '../../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
 
-import { Subscription } from '../../api/schema'
-import { useAppContext } from '../../context'
 import {
   SubscriptionReadWrite,
   SubscriptionReadWriteSchema,
+  Subscription,
+  UserSettings,
+  Currency,
 } from '../../api/schema'
+
 import SelectField, { SelectOption } from '../inputs/SelectField'
 import TextField from '../inputs/TextField'
 import CheckboxField from '../inputs/CheckboxField'
 
 const SubscriptionForm = ({
   subscription,
+  settings,
+  currencies,
   onSubmit,
 }: {
+  settings: UserSettings
+  currencies: Currency[]
   subscription: Subscription | undefined
   onSubmit: (subscription: SubscriptionReadWrite) => Promise<void>
 }) => {
-  const context = useAppContext()
-  const settings = context.getUserSettings()
-  const currencies = context.getCurrencies()
-
   const [currenciesOptions, setCurrenciesOptions] = useState<SelectOption[]>([])
 
   const [initialValues, setInitialValues] = useState<SubscriptionReadWrite>({
@@ -72,7 +74,7 @@ const SubscriptionForm = ({
       <Formik
         initialValues={initialValues}
         enableReinitialize
-        onSubmit={async (values) => {
+        onSubmit={async values => {
           await onSubmit(values)
         }}
         validate={toFormikValidate(SubscriptionReadWriteSchema)}

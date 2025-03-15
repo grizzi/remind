@@ -27,7 +27,7 @@ const UserSettingsView = ({ settings }: { settings: UserSettings }) => {
         </p>
       </div>
       <div>
-        <p>Reminders active: {settings.reminders_active}</p>
+        <p>Reminders active: {settings.reminders_active ? 'Yes' : 'No'}</p>
       </div>
     </div>
   )

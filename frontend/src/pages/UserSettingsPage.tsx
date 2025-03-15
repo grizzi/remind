@@ -1,46 +1,37 @@
 import { useEffect, useState } from 'react'
 import { useAppContext } from '../context'
 
-import { Api } from '../api/api'
 import { UserSettings } from '../api/schema'
 import UserSettingsView from '../components/views/UserSettingsView'
-import UserSettingsForm from '../components/forms/UserSettingsForm'
+import { Navigate } from 'react-router'
 
 const UserSettingsPage = () => {
-  const context = useAppContext()
-  const settings = context.getUserSettings()
-  const [editSettings, setEditSettings] = useState<boolean>(false)
+  const { getUserSettings } = useAppContext()
+  const [editing, setEditing] = useState<boolean>(false)
+  const [settings, setSettings] = useState<UserSettings>()
 
   useEffect(() => {
-    console.log('resetting settings', JSON.stringify(settings))
-  }, [settings])
+    getUserSettings()
+      .then(settings => {
+        setSettings(settings)
+      })
+      .catch(err => {
+        alert(err)
+      })
+  }, [])
 
   if (!settings) {
-    return <div>No settings!</div>
+    return <div></div>
   }
 
-  const onSubmit = async (settings: UserSettings): Promise<void> => {
-    console.log('Submitting settings', JSON.stringify(settings))
-    Api.updateUserSettings(settings)
-      .then(() => {
-        setEditSettings(false)
-      })
-      .catch(error => {
-        alert(
-          `Failed to update subscription!: ${error.message} ${JSON.stringify(
-            error,
-          )}`,
-        )
-      })
+  if (editing) {
+    return <Navigate to='/settings/edit' />
   }
 
   return (
     <div>
-      {!editSettings && (
-        <button onClick={() => setEditSettings(true)}>Edit</button>
-      )}
-      {!editSettings && <UserSettingsView settings={settings!} />}
-      {editSettings && <UserSettingsForm onSubmit={onSubmit} />}
+      <button onClick={() => setEditing(true)}>Edit</button>
+      <UserSettingsView settings={settings} />
     </div>
   )
 }
