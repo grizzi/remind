@@ -18,9 +18,9 @@ class Subscription(models.Model):
     remind = models.BooleanField(default=False)
     autorenewal = models.BooleanField(default=False)
     expiring_at = models.DateTimeField(null=True)
-    external_link = models.URLField(default="")
+    external_link = models.CharField(default="", blank=True)
     archieved = models.BooleanField(default=False)
-    last_reminder_at = models.DateTimeField(null=True)
+    last_reminder_at = models.DateTimeField(null=True, blank=True)
     total_reminders = models.SmallIntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

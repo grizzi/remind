@@ -64,9 +64,7 @@ const SubscriptionEditPage = () => {
         })
         .catch(error => {
           alert(
-            `Failed to create subscription!: ${error.message} ${JSON.stringify(
-              error,
-            )}`,
+            `Failed to create subscription!: ${JSON.stringify(error.response.data)}`,
           )
         })
     } else {
