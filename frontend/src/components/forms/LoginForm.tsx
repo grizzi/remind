@@ -60,33 +60,28 @@ function LoginForm({ method }: { method: 'login' | 'register' }) {
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className='form-container'>
-        <h1>{name}</h1>
+    <div className=''>
+      <form className='flex flex-col items-center' onSubmit={handleSubmit}>
+        <p className='text-xl m-6'>{name}</p>
         <input
-          className='form-input'
+          className=''
           type='text'
           value={username}
           onChange={e => setUserName(e.target.value)}
           placeholder='Username'
         />
         <input
-          className='form-input'
+          className=''
           type='password'
           value={password}
           onChange={e => setPassword(e.target.value)}
           placeholder='Password'
         />
-        <button className='form-button' type='submit'>
+        <button className='' type='submit'>
           {name}
         </button>
+        {method === 'login' && <Link to='/register'>Register</Link>}
       </form>
-
-      {method === 'login' ? (
-        <Link to='/register'>Register</Link>
-      ) : (
-        <Link to='/login'>Login</Link>
-      )}
     </div>
   )
 }

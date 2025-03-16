@@ -1,7 +1,13 @@
+import Logo from '../components/shared/Logo'
 import LoginForm from '../components/forms/LoginForm'
 
 export const Login = () => {
-  return <LoginForm method='login' />
+  return (
+    <div className='px-6 pt-8 flex flex-col items-center'>
+      <Logo />
+      <LoginForm method='login' />
+    </div>
+  )
 }
 
 export default Login
