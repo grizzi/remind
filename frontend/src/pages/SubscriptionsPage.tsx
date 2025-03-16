@@ -3,8 +3,9 @@ import { Navigate } from 'react-router'
 import { useAppContext } from '../context'
 
 import { Label, Subscription } from '../api/schema'
+import FloatingActionButton from '../components/buttons/FloatingActionButton'
+
 import SubscriptionCardView from '../components/views/SubscriptionCardView'
-import { set } from 'zod'
 
 const SubscriptionsPage = () => {
   const context = useAppContext()
@@ -41,9 +42,9 @@ const SubscriptionsPage = () => {
 
   return (
     <div>
-      <button onClick={() => setAddSubscription(true)}>Add Subscription</button>
+      <FloatingActionButton onClick={() => setAddSubscription(true)}/>
       <div>
-        <h1>Summary</h1>
+        <p className='text-4xl'>My Subscriptions</p>
         {subscriptions
           .sort((a, b) => {
             if (a.created_at < b.created_at) {

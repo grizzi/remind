@@ -5,40 +5,12 @@ import { createPortal } from 'react-dom'
 import { Api } from '../../api/api'
 
 import { useNavigate } from 'react-router'
+import { TbTrash, TbEdit } from 'react-icons/tb'
 
-function ModalContent({
-  onOk,
-  onDiscard,
-}: {
-  onOk: () => void
-  onDiscard: () => void
-}) {
-  return (
-    <div
-      className='modal'
-      style={{
-        display: 'flex',
-        justifyContent: 'space-evenly',
-        alignItems: 'center',
-        boxShadow: 'rgba(100, 100, 111, 0.3) 0px 7px 29px 0px',
-        backgroundColor: 'white',
-        border: '2px solid rgb(240, 240, 240)',
-        borderRadius: '12px',
-        position: 'absolute',
-        width: '250px',
-        top: '70px',
-        left: 'calc(50% - 125px)',
-        bottom: '70px',
-      }}
-    >
-      <div>Are you sure that you want to delete the current subscription?</div>
-      <div>
-        <button onClick={onOk}>Ok</button>
-        <button onClick={onDiscard}>Discard</button>
-      </div>
-    </div>
-  )
-}
+import TagChip from '../shared/TagChip'
+import ConfirmModal from '../shared/ConfirmModal'
+
+
 
 const SubscriptionView = ({
   subscription,
@@ -52,22 +24,33 @@ const SubscriptionView = ({
 
   return (
     <div>
-      <h1>{subscription.title}</h1>
-      <ul>
-        {labels.map(l => (
-          <li>{l.name}</li>
-        ))}
-      </ul>
-      <button onClick={() => setShowModal(true)}>Delete</button>
+      <div className='flex flex-col justify-stretch items-start'>
+        <div className='flex flex-row justify-between items-center w-full'>
+          <p className='text-4xl'>{subscription.title}</p>
+          <button
+            onClick={() => navigate(`/subscriptions/${subscription.id}/edit`)}
+          >
+            <TbEdit className='px-2 size-10 text-purple-700 hover:text-purple-200 transition-all' />
+          </button>
+        </div>
+
+        <div className='mt-2 mb-2 p-0 flex flex-row'>
+          {labels.map(l => (
+            <TagChip name={l.name} />
+          ))}
+        </div>
+      </div>
       <button
-        onClick={() => navigate(`/subscriptions/${subscription.id}/edit`)}
+        className='fixed border-0 bottom-8 right-8 flex items-center justify-center w-30 h-16 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
+        onClick={() => setShowModal(true)}
       >
-        Edit
+        <TbTrash className='size-10' />
       </button>
 
       {showModal &&
         createPortal(
-          <ModalContent
+          <ConfirmModal
+            prompt='Are you sure that you want to delete the current subscription?'
             onOk={() => {
               Api.deleteSubscription(subscription.id)
               setShowModal(false)

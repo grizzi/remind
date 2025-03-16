@@ -1,10 +1,14 @@
-/* @import "tailwindcss";
-@tailwind css;
-@tailwind components;
+/*  
+* Specifies the specificity of the layers
+*
+* That means tailwind-theme is the least powerful layer 
+* and any code in it will be overridden by all the subsequent layers. 
+*/
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins');
 
-@layer components {
-    .sidebar-hr {
-        @apply border border-gray-400 rounded-full mx-2 
-    }
-} */
+@import "tailwindcss";
+
+body {
+    font-family: "Poppins";
+}

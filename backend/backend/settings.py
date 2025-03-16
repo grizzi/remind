@@ -183,4 +183,4 @@ LOGGING = {
 }
 
 # Currencies
-CURRENCIES = ('USD', 'EUR', 'GBP', 'JPY', 'CNY', 'CAD', 'RUB')
+CURRENCIES = ('CHF', 'USD', 'EUR', 'GBP', 'JPY', 'CNY', 'CAD', 'RUB')
