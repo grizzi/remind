@@ -1,4 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom'
 
 import Login from './pages/Login'
 import SubscriptionsPage from './pages/SubscriptionsPage'
@@ -44,6 +49,10 @@ function App() {
           <Route path='/login' element={<Login />}></Route>
           <Route path='/logout' element={<Logout />}></Route>
           <Route path='/register' element={<LogoutAndRegister />}></Route>
+          <Route
+            path='/'
+            element={<Navigate replace to='/subscriptions' />}
+          />
           <Route path='*' element={<NotFound />}></Route>
         </Routes>
       </BrowserRouter>

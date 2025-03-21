@@ -94,7 +94,7 @@ const SubscriptionForm = ({
         }}
         validate={toFormikValidate(SubscriptionReadWriteSchema)}
       >
-        <Form>
+        <Form className='max-w-3xl'>
           <TextField id='title' label='Title' />
           <TextField id='amount' label='Amount' />
           <SelectField

@@ -21,7 +21,10 @@ const ProtectedRoute = () => {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null)
 
   useEffect(() => {
-    auth().catch(() => setIsAuthorized(false))
+    auth().catch(() => {
+      console.log("User is not authorized. Will be redirected to login.")
+      setIsAuthorized(false)
+    })
   }, [])
 
   const refreshToken = async () => {

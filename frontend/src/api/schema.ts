@@ -8,7 +8,7 @@ export const CurrencySchema = z.object({
 export type Currency = z.infer<typeof CurrencySchema>
 
 export const LabelSchema = z.object({
-  subscription: z.number(),
+  subscription: z.number().optional(),
   name: z.string(),
 })
 

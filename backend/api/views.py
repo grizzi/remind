@@ -42,14 +42,27 @@ class SubscriptionsListCreate(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         logger.info(f"Received data: {request.data}")
 
+        # Handle labels differently
+        labels_data = request.data.pop("labels", [])
+        request.data["labels"] = []
+
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             logger.error(f"Validation failed: {serializer.errors}")
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-        serializer.save(user=self.request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        subscription = serializer.save(user=request.user)
+
+        # Now create the label objects and associate them with the new subscription
+        for label in labels_data:
+            Label.objects.create(name=label["name"],
+                                 user=request.user,
+                                 subscription=subscription)
+
+        # Re-serialize to include the created labels in the response
+        output_serializer = self.get_serializer(subscription)
+        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class SubscriptionDetails(views.APIView):
@@ -69,6 +82,15 @@ class SubscriptionDetails(views.APIView):
         subscription = self.get_object(pk)
         serializer = SubscriptionSerializer(subscription)
         return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = SubscriptionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        logger.error(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk, format=None):
         _ = format
@@ -167,7 +189,8 @@ class LabelsList(generics.ListCreateAPIView):
         data = request.data
 
         if not isinstance(data, list):
-            return Response({"error": "Expected a list of objects"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Expected a list of objects"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         # Fetch existing labels
         existing_labels = {label.id: label for label in self.get_queryset()}
@@ -178,7 +201,9 @@ class LabelsList(generics.ListCreateAPIView):
             if label_id and label_id in existing_labels:
                 # Update existing label
                 label_instance = existing_labels[label_id]
-                serializer = LabelSerializer(label_instance, data=item, partial=True)
+                serializer = LabelSerializer(label_instance,
+                                             data=item,
+                                             partial=True)
             else:
                 # Create new label
                 serializer = LabelSerializer(data=item)
@@ -187,6 +212,7 @@ class LabelsList(generics.ListCreateAPIView):
                 updated_labels.append(serializer.save(user=self.request.user))
             else:
                 logger.error(serializer.errors)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors,
+                                status=status.HTTP_400_BAD_REQUEST)
 
         return Response(LabelSerializer(updated_labels, many=True).data)

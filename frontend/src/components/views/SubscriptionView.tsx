@@ -54,6 +54,7 @@ const SubscriptionView = ({
             onOk={() => {
               Api.deleteSubscription(subscription.id)
               setShowModal(false)
+              navigate("/subscriptions")
             }}
             onDiscard={() => setShowModal(false)}
           />,

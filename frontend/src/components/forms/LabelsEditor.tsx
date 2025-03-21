@@ -58,21 +58,19 @@ const LabelEditor = ({
 
   return (
     <div>
-      <p className='text-xl'>Labels</p>
       <div className='flex flex-col'>
-        <div className='flex flex-row justify-start'>
+        <div className='flex flex-wrap flex-row items-center w-full mt-4'>
           <input
             className='max-w-48 pl-2'
             type='text'
             value={newLabel && newLabel.name}
             onChange={e =>
               setNewLabel({
-                subscription:
-                  subscription === undefined ? NaN : subscription.id,
+                subscription: subscription?.id,
                 name: e.target.value,
               })
             }
-            placeholder='new label'
+            placeholder='Add new label here'
           />
           <button
             className='m-1 min-w-14 rounded-lg shadow-md px-3 justify-center transition-all'
@@ -80,9 +78,8 @@ const LabelEditor = ({
           >
             Add label
           </button>
-        </div>
-        {/* Labels of current subscription */}
-        <div className='flex flex-wrap flex-row items-center w-full mt-4'>
+
+          {/* Labels of current subscription */}
           {subLabels
             .sort((a, b) => sortLabelByName(a, b))
             .map(l => (
@@ -105,11 +102,11 @@ const LabelEditor = ({
                 name={l.name}
                 onClick={() => {
                   setSubLabels([
-                    { name: l.name, subscription: subscription!.id },
+                    { name: l.name, subscription: subscription?.id },
                     ...subLabels,
                   ])
                   setNewLabels([
-                    { name: l.name, subscription: subscription!.id },
+                    { name: l.name, subscription: subscription?.id },
                     ...subLabels,
                   ])
                 }}

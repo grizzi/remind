@@ -32,6 +32,15 @@ api.interceptors.request.use(
   },
 )
 
+// api.interceptors.response.use(
+//   response => response,
+//   error => {
+//     if (error.response.status === 403) {
+
+//     }
+//   },
+// )
+
 export namespace Api {
   const CurrenciesListSchema = z.array(CurrencySchema)
   const SubscriptionsListSchema = z.array(SubscriptionSchema)
@@ -82,8 +91,8 @@ export namespace Api {
     sub: Partial<Subscription>,
   ): Promise<void> => {
     const result = SubscriptionReadWriteSchema.safeParse(sub)
-    throwOnError(result)
-    await api.post('/api/subscriptions/', sub)
+    const validated = throwOnError(result)
+    await api.post('/api/subscriptions/', validated)
   }
 
   export const updateSubscription = async (
@@ -119,7 +128,6 @@ export namespace Api {
         }).toString()
       : ''
 
-    const url = `/api/labels/${params}`
     const response = await api.get(`/api/labels/${params}`)
     const result = LabelsListSchema.safeParse(response.data)
     return throwOnError(result)
