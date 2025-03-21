@@ -14,6 +14,7 @@ import {
 import SelectField, { SelectOption } from '../inputs/SelectField'
 import TextField from '../inputs/TextField'
 import CheckboxField from '../inputs/CheckboxField'
+import LabelEditor from './LabelsEditor'
 
 const SubscriptionForm = ({
   subscription,
@@ -29,7 +30,7 @@ const SubscriptionForm = ({
   onSubmit: (subscription: SubscriptionReadWrite) => Promise<void>
 }) => {
   const [currenciesOptions, setCurrenciesOptions] = useState<SelectOption[]>([])
-
+  const [newLabels, setNewLabels] = useState<Label[]>([])
   const [initialValues, setInitialValues] = useState<SubscriptionReadWrite>({
     title: '',
     amount: 0,
@@ -39,11 +40,12 @@ const SubscriptionForm = ({
     autorenewal: false,
     expiring_at: new Date(),
     external_link: '',
+    labels: subscription?.labels || [],
   })
 
   useEffect(() => {
+    console.log('Got subscriptions: ', JSON.stringify(subscription))
     if (subscription || settings) {
-      // TODO: try to loop through the keys instead of having a manually filled object
       setInitialValues(prevValues => ({
         ...prevValues,
         ...(subscription && {
@@ -55,6 +57,7 @@ const SubscriptionForm = ({
           autorenewal: subscription.autorenewal,
           expiring_at: subscription.expiring_at,
           external_link: subscription.external_link,
+          labels: subscription.labels,
         }),
         ...(settings && {
           amount_currency: settings.budget_currency,
@@ -78,6 +81,8 @@ const SubscriptionForm = ({
         initialValues={initialValues}
         enableReinitialize
         onSubmit={async values => {
+          values.labels = newLabels
+          console.log(JSON.stringify(values.labels))
           await onSubmit(values)
         }}
         validate={toFormikValidate(SubscriptionReadWriteSchema)}
@@ -95,24 +100,14 @@ const SubscriptionForm = ({
           <TextField id='expiring_at' label='Expiring' />
           <TextField id='external_link' label='External Link' />
           <button type='submit'>Submit</button>
-
-          <div>
-            <SelectField
-              id='label'
-              label='Labels'
-              options={labels.map(l => {
-                return {
-                  value: l.name,
-                  label: l.name,
-                }
-              })}
-            />
-            {labels.map(l => (
-              <button type='button'>{l.name}</button>
-            ))}
-          </div>
         </Form>
       </Formik>
+
+      <LabelEditor
+        subscription={subscription}
+        allLabels={labels}
+        setNewLabels={setNewLabels}
+      />
     </div>
   )
 }

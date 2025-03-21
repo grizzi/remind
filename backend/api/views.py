@@ -154,7 +154,7 @@ class DeleteUserView(generics.DestroyAPIView):
                         status=status.HTTP_204_NO_CONTENT)
 
 
-class LabelsList(generics.ListAPIView):
+class LabelsList(generics.ListCreateAPIView):
     serializer_class = LabelSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
@@ -163,33 +163,30 @@ class LabelsList(generics.ListAPIView):
     def get_queryset(self):
         return Label.objects.filter(user=self.request.user)
 
+    def put(self, request, *args, **kwargs):
+        data = request.data
 
-# class LabelDetails(views.APIView):
-#     serializer_class = LabelSerializer
-#     permission_classes = [IsAuthenticated]
-#     filter_backends = [DjangoFilterBackend]
-#     filterset_fields = ['subscription']
+        if not isinstance(data, list):
+            return Response({"error": "Expected a list of objects"}, status=status.HTTP_400_BAD_REQUEST)
 
-#     def get_queryset(self):
-#         return Label.objects.filter(user=self.request.user)
+        # Fetch existing labels
+        existing_labels = {label.id: label for label in self.get_queryset()}
+        updated_labels = []
 
-#     def get(self, request, format=None):
-#         settings = self.get_queryset()
-#         serializer = UserSettingsSerializer(settings)
-#         logger.info(f"Returning settings: {serializer.data}")
-#         return Response(serializer.data)
+        for item in data:
+            label_id = item.get('id')
+            if label_id and label_id in existing_labels:
+                # Update existing label
+                label_instance = existing_labels[label_id]
+                serializer = LabelSerializer(label_instance, data=item, partial=True)
+            else:
+                # Create new label
+                serializer = LabelSerializer(data=item)
 
-#     def put(self, request, format=None):
-#         settings = self.get_queryset().first()
-#         serializer = UserSettingsSerializer(settings, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save(user=self.request.user)
-#             return Response(serializer.data)
-#         logger.error(serializer.errors)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if serializer.is_valid():
+                updated_labels.append(serializer.save(user=self.request.user))
+            else:
+                logger.error(serializer.errors)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#     def perform_create(self, serializer):
-#         if serializer.is_valid():
-#             serializer.save(user=self.request.user)
-#         else:
-#             print(serializer.errors)
+        return Response(LabelSerializer(updated_labels, many=True).data)

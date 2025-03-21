@@ -77,10 +77,20 @@ function LoginForm({ method }: { method: 'login' | 'register' }) {
           onChange={e => setPassword(e.target.value)}
           placeholder='Password'
         />
-        <button className='' type='submit'>
-          {name}
-        </button>
-        {method === 'login' && <Link to='/register'>Register</Link>}
+        <div className='flex'>
+          <button
+            className='m-4 p-1 w-full w-min-12 border-0 shadow-lg rounded-xs'
+            type='submit'
+          >
+            {name}
+          </button>
+          <Link
+            className='m-4 p-1 w-full w-min-12 border-0 bg-purple-500 text-white rounded-xs shadow-lg'
+            to='/register'
+          >
+            Register
+          </Link>
+        </div>
       </form>
     </div>
   )

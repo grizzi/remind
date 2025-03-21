@@ -11,6 +11,7 @@ import {
   SubscriptionReadWriteSchema,
   UserSettings,
   LabelSchema,
+  Label,
 } from './schema'
 
 const api = axios.create({
@@ -124,6 +125,10 @@ export namespace Api {
     const response = await api.get(`/api/labels/${params}`)
     const result = LabelsListSchema.safeParse(response.data)
     return throwOnError(result)
+  }
+
+  export const updateLabels = async (labels: Label[]): Promise<void> => {
+    await api.put(`/api/labels/`, labels)
   }
 }
 

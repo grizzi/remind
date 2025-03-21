@@ -22,7 +22,7 @@ const SubscriptionCardView = ({
           {`${subscription.amount} ${subscription.amount_currency}`}
         </p>
       </div>
-      <div className='flex flex-wrap items-start max-w-48'>
+      <div className='flex flex-wrap justify-end items-start max-w-48'>
         {labels.map(l => (
           <TagChip name={l.name} />
         ))}

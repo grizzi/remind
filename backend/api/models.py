@@ -53,7 +53,7 @@ class UserSettings(models.Model):
 class Label(models.Model):
     name = models.CharField(max_length=20)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name="labels")
 
 
 class Transaction(models.Model):

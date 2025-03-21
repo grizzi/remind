@@ -30,10 +30,13 @@ const SubscriptionEditPage = () => {
 
     const forceUpdate = true
     context.getSubscriptions(forceUpdate).then(subs => {
+      console.log("Getting all subscriptions!")
+      console.log(JSON.stringify(subs))
       setSubscription(subs.find(sub => sub.id === id))
+      console.log("Subscription is now set!")
     })
 
-    context.getLabels(id).then(l => setLabels(l))
+    context.getLabels().then(l => setLabels(l))
   }, [subId])
 
   useEffect(() => {
