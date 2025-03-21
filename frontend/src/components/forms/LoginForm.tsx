@@ -1,68 +1,79 @@
 import { useState } from 'react'
+import { Navigate } from 'react-router'
 import api from '../../api/api'
-import { Link, useNavigate } from 'react-router'
+import { Link } from 'react-router'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants'
+import axios, { AxiosError, AxiosResponse } from 'axios'
+import TimedParagraph from '../shared/TimedParagraph'
 
-function LoginForm({ method }: { method: 'login' | 'register' }) {
+interface LoginError {
+  reason: string
+  when: number
+}
+
+function LoginForm() {
   const [username, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
-  const navigate = useNavigate()
-
-  const name: string = method === 'login' ? 'Login' : 'Register'
+  const [error, setError] = useState<LoginError>()
+  const [isRegistered, setIsRegistered] = useState<boolean>(false)
+  const [isLoggedId, setIsLoggedIn] = useState<boolean>(false)
 
   interface AuthResponse {
     access: string
     refresh: string
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    setLoading(true)
-    e.preventDefault()
-    let res = undefined
-    try {
-      if (method === 'login') {
-        res = await api.post<AuthResponse>('/api/token/', {
-          username,
-          password,
-        })
+  const login = () => {
+    api
+      .post<AuthResponse>('/api/token/', {
+        username,
+        password,
+      })
+      .then((res: AxiosResponse<AuthResponse>) => {
         localStorage.setItem(ACCESS_TOKEN, res.data.access)
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
-        navigate('/subscriptions') // go home
-      }
-
-      if (method === 'register') {
-        try {
-          await api.post('/api/register/', { username, password })
-          navigate('/login') // if we just registered, then we have to login to access the webapp
-        } catch (error: any) {
-          if (error.response) {
-            console.error('Error response:', error.response.data)
-            alert(JSON.stringify(error.response.data)) // Show API error details
-          } else if (error.request) {
-            console.error('No response received:', error.request)
-            alert('No response from server. Please try again.')
-          } else {
-            console.error('Error:', error.message)
-            alert(error.message)
+        setIsLoggedIn(true)
+        setError(undefined)
+      })
+      .catch((error: Error | AxiosError) => {
+        let errorMessage = 'Failed to login!'
+        if (axios.isAxiosError(error)) {
+          if (error.status && error.status === 401) {
+            errorMessage += ' Invalid username or password!'
+          } else if (error.response) {
+            errorMessage += ' ' + JSON.stringify(error.response.data)
           }
         }
-      }
-    } catch (error) {
-      alert(error)
-    } finally {
-      setLoading(false)
-    }
+        setError({ reason: errorMessage, when: Date.now() })
+        console.log(errorMessage)
+      })
   }
 
-  if (loading) {
-    return <div>Loading...</div>
+  const register = (username: string, password: string) => {
+    api
+      .post('/api/register/', { username, password })
+      .then(() => {
+        setIsRegistered(true)
+        setError(undefined)
+      })
+      .catch((error: Error | AxiosError) => {
+        let errorMessage = 'Failed to register!'
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            errorMessage += ' ' + JSON.stringify(error.response.data)
+          }
+        }
+        setError({ reason: errorMessage, when: Date.now() })
+      })
+  }
+
+  if (isLoggedId) {
+    return <Navigate to='/subscriptions' />
   }
 
   return (
     <div className=''>
-      <form className='flex flex-col items-center' onSubmit={handleSubmit}>
-        <p className='text-xl m-6'>{name}</p>
+      <div className='flex flex-col items-center'>
         <input
           className=''
           type='text'
@@ -77,21 +88,39 @@ function LoginForm({ method }: { method: 'login' | 'register' }) {
           onChange={e => setPassword(e.target.value)}
           placeholder='Password'
         />
+
         <div className='flex'>
           <button
             className='m-4 p-1 w-full w-min-12 border-0 shadow-lg rounded-xs'
-            type='submit'
+            type='button'
+            onClick={() => login()}
           >
-            {name}
+            Login
           </button>
           <Link
             className='m-4 p-1 w-full w-min-12 border-0 bg-purple-500 text-white rounded-xs shadow-lg'
             to='/register'
+            onClick={() => register(username, password)}
           >
             Register
           </Link>
         </div>
-      </form>
+
+        {error && (
+          <TimedParagraph
+            variant='error'
+            key={error.when}
+            text={error.reason}
+          />
+        )}
+
+        {isRegistered && (
+          <TimedParagraph
+            variant='success'
+            text='You successfully registered!'
+          />
+        )}
+      </div>
     </div>
   )
 }

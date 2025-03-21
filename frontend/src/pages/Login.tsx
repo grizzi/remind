@@ -5,7 +5,7 @@ export const Login = () => {
   return (
     <div className='px-6 pt-8 flex flex-col items-center'>
       <Logo />
-      <LoginForm method='login' />
+      <LoginForm />
     </div>
   )
 }

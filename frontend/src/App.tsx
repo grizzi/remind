@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 import Login from './pages/Login'
-import Register from './pages/Register'
 import SubscriptionsPage from './pages/SubscriptionsPage'
 import NotFound from './pages/NotFound'
 import UserSettingsPage from './pages/UserSettingsPage'
@@ -18,7 +17,7 @@ function Logout() {
 
 function LogoutAndRegister() {
   localStorage.clear()
-  return <Register />
+  return <Login />
 }
 
 function App() {
