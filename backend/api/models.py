@@ -14,7 +14,8 @@ class Subscription(models.Model):
                         null=True,
                         validators=[MinMoneyValidator(0)])
     created_at = models.DateTimeField(auto_now_add=True)
-    billed_at = models.DateTimeField()
+    date_start = models.DateField()
+    date_end = models.DateField()
     remind = models.BooleanField(default=False)
     autorenewal = models.BooleanField(default=False)
     expiring_at = models.DateTimeField(null=True)
@@ -53,7 +54,9 @@ class UserSettings(models.Model):
 class Label(models.Model):
     name = models.CharField(max_length=20)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name="labels")
+    subscription = models.ForeignKey(Subscription,
+                                     on_delete=models.CASCADE,
+                                     related_name="labels")
 
 
 class Transaction(models.Model):

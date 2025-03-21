@@ -39,7 +39,7 @@ export const SubscriptionReadWriteSchema = z.object({
   title: z.string().nonempty('Title should not be empty!'),
   amount: z.coerce.number().gt(0, 'Insert a positive amount'),
   amount_currency: z.string(),
-  billed_at: z.coerce.date(),
+  date_start: z.coerce.date(),
   remind: z.boolean(),
   autorenewal: z.boolean(),
   expiring_at: z.coerce.date(),

@@ -35,7 +35,7 @@ const SubscriptionForm = ({
     title: '',
     amount: 0,
     amount_currency: '',
-    billed_at: new Date(),
+    date_start: new Date(),
     remind: false,
     autorenewal: false,
     expiring_at: new Date(),
@@ -51,7 +51,7 @@ const SubscriptionForm = ({
           title: subscription.title,
           amount: subscription.amount,
           amount_currency: subscription.amount_currency,
-          billed_at: subscription.billed_at,
+          date_start: subscription.date_start,
           remind: subscription.remind,
           autorenewal: subscription.autorenewal,
           expiring_at: subscription.expiring_at,
@@ -102,7 +102,7 @@ const SubscriptionForm = ({
             label='Currency'
             options={currenciesOptions}
           />
-          <TextField id='billed_at' label='Billed' />
+          <TextField id='date_start' label='Billed' />
           <CheckboxField id='autorenewal' label='Autorenewal' />
           <TextField id='expiring_at' label='Expiring' />
           <TextField id='external_link' label='External Link' />
