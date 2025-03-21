@@ -66,7 +66,6 @@ export namespace Api {
     z.infer<typeof SubscriptionsListSchema>
   > => {
     const response = await api.get('/api/subscriptions/')
-    console.log(JSON.stringify(response.data))
     const result = SubscriptionsListSchema.safeParse(response.data)
     return throwOnError(result)
   }
@@ -121,7 +120,6 @@ export namespace Api {
       : ''
 
     const url = `/api/labels/${params}`
-    console.log(url)
     const response = await api.get(`/api/labels/${params}`)
     const result = LabelsListSchema.safeParse(response.data)
     return throwOnError(result)

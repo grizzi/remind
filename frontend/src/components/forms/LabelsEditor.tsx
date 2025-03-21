@@ -13,6 +13,7 @@ const LabelEditor = ({
 }) => {
   const [subLabels, setSubLabels] = useState<Label[]>([])
   const [newLabel, setNewLabel] = useState<Label>()
+  const [uniqueLabels, setUniqueLabels] = useState<Label[]>([])
 
   // Initialize the labels with the one of the subscription if the subscription is non empty
   useEffect(() => {
@@ -22,10 +23,17 @@ const LabelEditor = ({
     } else {
       setSubLabels([])
     }
+
+    let ul: Label[] = []
+    for (const label of allLabels) {
+      if (ul.find(l => l.name === label.name) === undefined) {
+        ul.push(label)
+      }
+    }
+    setUniqueLabels(ul)
   }, [subscription])
 
-  const onAddLabel = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const onAddLabel = () => {
     if (
       newLabel !== undefined &&
       subLabels.filter(l => l.name === newLabel.name).length === 0
@@ -51,10 +59,10 @@ const LabelEditor = ({
   return (
     <div>
       <p className='text-xl'>Labels</p>
-      <div className='flex flex-wrap flex-row items-center w-full'>
-        <form onSubmit={onAddLabel}>
+      <div className='flex flex-col'>
+        <div className='flex flex-row justify-start'>
           <input
-            className='max-w-48'
+            className='max-w-48 pl-2'
             type='text'
             value={newLabel && newLabel.name}
             onChange={e =>
@@ -66,36 +74,48 @@ const LabelEditor = ({
             }
             placeholder='new label'
           />
-        </form>
-
+          <button
+            className='m-1 min-w-14 rounded-lg shadow-md px-3 justify-center transition-all'
+            onClick={() => onAddLabel()}
+          >
+            Add label
+          </button>
+        </div>
         {/* Labels of current subscription */}
-        {subLabels
-          .sort((a, b) => sortLabelByName(a, b))
-          .map(l => (
-            <TagChip
-              name={l.name}
-              onClick={() => {
-                setSubLabels(subLabels.filter(sl => sl.name !== l.name))
-              }}
-            />
-          ))}
+        <div className='flex flex-wrap flex-row items-center w-full mt-4'>
+          {subLabels
+            .sort((a, b) => sortLabelByName(a, b))
+            .map(l => (
+              <TagChip
+                name={l.name}
+                onClick={() => {
+                  setSubLabels(subLabels.filter(sl => sl.name !== l.name))
+                  setNewLabels(subLabels.filter(sl => sl.name !== l.name))
+                }}
+              />
+            ))}
 
-        {/* Inactive labels */}
-        {allLabels
-          .filter(l => labelsContainByName(l, subLabels))
-          .sort((a, b) => sortLabelByName(a, b))
-          .map(l => (
-            <TagChip
-              disabled={true}
-              name={l.name}
-              onClick={() => {
-                setSubLabels([
-                  { name: l.name, subscription: subscription!.id },
-                  ...subLabels,
-                ])
-              }}
-            />
-          ))}
+          {/* Inactive labels */}
+          {uniqueLabels
+            .filter(l => labelsContainByName(l, subLabels))
+            .sort((a, b) => sortLabelByName(a, b))
+            .map(l => (
+              <TagChip
+                disabled={true}
+                name={l.name}
+                onClick={() => {
+                  setSubLabels([
+                    { name: l.name, subscription: subscription!.id },
+                    ...subLabels,
+                  ])
+                  setNewLabels([
+                    { name: l.name, subscription: subscription!.id },
+                    ...subLabels,
+                  ])
+                }}
+              />
+            ))}
+        </div>
       </div>
     </div>
   )

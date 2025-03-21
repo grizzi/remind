@@ -58,7 +58,6 @@ const ProtectedRoute = () => {
       setIsAuthorized(true)
     }
   }
-  console.log(isAuthorized)
 
   if (isAuthorized === null) {
     return <div>Loading...</div>

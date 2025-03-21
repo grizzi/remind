@@ -34,7 +34,6 @@ export default function AppContextProvider({
   // Get currencies lazily and cache them
   const getCurrencies = async () => {
     if (currencies.length > 0) {
-      console.log('Returning cached currencies')
       return currencies
     }
 
@@ -57,19 +56,16 @@ export default function AppContextProvider({
 
   const getSubscriptions = async (forceUpdate = false) => {
     if (!forceUpdate && subscriptions.length > 0) {
-      console.log('Returning cached subscriptions')
       return subscriptions
     }
 
     const subs = await Api.getSubscriptions()
-    console.log(JSON.stringify(subs))
     setSubscriptions(subs)
     return subs
   }
 
   const getLabels = async (subscription?: number) => {
     const labs = await Api.getLabels(subscription)
-    console.log(JSON.stringify(labs))
     setLabels(labs)
     return labs
   }

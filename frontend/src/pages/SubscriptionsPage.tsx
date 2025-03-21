@@ -31,7 +31,6 @@ const SubscriptionsPage = () => {
     return <div></div>
   }
 
-  console.log('Subscriptions Page')
   if (addSubscription) {
     return <Navigate to='/subscriptions/new/edit' />
   }

@@ -44,7 +44,6 @@ const SubscriptionForm = ({
   })
 
   useEffect(() => {
-    console.log('Got subscriptions: ', JSON.stringify(subscription))
     if (subscription || settings) {
       setInitialValues(prevValues => ({
         ...prevValues,
@@ -82,7 +81,15 @@ const SubscriptionForm = ({
         enableReinitialize
         onSubmit={async values => {
           values.labels = newLabels
-          console.log(JSON.stringify(values.labels))
+          values.labels.forEach(l => {
+            if (subscription) {
+              l.subscription = subscription.id
+            }
+          })
+          console.log(
+            'Submitting the following labels: ',
+            JSON.stringify(values.labels),
+          )
           await onSubmit(values)
         }}
         validate={toFormikValidate(SubscriptionReadWriteSchema)}
@@ -99,7 +106,13 @@ const SubscriptionForm = ({
           <CheckboxField id='autorenewal' label='Autorenewal' />
           <TextField id='expiring_at' label='Expiring' />
           <TextField id='external_link' label='External Link' />
-          <button type='submit'>Submit</button>
+          <button
+            className='fixed border-0 bottom-8 right-8 flex items-center justify-center w-24 h-12 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
+            aria-label='Add new entry'
+            type='submit'
+          >
+            Save
+          </button>
         </Form>
       </Formik>
 

@@ -23,17 +23,15 @@ const SubscriptionEditPage = () => {
 
   const [editing, setEditing] = useState(true)
 
-  console.log('Subscription Edit Page')
-
   useEffect(() => {
     const id = Number(subId)
 
     const forceUpdate = true
     context.getSubscriptions(forceUpdate).then(subs => {
-      console.log("Getting all subscriptions!")
+      console.log('Getting all subscriptions!')
       console.log(JSON.stringify(subs))
       setSubscription(subs.find(sub => sub.id === id))
-      console.log("Subscription is now set!")
+      console.log('Subscription is now set!')
     })
 
     context.getLabels().then(l => setLabels(l))
@@ -104,7 +102,7 @@ const SubscriptionEditPage = () => {
 
   return (
     <div>
-      <h1>Edit Subscription</h1>
+      <p className='mb-4 text-3xl'>Edit Subscription</p>
       <SubscriptionForm
         settings={settings}
         currencies={currencies}

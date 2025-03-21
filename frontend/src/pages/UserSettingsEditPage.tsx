@@ -19,7 +19,6 @@ const UserSettingsEditPage = () => {
       .getCurrencies()
       .then(curr => {
         setCurrencies(curr)
-        console.log('Currencies:', curr)
       })
       .catch(err => {
         alert(err)
@@ -36,7 +35,6 @@ const UserSettingsEditPage = () => {
   }, [])
 
   const onSubmit = async (settings: UserSettings): Promise<void> => {
-    console.log('Submitting settings', JSON.stringify(settings))
     Api.updateUserSettings(settings)
       .then(() => setSubmit(true))
       .catch(error => {
