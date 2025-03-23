@@ -4,14 +4,15 @@ import { ACCESS_TOKEN } from '../constants'
 
 import { User } from './types'
 import {
-  SubscriptionSchema,
+  SubscriptionsListSchema,
   UserSettingsSchema,
-  CurrencySchema,
+  CurrenciesListSchema,
   Subscription,
   SubscriptionReadWriteSchema,
   UserSettings,
-  LabelSchema,
+  LabelsListSchema,
   Label,
+  PlansListSchema,
 } from './schema'
 
 const api = axios.create({
@@ -42,10 +43,6 @@ api.interceptors.request.use(
 // )
 
 export namespace Api {
-  const CurrenciesListSchema = z.array(CurrencySchema)
-  const SubscriptionsListSchema = z.array(SubscriptionSchema)
-  const LabelsListSchema = z.array(LabelSchema)
-
   export const login = async (user: User) => {
     return await api.post('/api/token/', user)
   }
@@ -118,23 +115,31 @@ export namespace Api {
     await api.delete(`/api/delete/`)
   }
 
-  export const getLabels = async (
-    subscription?: number,
-  ): Promise<z.infer<typeof LabelsListSchema>> => {
-    const params = subscription
-      ? '?' +
-        new URLSearchParams({
-          subscription: `${subscription}`,
-        }).toString()
-      : ''
-
-    const response = await api.get(`/api/labels/${params}`)
+  export const getLabels = async (): Promise<
+    z.infer<typeof LabelsListSchema>
+  > => {
+    const response = await api.get('/api/labels/')
     const result = LabelsListSchema.safeParse(response.data)
     return throwOnError(result)
   }
 
   export const updateLabels = async (labels: Label[]): Promise<void> => {
     await api.put(`/api/labels/`, labels)
+  }
+
+  export const getPlans = async (
+    subscription: string,
+    plan?: string,
+  ): Promise<z.infer<typeof PlansListSchema>> => {
+    let url = `/api/subscriptions/${subscription}/plans/`
+
+    if (plan) {
+      url += `${plan}/`
+    }
+
+    const response = await api.get(url)
+    const result = PlansListSchema.safeParse(response.data)
+    return throwOnError(result)
   }
 }
 

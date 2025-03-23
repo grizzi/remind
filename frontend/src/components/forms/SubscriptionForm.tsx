@@ -11,15 +11,12 @@ import {
   Label,
 } from '../../api/schema'
 
-import SelectField, { SelectOption } from '../inputs/SelectField'
 import TextField from '../inputs/TextField'
-import CheckboxField from '../inputs/CheckboxField'
 import LabelEditor from './LabelsEditor'
 
 const SubscriptionForm = ({
   subscription,
   settings,
-  currencies,
   labels,
   onSubmit,
 }: {
@@ -29,14 +26,13 @@ const SubscriptionForm = ({
   labels: Label[]
   onSubmit: (subscription: SubscriptionReadWrite) => Promise<void>
 }) => {
-  const [currenciesOptions, setCurrenciesOptions] = useState<SelectOption[]>([])
   const [newLabels, setNewLabels] = useState<Label[]>([])
+
   const [initialValues, setInitialValues] = useState<SubscriptionReadWrite>({
     title: '',
     remind: false,
     external_link: '',
     labels: subscription?.labels || [],
-    plans: subscription?.plans || [],
   })
 
   useEffect(() => {
@@ -49,21 +45,9 @@ const SubscriptionForm = ({
           external_link: subscription.external_link,
           labels: subscription.labels,
         }),
-        ...(settings && {
-          amount_currency: settings.budget_currency,
-        }),
       }))
     }
-
-    if (currencies) {
-      setCurrenciesOptions(
-        currencies.map(el => ({
-          value: el.code,
-          label: el.name,
-        })),
-      )
-    }
-  }, [settings, subscription, currencies])
+  }, [settings, subscription])
 
   return (
     <div>
@@ -103,6 +87,7 @@ const SubscriptionForm = ({
         allLabels={labels}
         setNewLabels={setNewLabels}
       />
+
     </div>
   )
 }

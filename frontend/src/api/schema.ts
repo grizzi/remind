@@ -29,8 +29,8 @@ export const PlanSchema = z
   .refine(
     data => {
       return (
-        (!data?.cost && data?.cost_currency) ||
-        (data?.cost && !data?.cost_currency)
+        (data?.cost && data?.cost_currency) ||
+        (!data?.cost && !data?.cost_currency)
       )
     },
     {
@@ -65,7 +65,6 @@ export const SubscriptionReadWriteSchema = z.object({
   remind: z.boolean(),
   external_link: z.string(),
   labels: z.array(LabelSchema).optional().default([]),
-  plans: z.array(PlanSchema).optional().default([]),
 })
 
 export const SubscriptionSchema = SubscriptionReadOnlySchema.merge(
@@ -74,3 +73,8 @@ export const SubscriptionSchema = SubscriptionReadOnlySchema.merge(
 export type SubscriptionReadWrite = z.infer<typeof SubscriptionReadWriteSchema>
 export type SubscriptionReadOnly = z.infer<typeof SubscriptionReadOnlySchema>
 export type Subscription = z.infer<typeof SubscriptionSchema>
+
+export const CurrenciesListSchema = z.array(CurrencySchema)
+export const SubscriptionsListSchema = z.array(SubscriptionSchema)
+export const LabelsListSchema = z.array(LabelSchema)
+export const PlansListSchema = z.array(PlanSchema)

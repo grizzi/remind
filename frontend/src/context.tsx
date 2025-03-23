@@ -6,7 +6,7 @@ interface AppContextInterface {
   getCurrencies: () => Promise<Currency[]>
   getUserSettings: () => Promise<UserSettings>
   getSubscriptions: (forceUpdate: boolean) => Promise<Subscription[]>
-  getLabels: (subscription?: number) => Promise<Label[]>
+  getLabels: () => Promise<Label[]>
 }
 
 const defaultContext: AppContextInterface = {
@@ -64,8 +64,8 @@ export default function AppContextProvider({
     return subs
   }
 
-  const getLabels = async (subscription?: number) => {
-    const labs = await Api.getLabels(subscription)
+  const getLabels = async () => {
+    const labs = await Api.getLabels()
     setLabels(labs)
     return labs
   }

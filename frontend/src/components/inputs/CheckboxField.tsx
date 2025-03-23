@@ -1,10 +1,14 @@
-import { ErrorMessage, Field, useField } from 'formik'
+import { ErrorMessage, useField } from 'formik'
 
-const CheckboxField = (props: { label: string; id: string }) => {
+const CheckboxField = (props: {
+  label: string
+  id: string
+  disabled?: boolean
+}) => {
   const [field] = useField({ name: props.id, type: 'checkbox' })
 
   return (
-    <div>
+    <div className='mr-2 ml-2'>
       <label
         htmlFor={props.id}
         className={`cursor-pointer inline-block px-4 py-2 rounded-full border transition 
@@ -15,7 +19,13 @@ const CheckboxField = (props: { label: string; id: string }) => {
           } 
           hover:shadow-md`}
       >
-        <input {...field} id={props.id} type='checkbox' className='hidden' />
+        <input
+          {...field}
+          id={props.id}
+          disabled={props?.disabled}
+          type='checkbox'
+          className='hidden'
+        />
         {props.label}
       </label>
       <div className='text-red-500 text-sm mt-1'>

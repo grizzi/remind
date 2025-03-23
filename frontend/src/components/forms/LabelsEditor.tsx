@@ -59,6 +59,7 @@ const LabelEditor = ({
   return (
     <div>
       <div className='flex flex-col'>
+        <p className='text-xl'>Labels</p>
         <div className='flex flex-wrap flex-row items-center w-full mt-4'>
           <input
             className='max-w-48 pl-2'

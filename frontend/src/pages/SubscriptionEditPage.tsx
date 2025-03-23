@@ -1,6 +1,6 @@
 import SubscriptionForm from '../components/forms/SubscriptionForm'
 import { Api } from '../api/api'
-import { Navigate, useParams } from 'react-router'
+import { Navigate, Outlet, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 
 import {
@@ -9,17 +9,21 @@ import {
   UserSettings,
   Currency,
   Label,
+  Plan,
 } from '../api/schema'
 import { useAppContext } from '../context'
+import PlansView from '../components/views/PlansView'
+import PlanForm from '../components/forms/PlanForm'
 
 const SubscriptionEditPage = () => {
   const context = useAppContext()
   const { subId } = useParams()
   const [subscription, setSubscription] = useState<Subscription>()
   const [labels, setLabels] = useState<Label[]>([])
-
+  const [plans, setPlans] = useState<Plan[]>([])
   const [settings, setSettings] = useState<UserSettings>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
+  const [editingPlan, setEditingPlan] = useState<boolean>(false)
 
   const [editing, setEditing] = useState(true)
 
@@ -35,6 +39,14 @@ const SubscriptionEditPage = () => {
     })
 
     context.getLabels().then(l => setLabels(l))
+
+    if (subId) {
+      Api.getPlans(subId)
+        .then(plans => setPlans(plans))
+        .catch(error =>
+          alert(`Failed to get subscription plans: ${error.message}`),
+        )
+    }
   }, [subId])
 
   useEffect(() => {
@@ -71,11 +83,7 @@ const SubscriptionEditPage = () => {
           setEditing(false)
         })
         .catch(error => {
-          alert(
-            `Failed to create subscription!: ${JSON.stringify(
-              error,
-            )}`,
-          )
+          alert(`Failed to create subscription!: ${JSON.stringify(error)}`)
         })
     } else {
       Api.updateSubscription(id, subscription)
@@ -103,13 +111,31 @@ const SubscriptionEditPage = () => {
   return (
     <div>
       <p className='mb-4 text-3xl'>Edit Subscription</p>
-      <SubscriptionForm
-        settings={settings}
-        currencies={currencies}
-        subscription={subscription}
-        onSubmit={onSubmit}
-        labels={labels}
-      />
+      <div className='flex flex-col'>
+        <div>
+          <p className='text-xl'>General</p>
+          <SubscriptionForm
+            settings={settings}
+            currencies={currencies}
+            subscription={subscription}
+            onSubmit={onSubmit}
+            labels={labels}
+          />
+        </div>
+
+        <div>
+          <p className='text-xl'>Plans</p>
+          {plans.map(p => (
+            <PlanForm
+              currentPlan={p}
+              settings={settings}
+              currencies={currencies}
+              onSave={() => {}}
+              onDiscard={() => {}}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

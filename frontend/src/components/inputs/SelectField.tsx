@@ -9,12 +9,13 @@ const SelectField = (props: {
   label: string
   id: string
   options: SelectOption[]
+  disabled?: boolean
 }) => {
   return (
-    <div className='mb-4'>
+    <div className='mb-4  mr-2 ml-2'>
       <label
         htmlFor={props.id}
-        className='block text-sm font-medium text-gray-700 mb-1'
+        className='block text-sm min-w-40 font-medium text-gray-700 mb-1'
       >
         {props.label}
       </label>
@@ -23,6 +24,7 @@ const SelectField = (props: {
           as='select'
           id={props.id}
           name={props.id}
+          disabled={props?.disabled}
           className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
         >
           <option value='' disabled>

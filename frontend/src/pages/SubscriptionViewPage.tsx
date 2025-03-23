@@ -2,12 +2,16 @@ import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
 import SubscriptionView from '../components/views/SubscriptionView'
+import PlansView from '../components/views/PlansView'
+
 import { useAppContext } from '../context'
-import { Label, Subscription } from '../api/schema'
+import { Label, Plan, Subscription } from '../api/schema'
+import { Api } from '../api/api'
 
 const SubscriptionViewPage = () => {
   const [subscription, setSubscription] = useState<Subscription>()
   const [labels, setLabels] = useState<Label[]>([])
+  const [plans, setPlans] = useState<Plan[]>([])
 
   const { subId } = useParams()
   const context = useAppContext()
@@ -20,7 +24,18 @@ const SubscriptionViewPage = () => {
       .then(subs => setSubscription(subs.find(sub => sub.id === Number(id))))
       .catch(err => alert(err.message))
 
-    context.getLabels(id).then(l => setLabels(l))
+    context
+      .getLabels()
+      .then(l => setLabels(l.filter(l => l.subscription === id)))
+      .catch(_ => alert('Failed to retrieve subscription labels'))
+
+    if (subId) {
+      Api.getPlans(subId)
+        .then(p => setPlans(p))
+        .catch(error =>
+          alert(`Failed to get subscription plans: ${error.message}`),
+        )
+    }
   }, [])
 
   if (!subscription) {
@@ -30,6 +45,7 @@ const SubscriptionViewPage = () => {
   return (
     <div>
       <SubscriptionView subscription={subscription} labels={labels} />
+      <PlansView plans={plans} />
     </div>
   )
 }

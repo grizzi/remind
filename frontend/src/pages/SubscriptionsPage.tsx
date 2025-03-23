@@ -41,7 +41,7 @@ const SubscriptionsPage = () => {
 
   return (
     <div>
-      <FloatingActionButton onClick={() => setAddSubscription(true)}/>
+      <FloatingActionButton onClick={() => setAddSubscription(true)} />
       <div>
         <p className='text-4xl'>My Subscriptions</p>
         {subscriptions

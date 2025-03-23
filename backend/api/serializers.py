@@ -53,12 +53,11 @@ class PlanSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     labels = LabelSerializer(many=True)
-    plans = PlanSerializer(many=True)
 
     class Meta:
         model = Subscription
         fields = "__all__"
-        extra_fields = ["labels", "plans"]
+        extra_fields = ["labels"]
 
         # In this case we want to only be able to read this property
         # when I am signed id, I am of course the author of this
@@ -70,7 +69,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         labels_data = validated_data.pop("labels", [])
-        plans_data = validated_data.pop("plans", [])
 
         # Ensures all database operations succeed or fail together
         with transaction.atomic():
@@ -84,7 +82,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         labels_data = validated_data.pop("labels", [])  # Get nested labels data
-        plans_data = validated_data.pop("plans", []) # Get the plans data
 
         # Ensures all database operations succeed or fail together
         with transaction.atomic():
@@ -95,7 +92,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             instance.save()
 
             self._create_or_update_labels(all_labels=instance.labels.all(), labels_data=labels_data, user=instance.user)
-            self._create_or_update_plans(all_plans=instance.plans.all(), plans_data=plans_data, user=instance.user)
                 
 
         return instance
@@ -124,27 +120,3 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         # Delete labels that were removed
         for label in existing_labels.values():
             label.delete()
-
-    def _create_or_update_plans(self, all_plans: list[Plan], plans_data: dict, user=User()):
-        """
-        If plans already was attached to this subscription, update it, 
-        otherwise create a new one
-        """
-        existing_plans = {plan.id: plan for plan in all_plans}
-
-        for plan_data in all_plans:
-            plan_id = plan_data.get("id", None)
-
-            if plan_id and plan_id in existing_plans:
-                plan = existing_plans[plan_id]
-                for key, value in plan_data.items():
-                    setattr(plan, key, value)
-                plan.save()
-                existing_plans.pop(plan_id)  # Remove from dict to track remaining ones
-            else:
-                logger.info(f"Creating new plan: {plan_data}")
-                Plan.objects.create(user=user, **plan_data)
-
-        # Delete plans that were removed
-        for plan in existing_plans.values():
-            plan.delete()
