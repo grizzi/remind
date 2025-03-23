@@ -14,6 +14,32 @@ export const LabelSchema = z.object({
 
 export type Label = z.infer<typeof LabelSchema>
 
+export const PlanSchema = z
+  .object({
+    subscription: z.number().optional(),
+    auto_renew: z.boolean(),
+    start_date: z.coerce.date(),
+    end_date: z.coerce.date().optional(),
+    cost: z.coerce.number().gt(0, 'Insert a positive amount').optional(),
+    cost_currency: z.string().optional(),
+    billing_frequency: z
+      .enum(['daily', 'weekly', 'monthly', 'yearly'])
+      .optional(),
+  })
+  .refine(
+    data => {
+      return (
+        (!data?.cost && data?.cost_currency) ||
+        (data?.cost && !data?.cost_currency)
+      )
+    },
+    {
+      message: 'Both currency and plan cost must be specified!',
+    },
+  )
+
+export type Plan = z.infer<typeof PlanSchema>
+
 export const UserSettingsSchema = z.object({
   remind_within_days: z.coerce.number(),
   remind_frequency: z.string(),
@@ -25,7 +51,6 @@ export const UserSettingsSchema = z.object({
 
 export type UserSettings = z.infer<typeof UserSettingsSchema>
 
-// TODO: investigate the use of readonly variables
 export const SubscriptionReadOnlySchema = z.object({
   id: z.number(),
   created_at: z.coerce.date(),
@@ -37,14 +62,10 @@ export const SubscriptionReadOnlySchema = z.object({
 
 export const SubscriptionReadWriteSchema = z.object({
   title: z.string().nonempty('Title should not be empty!'),
-  amount: z.coerce.number().gt(0, 'Insert a positive amount'),
-  amount_currency: z.string(),
-  date_start: z.coerce.date(),
   remind: z.boolean(),
-  autorenewal: z.boolean(),
-  expiring_at: z.coerce.date(),
   external_link: z.string(),
   labels: z.array(LabelSchema).optional().default([]),
+  plans: z.array(PlanSchema).optional().default([]),
 })
 
 export const SubscriptionSchema = SubscriptionReadOnlySchema.merge(

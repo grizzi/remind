@@ -7,23 +7,14 @@ from djmoney.models.validators import MinMoneyValidator
 
 
 class Subscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, default="")
-    amount = MoneyField(max_digits=10,
-                        decimal_places=2,
-                        default_currency='CHF',
-                        null=True,
-                        validators=[MinMoneyValidator(0)])
     created_at = models.DateTimeField(auto_now_add=True)
-    date_start = models.DateField()
-    date_end = models.DateField()
     remind = models.BooleanField(default=False)
-    autorenewal = models.BooleanField(default=False)
-    expiring_at = models.DateTimeField(null=True)
     external_link = models.CharField(default="", blank=True)
     archieved = models.BooleanField(default=False)
     last_reminder_at = models.DateTimeField(null=True, blank=True)
     total_reminders = models.SmallIntegerField(default=0)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class RemindFrequencyChoices(models.TextChoices):
@@ -51,6 +42,36 @@ class UserSettings(models.Model):
                         validators=[MinMoneyValidator(0)])
 
 
+
+class PlanFrequencyChoices(models.TextChoices):
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+    YEARLY = "yearly"
+
+
+class Plan(models.Model):
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name="plans")
+    auto_renew  =models.BooleanField(default=True)
+    start_date = models.DateField()
+    
+    # the next can be null on plans without an explicit end
+    end_date = models.DateField(null=True, blank=True)
+    
+    
+    # the next two can be null on free plans
+    cost = MoneyField(max_digits=10,
+                        decimal_places=2,
+                        default_currency='CHF',
+                        null=True,
+                        blank=True,
+                        validators=[MinMoneyValidator(0)])
+    billing_frequency = models.CharField(max_length=20, choices=PlanFrequencyChoices, blank=True, null=True)
+    
+    def __str__(self):
+        return f"Subscription [{self.subscription}] plan: {self.start_date}-{self.end_date}"
+    
+    
 class Label(models.Model):
     name = models.CharField(max_length=20)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -58,11 +79,3 @@ class Label(models.Model):
                                      on_delete=models.CASCADE,
                                      related_name="labels")
 
-
-class Transaction(models.Model):
-    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
-    date = models.DateTimeField()
-    amount = MoneyField(max_digits=10,
-                        decimal_places=2,
-                        default_currency='USD',
-                        validators=[MinMoneyValidator(0)])

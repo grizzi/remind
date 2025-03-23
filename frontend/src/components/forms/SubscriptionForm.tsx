@@ -33,14 +33,10 @@ const SubscriptionForm = ({
   const [newLabels, setNewLabels] = useState<Label[]>([])
   const [initialValues, setInitialValues] = useState<SubscriptionReadWrite>({
     title: '',
-    amount: 0,
-    amount_currency: '',
-    date_start: new Date(),
     remind: false,
-    autorenewal: false,
-    expiring_at: new Date(),
     external_link: '',
     labels: subscription?.labels || [],
+    plans: subscription?.plans || [],
   })
 
   useEffect(() => {
@@ -49,12 +45,7 @@ const SubscriptionForm = ({
         ...prevValues,
         ...(subscription && {
           title: subscription.title,
-          amount: subscription.amount,
-          amount_currency: subscription.amount_currency,
-          date_start: subscription.date_start,
           remind: subscription.remind,
-          autorenewal: subscription.autorenewal,
-          expiring_at: subscription.expiring_at,
           external_link: subscription.external_link,
           labels: subscription.labels,
         }),
@@ -96,15 +87,6 @@ const SubscriptionForm = ({
       >
         <Form className='max-w-3xl'>
           <TextField id='title' label='Title' />
-          <TextField id='amount' label='Amount' />
-          <SelectField
-            id='amount_currency'
-            label='Currency'
-            options={currenciesOptions}
-          />
-          <TextField id='date_start' label='Billed' />
-          <CheckboxField id='autorenewal' label='Autorenewal' />
-          <TextField id='expiring_at' label='Expiring' />
           <TextField id='external_link' label='External Link' />
           <button
             className='fixed border-0 bottom-8 right-8 flex items-center justify-center w-24 h-12 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
