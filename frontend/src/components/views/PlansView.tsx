@@ -1,10 +1,8 @@
 import { Plan } from '../../api/schema'
-import { format } from 'date-fns'
 
 const PlanCard = ({ plan }: { plan: Plan }) => {
   return (
     <div className='flex flex-col rounded-2xl shadow-md p-6 bg-white border border-gray-200'>
-
       {plan.cost && plan.cost_currency ? (
         <p className='text-lg text-gray-700'>
           <span className='font-medium'>Cost:</span> {plan.cost}{' '}
@@ -21,13 +19,13 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
 
       <p className='text-gray-700'>
         <span className='font-medium'>Start Date:</span>{' '}
-        {format(new Date(plan.start_date), 'PPP')}
+        {plan.start_date.toISOString()}
       </p>
 
       {plan.end_date && (
         <p className='text-gray-700'>
           <span className='font-medium'>End Date:</span>{' '}
-          {format(new Date(plan.end_date), 'PPP')}
+          {plan.end_date.toISOString()}
         </p>
       )}
 
