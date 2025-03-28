@@ -5,6 +5,7 @@ from .models import Subscription, UserSettings, Label, Plan
 
 from loguru import logger
 
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -42,6 +43,7 @@ class LabelSerializer(serializers.ModelSerializer):
 
         extra_kwargs = {"user": {"read_only": True}}
 
+
 class PlanSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -76,28 +78,30 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             for label_data in labels_data:
                 Label.objects.create(subscription=subscription, **label_data)
 
-            for plan_data in plans_data:
-                Plan.objects.create(subscription=subscription, **plan_data)
         return subscription
 
     def update(self, instance, validated_data):
-        labels_data = validated_data.pop("labels", [])  # Get nested labels data
+        labels_data = validated_data.pop("labels",
+                                         [])  # Get nested labels data
 
         # Ensures all database operations succeed or fail together
         with transaction.atomic():
-        
+
             # Update subscription fields
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
             instance.save()
 
-            self._create_or_update_labels(all_labels=instance.labels.all(), labels_data=labels_data, user=instance.user)
-                
+            self._create_or_update_labels(all_labels=instance.labels.all(),
+                                          labels_data=labels_data,
+                                          user=instance.user)
 
         return instance
 
-
-    def _create_or_update_labels(self, all_labels: list[Label], labels_data: dict, user=User()):
+    def _create_or_update_labels(self,
+                                 all_labels: list[Label],
+                                 labels_data: dict,
+                                 user=User()):
         """
         If label already was attached to this subscription, update it, 
         otherwise create a new one
@@ -112,7 +116,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                 for key, value in label_data.items():
                     setattr(label, key, value)
                 label.save()
-                existing_labels.pop(label_id)  # Remove from dict to track remaining ones
+                existing_labels.pop(
+                    label_id)  # Remove from dict to track remaining ones
             else:
                 logger.info(f"Creating new label: {label_data}")
                 Label.objects.create(user=user, **label_data)

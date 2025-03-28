@@ -12,35 +12,25 @@ const SelectField = (props: {
   disabled?: boolean
 }) => {
   return (
-    <div className='mb-4  mr-2 ml-2'>
-      <label
-        htmlFor={props.id}
-        className='block text-sm min-w-40 font-medium text-gray-700 mb-1'
-      >
-        {props.label}
-      </label>
+    <div className='flex flex-col w-full'>
       <div>
         <Field
           as='select'
           id={props.id}
           name={props.id}
           disabled={props?.disabled}
-          className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+          className='px-3 py-2 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm'
         >
-          <option value='' disabled>
-            {`Select ${props.label.toLowerCase()}`}
-          </option>
           {props.options.map(opt => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
         </Field>
-        <ErrorMessage
-          name={props.id}
-          component='div'
-          className='mt-1 text-sm text-red-600'
-        />
+        {/* Reserve space for error */}
+        <div className='min-h-[1.25rem] text-red-500 text-xs mt-1'>
+          <ErrorMessage name={props.id} />
+        </div>
       </div>
     </div>
   )

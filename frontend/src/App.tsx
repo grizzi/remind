@@ -9,7 +9,6 @@ import SubscriptionEditPage from './pages/SubscriptionEditPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import SubscriptionViewPage from './pages/SubscriptionViewPage'
 import UserSettingsEditPage from './pages/UserSettingsEditPage'
-import PlanEditor from './pages/PlanEditorPage'
 
 function Logout() {
   localStorage.clear()
@@ -36,9 +35,7 @@ function App() {
               <Route
                 path='subscriptions/:subId/edit'
                 element={<SubscriptionEditPage />}
-              >
-                <Route path='plans/:planId/edit' element={<PlanEditor />} />
-              </Route>
+              />
 
               <Route path='/settings' element={<UserSettingsPage />} />
               <Route path='/settings/edit' element={<UserSettingsEditPage />} />

@@ -59,7 +59,7 @@ const LabelEditor = ({
   return (
     <div>
       <div className='flex flex-col'>
-        <p className='text-xl'>Labels</p>
+        <p className='text-xl mb-2'>Labels</p>
         <div className='flex flex-wrap flex-row items-center w-full mt-4'>
           <input
             className='max-w-48 pl-2'
@@ -85,6 +85,7 @@ const LabelEditor = ({
             .sort((a, b) => sortLabelByName(a, b))
             .map(l => (
               <TagChip
+                key={l.name}
                 name={l.name}
                 onClick={() => {
                   setSubLabels(subLabels.filter(sl => sl.name !== l.name))
@@ -99,6 +100,7 @@ const LabelEditor = ({
             .sort((a, b) => sortLabelByName(a, b))
             .map(l => (
               <TagChip
+                key={l.name}
                 disabled={true}
                 name={l.name}
                 onClick={() => {

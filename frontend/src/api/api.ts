@@ -13,6 +13,8 @@ import {
   LabelsListSchema,
   Label,
   PlansListSchema,
+  Plan,
+  PlanSchema,
 } from './schema'
 
 const api = axios.create({
@@ -55,6 +57,7 @@ export namespace Api {
 
   function throwOnError(result: Partial<Result>) {
     if (!result.success) {
+      alert(`API response failed: ${result.error}`)
       throw new Error(`API response validation failed: ${result.error}`)
     }
     return result.data
@@ -140,6 +143,38 @@ export namespace Api {
     const response = await api.get(url)
     const result = PlansListSchema.safeParse(response.data)
     return throwOnError(result)
+  }
+
+  export const updatePlan = async (
+    subscription: number,
+    plan: Plan,
+  ): Promise<void> => {
+    const result = PlanSchema.safeParse(plan)
+    const validated = throwOnError(result)
+
+    const planDateAdjusted = {
+      ...validated,
+      start_date: validated.start_date.toISOString().split('T')[0],
+      end_date: validated.end_date?.toISOString().split('T')[0],
+    }
+    if (planDateAdjusted.id) {
+      await api.put(
+        `/api/subscriptions/${subscription}/plans/${planDateAdjusted.id}/`,
+        planDateAdjusted,
+      )
+    } else {
+      await api.post(
+        `/api/subscriptions/${subscription}/plans/`,
+        planDateAdjusted,
+      )
+    }
+  }
+
+  export const deletePlan = async (
+    subscription: number,
+    plan: Plan,
+  ): Promise<void> => {
+    await api.delete(`/api/subscriptions/${subscription}/plans/${plan.id}/`)
   }
 }
 

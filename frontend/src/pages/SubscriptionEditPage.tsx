@@ -12,8 +12,8 @@ import {
   Plan,
 } from '../api/schema'
 import { useAppContext } from '../context'
-import PlansView from '../components/views/PlansView'
-import PlanForm from '../components/forms/PlanForm'
+import LabelEditor from '../components/forms/LabelsEditor'
+import EditablePlanTable from '../components/views/EditableTablePlan'
 
 const SubscriptionEditPage = () => {
   const context = useAppContext()
@@ -110,10 +110,12 @@ const SubscriptionEditPage = () => {
 
   return (
     <div>
-      <p className='mb-4 text-3xl'>Edit Subscription</p>
+      <p className='mb-4 text-3xl'>
+        {subscription?.title || 'Add Subscription'}
+      </p>
       <div className='flex flex-col'>
         <div>
-          <p className='text-xl'>General</p>
+          <p className='text-xl mb-2'>General</p>
           <SubscriptionForm
             settings={settings}
             currencies={currencies}
@@ -124,16 +126,16 @@ const SubscriptionEditPage = () => {
         </div>
 
         <div>
-          <p className='text-xl'>Plans</p>
-          {plans.map(p => (
-            <PlanForm
-              currentPlan={p}
-              settings={settings}
-              currencies={currencies}
-              onSave={() => {}}
-              onDiscard={() => {}}
-            />
-          ))}
+          <EditablePlanTable
+            subscription={subscription}
+            plans={plans}
+            settings={settings}
+            currencies={currencies}
+            onUpdate={plan => {
+              Api.updatePlan(subscription!.id, plan)
+            }}
+            onDelete={plan => Api.deletePlan(subscription!.id, plan)}
+          />
         </div>
       </div>
     </div>

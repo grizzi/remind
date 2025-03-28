@@ -72,13 +72,15 @@ const SubscriptionForm = ({
         <Form className='max-w-3xl'>
           <TextField id='title' label='Title' />
           <TextField id='external_link' label='External Link' />
-          <button
-            className='fixed border-0 bottom-8 right-8 flex items-center justify-center w-24 h-12 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
-            aria-label='Add new entry'
-            type='submit'
-          >
-            Save
-          </button>
+          <div className='flex flex-col items-end'>
+            <button
+              className='flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
+              aria-label='Add new entry'
+              type='submit'
+            >
+              Save
+            </button>
+          </div>
         </Form>
       </Formik>
 
@@ -87,7 +89,6 @@ const SubscriptionForm = ({
         allLabels={labels}
         setNewLabels={setNewLabels}
       />
-
     </div>
   )
 }

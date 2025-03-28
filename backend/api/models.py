@@ -68,9 +68,6 @@ class Plan(models.Model):
                         validators=[MinMoneyValidator(0)])
     billing_frequency = models.CharField(max_length=20, choices=PlanFrequencyChoices, blank=True, null=True)
     
-    def __str__(self):
-        return f"Subscription [{self.subscription}] plan: {self.start_date}-{self.end_date}"
-    
     
 class Label(models.Model):
     name = models.CharField(max_length=20)

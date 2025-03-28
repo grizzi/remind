@@ -30,7 +30,7 @@ const TimedParagraph = ({
     <>
       {show && (
         <p
-          className={`text-center  p-4 rounded-lg shadow-md transition-all duration-500 ease-in-out 
+          className={`absolute top-16 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center p-4 rounded-lg shadow-md transition-all duration-500 ease-in-out 
           ${
             animateOut
               ? 'opacity-0 translate-x-20'

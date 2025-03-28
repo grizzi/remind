@@ -16,6 +16,7 @@ export type Label = z.infer<typeof LabelSchema>
 
 export const PlanSchema = z
   .object({
+    id: z.number().optional(),
     subscription: z.number().optional(),
     auto_renew: z.boolean(),
     start_date: z.coerce.date(),

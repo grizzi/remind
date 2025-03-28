@@ -8,27 +8,29 @@ const CheckboxField = (props: {
   const [field] = useField({ name: props.id, type: 'checkbox' })
 
   return (
-    <div className='mr-2 ml-2'>
-      <label
-        htmlFor={props.id}
-        className={`cursor-pointer inline-block px-4 py-2 rounded-full border transition 
-          ${
-            field.checked
-              ? 'bg-blue-600 text-white border-blue-600'
-              : 'bg-white text-gray-700 border-gray-300'
-          } 
-          hover:shadow-md`}
-      >
+    <div className='flex flex-col items-center justify-center gap-1'>
+      <label className='relative inline-flex items-center cursor-pointer w-fit'>
         <input
           {...field}
           id={props.id}
-          disabled={props?.disabled}
+          disabled={props.disabled}
           type='checkbox'
-          className='hidden'
+          className='sr-only peer'
         />
-        {props.label}
+        <div
+          className={`w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-pink-500
+            peer-checked:bg-purple-600 transition-all duration-300
+            ${props.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        />
+        <div
+          className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all duration-300
+            peer-checked:translate-x-5
+            ${props.disabled ? 'opacity-75' : ''}`}
+        />
       </label>
-      <div className='text-red-500 text-sm mt-1'>
+
+      {/* Reserve space for error */}
+      <div className='min-h-[1.25rem] text-red-500 text-xs mt-1'>
         <ErrorMessage name={props.id} />
       </div>
     </div>

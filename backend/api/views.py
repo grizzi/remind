@@ -109,6 +109,7 @@ class SubscriptionDetails(views.APIView):
         self.get_object(pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class PlanListCreate(generics.ListCreateAPIView):
     serializer_class = PlanSerializer
     permission_classes = [IsAuthenticated]
@@ -122,11 +123,12 @@ class PlanListCreate(generics.ListCreateAPIView):
 
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
+            logger.error(f"Got data: {request.data}")
             logger.error(f"Validation failed: {serializer.errors}")
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
-        serializer.save(user=request.user)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -135,16 +137,13 @@ class PlanDetails(views.APIView):
 
     def get_object(self, pk, subscription_id):
         try:
-            return Plan.objects.filter(subscription=subscription_id).get(
-                pk=pk)
+            return Plan.objects.filter(subscription=subscription_id).get(pk=pk)
         except Subscription.DoesNotExist:
-            logger.error(
-                f"Plan {pk} for user {self.request.user} not found")
+            logger.error(f"Plan {pk} for user {self.request.user} not found")
             raise Http404
 
-    def get(self, request, pk, format=None):
+    def get(self, request, subscription_id, pk, format=None):
         _ = request, format
-        subscription_id = self.kwargs['subscription_id']
         plan = self.get_object(pk, subscription_id)
         serializer = PlanSerializer(plan)
         return Response(serializer.data)
@@ -158,9 +157,10 @@ class PlanDetails(views.APIView):
         logger.error(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, pk, format=None):
+    def put(self, request, pk, subscription_id, format=None):
         _ = format
-        plan = self.get_object(pk)
+        plan = self.get_object(pk, subscription_id)
+        logger.info(f"{request.data}")
         serializer = PlanSerializer(plan, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -168,10 +168,12 @@ class PlanDetails(views.APIView):
         logger.error(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
+    def delete(self, request, pk, subscription_id, format=None):
         _ = request, format
-        self.get_object(pk).delete()
+        logger.info(f"Deleting plan {pk}")
+        self.get_object(pk, subscription_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class UserSettingsDetails(views.APIView):
     serializer_class = UserSettingsSerializer
