@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import TimedParagraph from '../shared/TimedParagraph'
+import Logo from '../shared/Logo'
 
 interface LoginError {
   reason: string
@@ -72,38 +73,40 @@ function LoginForm() {
   }
 
   return (
-    <div className=''>
-      <div className='flex flex-col items-center'>
+    <div className='flex flex-col shadow-2xl p-2 rounded-md justify-start'>
+      <div className='flex flex-row justify-center mb-4'>
+        <Logo />
+      </div>
+      <div className='flex flex-col'>
         <input
-          className=''
+          className='mb-2 border-1 border-gray-200 p-1'
           type='text'
           value={username}
           onChange={e => setUserName(e.target.value)}
-          placeholder='Username'
+          placeholder='Enter username'
         />
         <input
-          className=''
+          className='mb-2 border-1 border-gray-200 p-1'
           type='password'
           value={password}
           onChange={e => setPassword(e.target.value)}
-          placeholder='Password'
+          placeholder='Enter password'
         />
 
         <div className='flex'>
           <button
-            className='m-4 p-1 w-full w-min-12 border-0 shadow-lg rounded-xs'
+            className='m-4 p-2 w-full w-min-12 border-0 shadow-lg rounded-md'
             type='button'
             onClick={() => login()}
           >
             Login
           </button>
-          <Link
-            className='m-4 p-1 w-full w-min-12 border-0 bg-purple-500 text-white rounded-xs shadow-lg'
-            to='/register'
+          <button
+            className='m-4 p-2 w-full w-min-12 border-0 bg-purple-500 text-white rounded-md shadow-lg'
             onClick={() => register(username, password)}
           >
             Register
-          </Link>
+          </button>
         </div>
 
         {error && (
