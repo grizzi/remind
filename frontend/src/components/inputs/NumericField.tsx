@@ -1,6 +1,6 @@
 import { ErrorMessage, Field } from 'formik'
 
-const TextField = (props: {
+const NumericField = (props: {
   label?: string
   id: string
   disabled?: boolean
@@ -11,6 +11,7 @@ const TextField = (props: {
       <Field
         id={props.id}
         name={props.id}
+        type='number'
         placeholder={props.label}
         disabled={props.disabled}
         className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm'
@@ -23,4 +24,4 @@ const TextField = (props: {
   )
 }
 
-export default TextField
+export default NumericField

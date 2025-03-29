@@ -19,8 +19,8 @@ export const PlanSchema = z
     id: z.number().optional(),
     subscription: z.number().optional(),
     auto_renew: z.boolean(),
-    start_date: z.coerce.date(),
-    end_date: z.coerce.date().optional(),
+    start_date: z.string().date(),
+    end_date: z.string().date().nullable(),
     cost: z.coerce.number().gt(0, 'Insert a positive amount').optional(),
     cost_currency: z.string().optional(),
     billing_frequency: z
@@ -42,7 +42,7 @@ export const PlanSchema = z
 export type Plan = z.infer<typeof PlanSchema>
 
 export const UserSettingsSchema = z.object({
-  remind_within_days: z.coerce.number(),
+  remind_within_days: z.coerce.number().gt(-1, 'Remind days should be 0 or '),
   remind_frequency: z.string(),
   remind_at_most: z.coerce.number(),
   reminders_active: z.boolean(),

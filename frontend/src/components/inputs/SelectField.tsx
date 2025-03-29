@@ -6,7 +6,7 @@ export type SelectOption = {
 }
 
 const SelectField = (props: {
-  label: string
+  label?: string
   id: string
   options: SelectOption[]
   disabled?: boolean
@@ -14,6 +14,7 @@ const SelectField = (props: {
   return (
     <div className='flex flex-col w-full'>
       <div>
+        {props.label ?? <label htmlFor={props.id}></label>}
         <Field
           as='select'
           id={props.id}

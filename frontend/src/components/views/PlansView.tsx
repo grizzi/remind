@@ -18,14 +18,12 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
       </p>
 
       <p className='text-gray-700'>
-        <span className='font-medium'>Start Date:</span>{' '}
-        {plan.start_date.toISOString()}
+        <span className='font-medium'>Start Date:</span> {plan.start_date}
       </p>
 
       {plan.end_date && (
         <p className='text-gray-700'>
-          <span className='font-medium'>End Date:</span>{' '}
-          {plan.end_date.toISOString()}
+          <span className='font-medium'>End Date:</span> {plan.end_date}
         </p>
       )}
 

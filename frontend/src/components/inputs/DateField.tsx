@@ -11,7 +11,7 @@ const parseDateInput = (value: string): Date | null => {
 }
 
 const DateField = (props: {
-  label: string
+  label?: string
   id: string
   disabled?: boolean
 }) => {
@@ -32,7 +32,7 @@ const DateField = (props: {
           const newDate = parseDateInput(e.target.value)
           setFieldValue(props.id, newDate)
         }}
-        placeholder={props.label}
+        placeholder={props?.label}
         className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm'
       />
       <div className='min-h-[1.25rem] text-red-500 text-xs mt-1'>

@@ -1,7 +1,7 @@
 import { ErrorMessage, useField } from 'formik'
 
 const CheckboxField = (props: {
-  label: string
+  label?: string
   id: string
   disabled?: boolean
 }) => {

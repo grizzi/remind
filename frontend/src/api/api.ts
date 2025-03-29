@@ -158,20 +158,21 @@ export namespace Api {
     const result = PlanSchema.safeParse(plan)
     const validated = throwOnError(result)
 
-    const planDateAdjusted = {
-      ...validated,
-      start_date: validated.start_date.toISOString().split('T')[0],
-      end_date: validated.end_date?.toISOString().split('T')[0],
-    }
-    if (planDateAdjusted.id) {
+    // const planDateAdjusted = {
+    //   ...validated,
+    //   start_date: validated.start_date,
+    //   end_date: validated.end_date?,
+    // }
+  
+    if (validated.id) {
       await api.put(
-        `/api/subscriptions/${subscription}/plans/${planDateAdjusted.id}/`,
-        planDateAdjusted,
+        `/api/subscriptions/${subscription}/plans/${validated.id}/`,
+        validated,
       )
     } else {
       await api.post(
         `/api/subscriptions/${subscription}/plans/`,
-        planDateAdjusted,
+        validated,
       )
     }
   }

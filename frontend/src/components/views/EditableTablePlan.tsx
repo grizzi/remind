@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Formik, Form } from 'formik'
 import {
   Plan,
@@ -37,7 +37,7 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
   onDelete,
 }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
-  const [editedPlans, setEditedPlans] = useState<Plan[]>(plans)
+  const [editedPlans, setEditedPlans] = useState<Plan[]>([])
   const [submissionSuccess, setSubmissionSuccess] = useState<PopupInfo | null>(
     null,
   )
@@ -52,6 +52,10 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
     value: b,
     label: b.charAt(0).toUpperCase() + b.slice(1),
   }))
+
+  useEffect(() => {
+    setEditedPlans([...plans])
+  }, [])
 
   return (
     <div>
@@ -139,19 +143,17 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
             >
               <Form className='grid grid-cols-7 gap-4 items-start p-2 mt-2'>
                 <div className='max-w-28'>
-                  <CheckboxField id='auto_renew' label='auto_renew' />
+                  <CheckboxField id='auto_renew' />
                 </div>
-                <DateField id='start_date' label='start_date' />
-                <DateField id='end_date' label='end_date' />
-                <TextField id='cost' label='cost' />
+                <DateField id='start_date' />
+                <DateField id='end_date' />
+                <TextField id='cost' />
                 <SelectField
                   id='cost_currency'
-                  label='cost_currency'
                   options={currenciesOptions}
                 />
                 <SelectField
                   id='billing_frequency'
-                  label='billing_frequency'
                   options={billingOptions}
                 />
                 <div className='flex gap-2'>

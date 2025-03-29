@@ -39,8 +39,10 @@ const SubscriptionEditPage = () => {
 
     context.getLabels().then(l => setLabels(l))
 
-    if (subId && subId !== 'new') {
-      Api.getPlans(subId)
+    console.log("Sub Id is: ", subId)
+    if (subId !== 'new') {
+      console.log("Fetching plans!!!")
+      Api.getPlans(subId!)
         .then(plans => setPlans(plans))
         .catch(error =>
           alert(`Failed to get subscription plans: ${error.message}`),
