@@ -6,6 +6,7 @@ import { UserSettings, UserSettingsSchema, Currency } from '../../api/schema'
 import SelectField, { SelectOption } from '../inputs/SelectField'
 import TextField from '../inputs/TextField'
 import NumericField from '../inputs/NumericField'
+import CheckboxField from '../inputs/CheckboxField'
 
 const UserSettingsForm = ({
   currentSettings,
@@ -41,15 +42,24 @@ const UserSettingsForm = ({
           <NumericField id='remind_within_days' label='Remind within days' />
           <TextField id='remind_frequency' label='Remind frequency' />
           <NumericField id='remind_at_most' label='Remind at most' />
-          <NumericField id='budget' label='Budget' />
-          <SelectField
-            id='budget_currency'
-            label='Default currency'
-            options={currenciesOptions}
-          />
-
+          <div className='flex flex-row'>
+            <div className='mr-2 w-full'>
+              <NumericField id='budget' label='Budget' />
+            </div>
+            <div className='max-w-60'>
+              <SelectField
+                id='budget_currency'
+                label='Currency'
+                options={currenciesOptions}
+              />
+            </div>
+          </div>
+          <div className='flex flex-row justify-between'>
+            <p>Reminders active</p>
+            <CheckboxField id='reminders_active' />
+          </div>
           <button
-            className='flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
+            className='fixed border-0 bottom-8 right-8 flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
             aria-label='Add new entry'
             type='submit'
           >

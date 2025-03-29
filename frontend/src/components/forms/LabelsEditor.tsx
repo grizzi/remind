@@ -64,7 +64,7 @@ const LabelEditor = ({
           <input
             className='max-w-48 pl-2'
             type='text'
-            value={newLabel && newLabel.name}
+            value={newLabel?.name ?? ''}
             onChange={e =>
               setNewLabel({
                 subscription: subscription?.id,
