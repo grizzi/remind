@@ -13,13 +13,10 @@ class Subscription(models.Model):
     remind = models.BooleanField(default=False)
     external_link = models.CharField(default="", blank=True)
     archieved = models.BooleanField(default=False)
-    last_reminder_at = models.DateTimeField(null=True, blank=True)
-    total_reminders = models.SmallIntegerField(default=0)
-
 
 class RemindFrequencyChoices(models.TextChoices):
-    WEEKLY = "W"
-    MONTHLY = "M"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
 
 
 class UserSettings(models.Model):
@@ -30,7 +27,7 @@ class UserSettings(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     remind_within_days = models.BigIntegerField(default=0)
-    remind_frequency = models.CharField(max_length=1,
+    remind_frequency = models.CharField(max_length=20,
                                         choices=RemindFrequencyChoices,
                                         default=RemindFrequencyChoices.MONTHLY)
     remind_at_most = models.SmallIntegerField(default=1)
@@ -54,6 +51,9 @@ class Plan(models.Model):
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name="plans")
     auto_renew  =models.BooleanField(default=True)
     start_date = models.DateField()
+    last_reminder_at = models.DateTimeField(null=True, blank=True)
+    total_reminders = models.SmallIntegerField(default=0)
+
     
     # the next can be null on plans without an explicit end
     end_date = models.DateField(null=True, blank=True)

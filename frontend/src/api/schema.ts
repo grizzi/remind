@@ -48,9 +48,11 @@ export const PlanSchema = z
 
 export type Plan = z.infer<typeof PlanSchema>
 
+export const RemindFrequencySchema = z.enum(['monthly', 'weekly'])
+
 export const UserSettingsSchema = z.object({
   remind_within_days: z.coerce.number().gt(-1, 'Remind days should be 0 or '),
-  remind_frequency: z.string(),
+  remind_frequency: RemindFrequencySchema,
   remind_at_most: z.coerce.number(),
   reminders_active: z.boolean(),
   budget: z.coerce.number(),
@@ -62,8 +64,6 @@ export type UserSettings = z.infer<typeof UserSettingsSchema>
 export const SubscriptionReadOnlySchema = z.object({
   id: z.number(),
   created_at: z.coerce.date(),
-  last_reminder_at: z.coerce.date().nullable(),
-  total_reminders: z.number(),
   user: z.number(),
   archieved: z.boolean(),
 })

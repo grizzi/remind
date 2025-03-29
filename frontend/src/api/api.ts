@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import axios from 'axios'
-import { ACCESS_TOKEN } from '../constants'
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants'
 
 import { User } from './types'
 import {
@@ -18,32 +18,93 @@ import {
   SubscriptionSchema,
 } from './schema'
 
+let isRefreshing = false
+let failedQueue: any[] = []
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error)
+    } else {
+      prom.resolve(token)
+    }
+  })
+
+  failedQueue = []
+}
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_URL,
 })
+
 
 api.interceptors.request.use(
   config => {
     const token = localStorage.getItem(ACCESS_TOKEN)
     if (token) {
-      config.headers = { ...config.headers, Authorization: `Bearer ${token}` }
+      config.headers['Authorization'] = `Bearer ${token}`
     }
     return config
   },
+  error => Promise.reject(error),
+)
 
-  error => {
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token: string) => {
+              originalRequest.headers['Authorization'] = 'Bearer ' + token
+              resolve(api(originalRequest))
+            },
+            reject: (err: any) => {
+              reject(err)
+            },
+          })
+        })
+      }
+
+      originalRequest._retry = true
+      isRefreshing = true
+
+      try {
+        const newToken = await refreshToken()
+        processQueue(null, newToken)
+        if (newToken) {
+          originalRequest.headers['Authorization'] = 'Bearer ' + newToken
+          return api(originalRequest)
+        }
+      } catch (err) {
+        processQueue(err, null)
+        throw err
+      } finally {
+        isRefreshing = false
+      }
+    }
+
     return Promise.reject(error)
   },
 )
 
-// api.interceptors.response.use(
-//   response => response,
-//   error => {
-//     if (error.response.status === 403) {
-
-//     }
-//   },
-// )
+export const refreshToken = async (): Promise<string | null> => {
+  try {
+    const response = await axios.post('/api/token', {
+      refresh_token: localStorage.getItem('refresh_token'),
+    })
+    const newToken = response.data.access_token
+    localStorage.setItem(ACCESS_TOKEN, newToken)
+    return newToken
+  } catch (error) {
+    localStorage.removeItem(ACCESS_TOKEN)
+    localStorage.removeItem(REFRESH_TOKEN)
+    return null
+  }
+}
 
 export namespace Api {
   export const login = async (user: User) => {
@@ -163,17 +224,14 @@ export namespace Api {
     //   start_date: validated.start_date,
     //   end_date: validated.end_date?,
     // }
-  
+
     if (validated.id) {
       await api.put(
         `/api/subscriptions/${subscription}/plans/${validated.id}/`,
         validated,
       )
     } else {
-      await api.post(
-        `/api/subscriptions/${subscription}/plans/`,
-        validated,
-      )
+      await api.post(`/api/subscriptions/${subscription}/plans/`, validated)
     }
   }
 

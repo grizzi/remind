@@ -1,6 +1,14 @@
 import { UserSettings } from '../../api/schema'
+import {
+  TbCalendarBolt,
+  TbMoneybag,
+  TbCalendarRepeat,
+  TbBell,
+  TbTimeDuration5,
+} from 'react-icons/tb'
 
 import React from 'react'
+import CheckboxField from '../inputs/CheckboxField'
 
 interface UserSettingsViewProps {
   settings: UserSettings
@@ -23,9 +31,57 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
   } = settings
 
   return (
-    <div className='max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-md'>
-      <div className='flex items-center justify-between mb-6'>
-        <h2 className='text-2xl font-semibold'>User Settings</h2>
+    <div className='max-w-2xl bg-white'>
+      <p className='text-3xl mb-6'>User Settings</p>
+
+      <div className='grid grid-cols-[1.5rem_auto] gap-4'>
+        <TbCalendarBolt className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <div className='flex flex-row items-center gap-2'>
+          <p>
+            Remind me
+            <span className='font-extrabold'> {remind_within_days}</span> days
+            before expiry/renewal
+          </p>
+        </div>
+
+        <TbCalendarRepeat className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <div className='flex flex-row items-center gap-2'>
+          <p>
+            Remind me every
+            <span className='font-extrabold'>
+              {' '}
+              {remind_frequency.split('ly')[0]}
+            </span>
+          </p>
+        </div>
+
+        <TbTimeDuration5 className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <div className='flex flex-row items-center gap-2'>
+          <p>
+            Remind me at most
+            <span className='font-extrabold'> {remind_at_most}</span> time
+            {remind_at_most > 1 ? 's' : ''}
+          </p>
+        </div>
+
+        <TbMoneybag className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <div className='flex flex-row items-center gap-2'>
+          <p className='font-extrabold'>
+            {budget.toFixed(2)} {budget_currency}
+          </p>
+        </div>
+
+        <TbBell className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <div className='flex flex-row items-center gap-2'>
+          <p>
+            Reminders:{' '}
+            <span className='font-extrabold'>
+              {reminders_active ? 'Active' : 'Disabled'}
+            </span>
+          </p>
+        </div>
+      </div>
+      <div className='fixed border-0 bottom-8 right-8 flex flex-row justify-end mt-6 mb-6'>
         <div className='space-x-2'>
           <button
             onClick={onEdit}
@@ -41,31 +97,8 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
           </button>
         </div>
       </div>
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-        <SettingItem label='Remind Within Days' value={remind_within_days} />
-        <SettingItem label='Remind Frequency' value={remind_frequency} />
-        <SettingItem label='Remind At Most' value={remind_at_most} />
-        <SettingItem
-          label='Reminders Active'
-          value={reminders_active ? 'Yes' : 'No'}
-        />
-        <SettingItem
-          label='Budget'
-          value={`${budget.toFixed(2)} ${budget_currency}`}
-        />
-      </div>
     </div>
   )
 }
-
-const SettingItem: React.FC<{ label: string; value: string | number }> = ({
-  label,
-  value,
-}) => (
-  <div className='flex flex-col'>
-    <span className='text-sm text-gray-500'>{label}</span>
-    <span className='text-base font-medium text-gray-900'>{value}</span>
-  </div>
-)
 
 export default UserSettingsView

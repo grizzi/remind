@@ -2,9 +2,13 @@ import { toFormikValidate } from '../../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
 
-import { UserSettings, UserSettingsSchema, Currency } from '../../api/schema'
+import {
+  UserSettings,
+  UserSettingsSchema,
+  Currency,
+  RemindFrequencySchema,
+} from '../../api/schema'
 import SelectField, { SelectOption } from '../inputs/SelectField'
-import TextField from '../inputs/TextField'
 import NumericField from '../inputs/NumericField'
 import CheckboxField from '../inputs/CheckboxField'
 
@@ -32,6 +36,7 @@ const UserSettingsForm = ({
 
   return (
     <div>
+      <p className='text-3xl mb-6'>Edit User Settings</p>
       <Formik
         initialValues={currentSettings}
         enableReinitialize
@@ -40,7 +45,16 @@ const UserSettingsForm = ({
       >
         <Form>
           <NumericField id='remind_within_days' label='Remind within days' />
-          <TextField id='remind_frequency' label='Remind frequency' />
+          <SelectField
+            id='remind_frequency'
+            label='Remind frequency'
+            options={RemindFrequencySchema.options.map(opt => {
+              return {
+                label: opt,
+                value: opt,
+              }
+            })}
+          />
           <NumericField id='remind_at_most' label='Remind at most' />
           <div className='flex flex-row'>
             <div className='mr-2 w-full'>

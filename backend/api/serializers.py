@@ -50,7 +50,9 @@ class PlanSerializer(serializers.ModelSerializer):
         model = Plan
         fields = "__all__"
 
-        extra_kwargs = {"user": {"read_only": True}}
+        extra_kwargs = {"user": {"read_only": True}, 
+                        "last_reminder_at": {"read_only": True}, 
+                        "total_reminder": {"read_only": True}}
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
