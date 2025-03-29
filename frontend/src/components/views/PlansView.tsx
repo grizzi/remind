@@ -1,48 +1,60 @@
 import { Plan } from '../../api/schema'
 
-const PlanCard = ({ plan }: { plan: Plan }) => {
-  return (
-    <div className='flex flex-col rounded-2xl shadow-md p-6 bg-white border border-gray-200'>
-      {plan.cost && plan.cost_currency ? (
-        <p className='text-lg text-gray-700'>
-          <span className='font-medium'>Cost:</span> {plan.cost}{' '}
-          {plan.cost_currency.toUpperCase()}
-        </p>
-      ) : (
-        <p className='text-gray-500 italic'>No cost specified</p>
-      )}
+import React from 'react'
+import {
+  FaCalendarAlt,
+  FaDollarSign,
+  FaRegClock,
+  FaCheckCircle,
+  FaTimesCircle,
+} from 'react-icons/fa'
 
-      <p className='text-gray-700'>
-        <span className='font-medium'>Auto Renew:</span>{' '}
-        {plan.auto_renew ? 'Yes' : 'No'}
-      </p>
-
-      <p className='text-gray-700'>
-        <span className='font-medium'>Start Date:</span> {plan.start_date}
-      </p>
-
-      {plan.end_date && (
-        <p className='text-gray-700'>
-          <span className='font-medium'>End Date:</span> {plan.end_date}
-        </p>
-      )}
-
-      {plan.billing_frequency && (
-        <p className='text-gray-700'>
-          <span className='font-medium'>Billing Frequency:</span>{' '}
-          {plan.billing_frequency.charAt(0).toUpperCase() +
-            plan.billing_frequency.slice(1)}
-        </p>
-      )}
-    </div>
-  )
+type PlanTableProps = {
+  plans: Plan[]
 }
 
-const PlansView = ({ plans }: { plans: Plan[] }) => {
+const PlansView: React.FC<PlanTableProps> = ({ plans }) => {
   return (
-    <div>
-      {plans.map(p => (
-        <PlanCard plan={p} />
+    <div className='overflow-x-auto border-gray-200 shadow-sm'>
+      {plans.map((plan, _) => (
+        <div className='grid grid-cols-6'>
+          <div className='px-4 py-3 flex items-center gap-2'>
+            {plan.name === '' ? '(Untitled)' : plan.name}
+          </div>
+          <div className='min-w-40 px-4 py-3 flex items-center gap-2'>
+            {plan.auto_renew ? (
+              <>
+                <FaCheckCircle className='text-green-600' />
+                Autorenews
+              </>
+            ) : (
+              <>
+                <FaTimesCircle className='text-red-500' />
+                Expires
+              </>
+            )}
+          </div>
+          <div className='px-4 py-3 flex items-center gap-2'>
+            <FaCalendarAlt className='text-gray-500' />
+            {new Date(plan.start_date).toLocaleDateString()}
+          </div>
+          <div className='px-4 py-3 flex items-center gap-2'>
+            <FaCalendarAlt className='text-gray-500' />
+            {plan.end_date
+              ? new Date(plan.end_date).toLocaleDateString()
+              : 'Ongoing'}
+          </div>
+          <div className='px-4 py-3 flex items-center gap-2'>
+            <FaDollarSign className='text-gray-500' />
+            {plan.cost !== undefined && plan.cost_currency
+              ? `${plan.cost.toFixed(2)} ${plan.cost_currency}`
+              : '—'}
+          </div>
+          <div className='px-4 py-3 flex items-center gap-2'>
+            <FaRegClock className='text-gray-500' />
+            {plan.billing_frequency ?? '—'}
+          </div>
+        </div>
       ))}
     </div>
   )

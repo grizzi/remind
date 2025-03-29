@@ -26,6 +26,7 @@ export type BillingFrequency = z.infer<typeof BillingFrequencySchema>
 export const PlanSchema = z
   .object({
     id: z.number().optional(),
+    name: z.string(),
     subscription: z.number().optional(),
     auto_renew: z.boolean(),
     start_date: z.string().date(),

@@ -49,6 +49,7 @@ class PlanFrequencyChoices(models.TextChoices):
 
 class Plan(models.Model):
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name="plans")
+    name = models.CharField(max_length=100, default="", null=True, blank=True)
     auto_renew  =models.BooleanField(default=True)
     start_date = models.DateField()
     last_reminder_at = models.DateTimeField(null=True, blank=True)

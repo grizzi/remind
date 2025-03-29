@@ -87,6 +87,7 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
           setEditedPlans([
             {
               subscription: subscription?.id,
+              name: '',
               auto_renew: false,
               start_date: formatDate(new Date()),
               end_date: formatDate(new Date()),
@@ -110,8 +111,8 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
       )}
       {editedPlans.length > 0 && (
         <div className='overflow-x-auto rounded-2xl shadow-2xl max-w-600'>
-          <div className='grid grid-cols-7 gap-4 bg-gray-100 p-2 items-center'>
-            <div className='flex flex-row justify-center'>Auto Renew</div>
+          <div className='grid grid-cols-8 gap-4 bg-gray-100 p-2 items-center'>
+            <div className='flex flex-row justify-center'>Name</div>
             <div className='flex flex-row justify-center'>Start Date</div>
             <div className='flex flex-row justify-center'>End Date</div>
             <div className='flex flex-row justify-center'>Cost</div>
@@ -119,6 +120,7 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
             <div className='flex flex-row justify-center'>
               Billing Frequency
             </div>
+            <div className='flex flex-row justify-center'>Auto Renew</div>
             <div className='flex flex-row justify-center'>Actions</div>
           </div>
 
@@ -146,15 +148,16 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
                   )
               }}
             >
-              <Form className='grid grid-cols-7 gap-4 items-start p-2 mt-2'>
-                <div className='max-w-28'>
-                  <CheckboxField id='auto_renew' />
-                </div>
+              <Form className='grid grid-cols-8 gap-4 items-start p-2 mt-2'>
+                <TextField id='name' />
                 <DateField id='start_date' />
                 <DateField id='end_date' />
                 <TextField id='cost' />
                 <SelectField id='cost_currency' options={currenciesOptions} />
                 <SelectField id='billing_frequency' options={billingOptions} />
+                <div className='w-full'>
+                  <CheckboxField id='auto_renew' />
+                </div>
                 <div className='flex gap-2'>
                   <button
                     type='submit'

@@ -179,7 +179,7 @@ const SubscriptionsPage = () => {
         />
       </div>
       <FloatingActionButton onClick={() => setAddSubscription(true)} />
-      <div>
+      <div className='pr-2 pl-2'>
         <p className='text-4xl'>Subscriptions</p>
         {subscriptions
           .sort((a, b) => {
