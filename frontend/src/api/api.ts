@@ -15,6 +15,7 @@ import {
   PlansListSchema,
   Plan,
   PlanSchema,
+  SubscriptionSchema,
 } from './schema'
 
 const api = axios.create({
@@ -89,10 +90,14 @@ export namespace Api {
 
   export const createSubscription = async (
     sub: Partial<Subscription>,
-  ): Promise<void> => {
+  ): Promise<Subscription> => {
     const result = SubscriptionReadWriteSchema.safeParse(sub)
     const validated = throwOnError(result)
-    await api.post('/api/subscriptions/', validated)
+    const response = await api.post('/api/subscriptions/', validated)
+    const subscription = SubscriptionSchema.safeParse(response.data)
+
+    const subscription_validated = throwOnError(subscription)
+    return subscription_validated
   }
 
   export const updateSubscription = async (
@@ -149,6 +154,7 @@ export namespace Api {
     subscription: number,
     plan: Plan,
   ): Promise<void> => {
+    console.log('Updating plan')
     const result = PlanSchema.safeParse(plan)
     const validated = throwOnError(result)
 

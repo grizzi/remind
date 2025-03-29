@@ -36,7 +36,7 @@ const SubscriptionView = ({
 
         <div className='mt-2 mb-2 p-0 flex flex-row'>
           {labels.map(l => (
-            <TagChip name={l.name} />
+            <TagChip key={l.name} name={l.name} />
           ))}
         </div>
       </div>

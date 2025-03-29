@@ -26,19 +26,17 @@ const SubscriptionCardView = ({
     >
       <div className='flex flex-col justify-around p-1'>
         <p className='text-2xl'>{subscription.title}</p>
-        <p className=''>
-          {plans.length > 0 ? (
-            <p>
-              {plans[0].cost} {plans[0].cost_currency}
-            </p>
-          ) : (
-            <></>
-          )}
-        </p>
+        {plans.length > 0 ? (
+          <p>
+            {plans[0].cost} {plans[0].cost_currency}
+          </p>
+        ) : (
+          <></>
+        )}
       </div>
       <div className='flex flex-wrap justify-end items-start p-2'>
         {labels.map(l => (
-          <TagChip name={l.name} />
+          <TagChip key={l.name} name={l.name} />
         ))}
       </div>
     </div>

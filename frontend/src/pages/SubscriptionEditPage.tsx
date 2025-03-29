@@ -1,7 +1,8 @@
 import SubscriptionForm from '../components/forms/SubscriptionForm'
 import { Api } from '../api/api'
-import { Navigate, Outlet, useParams } from 'react-router'
+import { Navigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 import {
   Subscription,
@@ -12,7 +13,6 @@ import {
   Plan,
 } from '../api/schema'
 import { useAppContext } from '../context'
-import LabelEditor from '../components/forms/LabelsEditor'
 import EditablePlanTable from '../components/views/EditableTablePlan'
 
 const SubscriptionEditPage = () => {
@@ -23,9 +23,8 @@ const SubscriptionEditPage = () => {
   const [plans, setPlans] = useState<Plan[]>([])
   const [settings, setSettings] = useState<UserSettings>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
-  const [editingPlan, setEditingPlan] = useState<boolean>(false)
-
-  const [editing, setEditing] = useState(true)
+  const [editing, setEditing] = useState<boolean>(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const id = Number(subId)
@@ -40,7 +39,7 @@ const SubscriptionEditPage = () => {
 
     context.getLabels().then(l => setLabels(l))
 
-    if (subId) {
+    if (subId && subId !== 'new') {
       Api.getPlans(subId)
         .then(plans => setPlans(plans))
         .catch(error =>
@@ -79,8 +78,8 @@ const SubscriptionEditPage = () => {
     const id = Number(subId)
     if (id === undefined || isNaN(id)) {
       Api.createSubscription(subscription)
-        .then(() => {
-          setEditing(false)
+        .then(subscription => {
+          navigate(`/subscriptions/${subscription.id}/edit/`)
         })
         .catch(error => {
           alert(`Failed to create subscription!: ${JSON.stringify(error)}`)
@@ -125,18 +124,20 @@ const SubscriptionEditPage = () => {
           />
         </div>
 
-        <div>
-          <EditablePlanTable
-            subscription={subscription}
-            plans={plans}
-            settings={settings}
-            currencies={currencies}
-            onUpdate={plan => {
-              Api.updatePlan(subscription!.id, plan)
-            }}
-            onDelete={plan => Api.deletePlan(subscription!.id, plan)}
-          />
-        </div>
+        {subscription?.id && (
+          <div>
+            <EditablePlanTable
+              subscription={subscription}
+              plans={plans}
+              settings={settings}
+              currencies={currencies}
+              onUpdate={async plan => {
+                await Api.updatePlan(subscription!.id, plan)
+              }}
+              onDelete={plan => Api.deletePlan(subscription!.id, plan)}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

@@ -19,8 +19,8 @@ type EditablePlanTableProps = {
   plans: Plan[]
   settings: UserSettings
   currencies: Currency[]
-  onUpdate: (plan: Plan) => void
-  onDelete: (plan: Plan) => void
+  onUpdate: (plan: Plan) => Promise<void>
+  onDelete: (plan: Plan) => Promise<void>
 }
 
 type PopupInfo = {
@@ -120,14 +120,21 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
               initialValues={plan}
               enableReinitialize
               validate={toFormikValidate(PlanSchema)}
-              onSubmit={async values => {
+              onSubmit={values => {
                 onUpdate(values)
-
-                setEditingIndex(null)
-                setSubmissionSuccess({
-                  reason: 'Plan updated',
-                  when: Date.now(),
-                })
+                  .then(() => setEditingIndex(null))
+                  .then(() =>
+                    setSubmissionSuccess({
+                      reason: 'Plan updated',
+                      when: Date.now(),
+                    }),
+                  )
+                  .catch(err =>
+                    setSubmissionError({
+                      reason: `Failed to update the plan: ${err}`,
+                      when: Date.now(),
+                    }),
+                  )
               }}
             >
               <Form className='grid grid-cols-7 gap-4 items-start p-2 mt-2'>
