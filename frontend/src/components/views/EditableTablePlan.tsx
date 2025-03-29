@@ -41,6 +41,11 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
   const [submissionSuccess, setSubmissionSuccess] = useState<PopupInfo | null>(
     null,
   )
+
+  const formatDate = (date: Date) => {
+    return date.toISOString().split('T')[0]
+  }
+
   const [submissionError, setSubmissionError] = useState<PopupInfo | null>(null)
 
   const currenciesOptions = currencies.map(c => ({
@@ -83,8 +88,8 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
             {
               subscription: subscription?.id,
               auto_renew: false,
-              start_date: new Date(),
-              end_date: new Date(),
+              start_date: formatDate(new Date()),
+              end_date: formatDate(new Date()),
               cost: 0,
               cost_currency: settings?.budget_currency || 'USD',
               billing_frequency: 'monthly',
@@ -148,14 +153,8 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
                 <DateField id='start_date' />
                 <DateField id='end_date' />
                 <TextField id='cost' />
-                <SelectField
-                  id='cost_currency'
-                  options={currenciesOptions}
-                />
-                <SelectField
-                  id='billing_frequency'
-                  options={billingOptions}
-                />
+                <SelectField id='cost_currency' options={currenciesOptions} />
+                <SelectField id='billing_frequency' options={billingOptions} />
                 <div className='flex gap-2'>
                   <button
                     type='submit'
