@@ -14,6 +14,15 @@ export const LabelSchema = z.object({
 
 export type Label = z.infer<typeof LabelSchema>
 
+export const BillingFrequencySchema = z.enum([
+  'daily',
+  'weekly',
+  'monthly',
+  'yearly',
+])
+
+export type BillingFrequency = z.infer<typeof BillingFrequencySchema>
+
 export const PlanSchema = z
   .object({
     id: z.number().optional(),
@@ -23,9 +32,7 @@ export const PlanSchema = z
     end_date: z.string().date().nullable(),
     cost: z.coerce.number().gt(0, 'Insert a positive amount').optional(),
     cost_currency: z.string().optional(),
-    billing_frequency: z
-      .enum(['daily', 'weekly', 'monthly', 'yearly'])
-      .optional(),
+    billing_frequency: BillingFrequencySchema.optional(),
   })
   .refine(
     data => {
