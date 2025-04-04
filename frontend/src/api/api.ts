@@ -37,7 +37,6 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_APP_URL,
 })
 
-
 api.interceptors.request.use(
   config => {
     const token = localStorage.getItem(ACCESS_TOKEN)
@@ -93,8 +92,8 @@ api.interceptors.response.use(
 
 export const refreshToken = async (): Promise<string | null> => {
   try {
-    const response = await axios.post('/api/token', {
-      refresh_token: localStorage.getItem('refresh_token'),
+    const response = await axios.post('/api/token/', {
+      refresh_token: localStorage.getItem(REFRESH_TOKEN),
     })
     const newToken = response.data.access_token
     localStorage.setItem(ACCESS_TOKEN, newToken)
@@ -119,7 +118,7 @@ export namespace Api {
 
   function throwOnError(result: Partial<Result>) {
     if (!result.success) {
-      alert(`API response failed: ${result.error}`)
+      // alert(`API response failed: ${result.error}`)
       throw new Error(`API response validation failed: ${result.error}`)
     }
     return result.data

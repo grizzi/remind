@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
+from django_celery_beat.models import PeriodicTask
 
 # See money django lib: https://github.com/django-money/django-money
 
@@ -37,6 +38,10 @@ class UserSettings(models.Model):
                         default=100.0,
                         default_currency='USD',
                         validators=[MinMoneyValidator(0)])
+    task = models.OneToOneField(
+        PeriodicTask, null=True, blank=True, on_delete=models.SET_NULL
+    )
+
 
 
 

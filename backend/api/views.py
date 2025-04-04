@@ -1,17 +1,23 @@
+import json
+
+from django.db import transaction
 from django.http import Http404
 from django.contrib.auth.models import User
 from djmoney.settings import CURRENCY_CHOICES
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_filters.rest_framework import DjangoFilterBackend
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 from rest_framework import generics, views
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import APIException
 
 from .serializers import UserSerializer, SubscriptionSerializer, UserSettingsSerializer, LabelSerializer, PlanSerializer
 from .models import Subscription, UserSettings, Label, Plan
+from .tasks import send_welcome_email
 
 from loguru import logger
 
@@ -197,12 +203,6 @@ class UserSettingsDetails(views.APIView):
         logger.error(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
-        else:
-            print(serializer.errors)
-
 
 class CreateUserView(views.APIView):
     queryset = User.objects.all()
@@ -210,19 +210,43 @@ class CreateUserView(views.APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, format=None):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            with transaction.atomic():
+                user: User = None
+                serializer = UserSerializer(data=request.data)
+                if serializer.is_valid():
+                    user = serializer.save()
+                else:
+                    logger.error(serializer.errors)
+                    raise NameError("Invalid data")
 
-        logger.error(serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                # Create default user settings
+                user_settings = UserSettings.objects.create(user=user)
 
+                # Send welcome email
+                send_welcome_email.delay(user.username, user.email)
 
-@receiver(post_save, sender=User)
-def create_user_picks(sender, instance, created, **kwargs):
-    if created:
-        UserSettings.objects.create(user=instance)
+                # Create monitoring task
+                schedule, _ = IntervalSchedule.objects.get_or_create(
+                    every=1,
+                    period=IntervalSchedule.HOURS,
+                )
+
+                task = PeriodicTask.objects.create(
+                    interval=schedule,
+                    name=f"user_{user.id}_monitor",
+                    task="api.tasks.user_monitor",
+                    args=json.dumps([
+                        user.id,
+                    ]),
+                )
+                user_settings.task = task
+                user_settings.save()
+                return Response(serializer.data,
+                                status=status.HTTP_201_CREATED)
+
+        except Exception as exc:
+            return Response(exc, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DeleteUserView(generics.DestroyAPIView):

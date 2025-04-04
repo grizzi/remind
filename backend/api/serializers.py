@@ -39,7 +39,7 @@ class UserSettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserSettings
-        fields = "__all__"
+        exclude = ('task', )
 
         extra_kwargs = {"user": {"read_only": True}}
 
