@@ -1,5 +1,7 @@
 from django.db import transaction
 from django.contrib.auth.models import User
+from django.core.validators import validate_email
+
 from rest_framework import serializers
 from .models import Subscription, UserSettings, Label, Plan
 
@@ -10,7 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "password"]  # include only these fields
+        fields = ["id", "username", "email",
+                  "password"]  # include only these fields
 
         # we want to tell Django to return (serialize) the user withouth
         # the password and instead write the user (deserialize from the frontend)
@@ -22,6 +25,12 @@ class UserSerializer(serializers.ModelSerializer):
     # If we want to be able to return complete object instances based on the validated data
     # we need to implement one or both of the .create() and .update() methods.
     def create(self, validated_data):
+        if "email" not in validated_data:
+            raise serializers.ValidationError("Email is required")
+
+        if validate_email(validated_data["email"]):
+            raise serializers.ValidationError("Invalid email address")
+
         user = User.objects.create_user(**validated_data)
         return user
 
@@ -50,9 +59,17 @@ class PlanSerializer(serializers.ModelSerializer):
         model = Plan
         fields = "__all__"
 
-        extra_kwargs = {"user": {"read_only": True}, 
-                        "last_reminder_at": {"read_only": True}, 
-                        "total_reminder": {"read_only": True}}
+        extra_kwargs = {
+            "user": {
+                "read_only": True
+            },
+            "last_reminder_at": {
+                "read_only": True
+            },
+            "total_reminder": {
+                "read_only": True
+            }
+        }
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

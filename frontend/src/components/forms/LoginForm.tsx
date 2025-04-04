@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router'
 import api from '../../api/api'
-import { Link } from 'react-router'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../constants'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import TimedParagraph from '../shared/TimedParagraph'
@@ -14,6 +13,7 @@ interface LoginError {
 
 function LoginForm() {
   const [username, setUserName] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [error, setError] = useState<LoginError>()
   const [isRegistered, setIsRegistered] = useState<boolean>(false)
@@ -50,9 +50,9 @@ function LoginForm() {
       })
   }
 
-  const register = (username: string, password: string) => {
+  const register = (username: string, password: string, email: string) => {
     api
-      .post('/api/register/', { username, password })
+      .post('/api/register/', { username, password, email })
       .then(() => {
         setIsRegistered(true)
         setError(undefined)
@@ -87,6 +87,13 @@ function LoginForm() {
         />
         <input
           className='mb-2 border-1 border-gray-200 p-1'
+          type='text'
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder='Enter email'
+        />
+        <input
+          className='mb-2 border-1 border-gray-200 p-1'
           type='password'
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -103,7 +110,7 @@ function LoginForm() {
           </button>
           <button
             className='m-4 p-2 w-full w-min-12 border-0 bg-purple-500 text-white rounded-md shadow-lg'
-            onClick={() => register(username, password)}
+            onClick={() => register(username, password, email)}
           >
             Register
           </button>

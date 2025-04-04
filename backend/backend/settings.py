@@ -32,7 +32,7 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 REST_FRAMEWORK = {
-    # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html
+    # https://djan3go-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html
     "DEFAULT_AUTHENTICATION_CLASSES":
     ("rest_framework_simplejwt.authentication.JWTAuthentication", ),
     "DEFAULT_PERMISSION_CLASSES": [
