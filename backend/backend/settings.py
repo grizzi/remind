@@ -106,6 +106,9 @@ DATABASES = {
         "USER": "postgres",
         "PASSWORD": '',  # empty since we are trusting local connections
         "PORT": '5432'
+    },
+    'test': {
+        'NAME': "test_remind",
     }
 }
 
