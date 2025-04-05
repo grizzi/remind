@@ -4,3 +4,14 @@ repos:
     hooks:
       - id: uv-lock
 
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+    - id: check-merge-conflict
+      name: "🌳 git · Detect conflict markers"
+    - id: forbid-new-submodules
+      name: "🌳 git · Prevent submodule creation"
+    - id: check-added-large-files
+      name: "🌳 git · Block large file commits"
+      args: ['--maxkb=5000']
