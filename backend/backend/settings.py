@@ -11,6 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# This is also the server jwt signing key
 SECRET_KEY = 'django-insecure-727=8n2)3#7&w=bzp(t80no@1c_lby)a$1cp&t@!g(+ar6-w=t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -30,13 +31,15 @@ REST_FRAMEWORK = {
     ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
+# See https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True
 }
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,12 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'djmoney',
-    'api',
-    'rest_framework',
-    'corsheaders',
     'django_celery_results',
     'django_celery_beat',
+    'djmoney',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -85,7 +89,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         "ENGINE": 'django.db.backends.postgresql',
@@ -102,7 +105,6 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME':
