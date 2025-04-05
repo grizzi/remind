@@ -24,4 +24,7 @@ dependencies = [
     "redis>=5.2.1",
 ]
 
-[]
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+]
