@@ -3,11 +3,11 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-merge-conflict
-        name: '🌳 git · Detect conflict markers'
+        name: 'Detect conflict markers'
       - id: forbid-new-submodules
-        name: '🌳 git · Prevent submodule creation'
+        name: 'Prevent submodule creation'
       - id: check-added-large-files
-        name: '🌳 git · Block large file commits'
+        name: 'Block large file commits'
         args: ['--maxkb=5000']
       - id: trailing-whitespace
         name: 'Remove trailing withspaces'
@@ -17,9 +17,10 @@ repos:
     rev: 0.6.12
     hooks:
       - id: uv-lock
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.4
-    hooks:
-      - id: ruff
-        args: [ --fix ]
-      - id: ruff-format
+  # Not working in ruff
+  # - repo: https://github.com/astral-sh/ruff-pre-commit
+  #   rev: v0.11.4
+  #   hooks:
+  #     - id: ruff
+  #       args: [--fix]
+  #     - id: ruff-format
