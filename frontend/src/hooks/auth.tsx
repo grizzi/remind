@@ -4,6 +4,8 @@ import { toast } from 'react-toastify'
 import React from 'react'
 import api from '../api/api'
 import axios, { AxiosError, AxiosResponse } from 'axios'
+import { jwtDecode } from 'jwt-decode'
+
 import { User } from '../api/schema'
 import { ACCESS_TOKEN, REFRESH_TOKEN, USER } from '../constants'
 
@@ -13,7 +15,7 @@ type AuthContextType = {
   loginUser: (username: string, password: string) => void
   logout: () => void
   isLoggedIn: () => boolean
-  refreshUser: () => void
+  refreshUser: (from: string) => void
 }
 
 interface AuthResponse {
@@ -96,50 +98,65 @@ export const AuthContextProvider = ({
       })
       .then((res: AxiosResponse<AuthResponse>) => {
         if (res) {
-          localStorage.setItem(ACCESS_TOKEN, res?.data.access)
           const userObj = {
             username: username,
             email: res?.data?.user!.email,
           }
+          localStorage.setItem(ACCESS_TOKEN, res?.data.access)
+          localStorage.setItem(REFRESH_TOKEN, res?.data.access)
           localStorage.setItem(USER, JSON.stringify(userObj))
           setAccessToken(res?.data.access!)
           setRefreshToken(res?.data.refresh!)
           setUser(userObj!)
           toast.success('Login Success!')
-          navigate('/subscriptions')
+          navigate('/subscriptions', { replace: true })
         }
       })
       .catch(_ => toast.warning('Server error occured'))
   }
 
   const isLoggedIn = () => {
-    return !!user
+    const token = localStorage.getItem(ACCESS_TOKEN)
+    if (!token) {
+      return false
+    }
+
+    const decoded = jwtDecode(token)
+    const tokenExpiration = decoded.exp
+    const now = Date.now() / 1000
+
+    if (tokenExpiration === undefined || tokenExpiration < now) {
+      return false
+    } else {
+      return true
+    }
   }
 
-  const refreshUser = () => {
+  const refreshUser = (from: string) => {
     api
       .post<AuthResponse>('/api/token/refresh/', {
         refresh: refreshToken,
       })
       .then((res: AxiosResponse<AuthResponse>) => {
         if (res.status === 200) {
-          localStorage.setItem(ACCESS_TOKEN, res?.data.access)
           const userObj = {
             username: res!.data.user!.username,
             email: res!.data.user!.email,
           }
+          localStorage.setItem(ACCESS_TOKEN, res?.data.access)
+          localStorage.setItem(REFRESH_TOKEN, res?.data.refresh)
           localStorage.setItem(USER, JSON.stringify(userObj))
+
           setAccessToken(res?.data.access!)
           setRefreshToken(res?.data.refresh!)
           setUser(userObj!)
-          toast.success('Login Success!')
-          navigate('/search')
+          navigate(from, { replace: true })
         } else {
           throw new Error('Failed to refresh the token')
         }
       })
       .catch((e: Error) => {
-        toast.warning(e.message)
+        console.log('Failed to refresh the token', e.message)
         navigate('/login')
       })
   }

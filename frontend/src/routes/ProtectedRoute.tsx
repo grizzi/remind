@@ -8,14 +8,14 @@ const ProtectedRoute = ({ children }: Props) => {
   const location = useLocation()
   const { isLoggedIn, refreshUser } = useAuth()
 
-  if (!isLoggedIn){
-    refreshUser();
+  if (!isLoggedIn()) {
+    console.log('Not logging in, trying to refresh token')
+    refreshUser(location.pathname)
+  } else {
+    return <>{children}</>
   }
-  return isLoggedIn() ? (
-    <>{children}</>
-  ) : (
-    <Navigate to='/login' state={{ from: location }} replace />
-  )
+
+  return <></>
 }
 
 export default ProtectedRoute

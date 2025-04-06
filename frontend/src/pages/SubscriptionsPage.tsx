@@ -51,6 +51,7 @@ const SubscriptionsPage = () => {
   const [settings, setSettings] = useState<UserSettings>()
 
   useEffect(() => {
+    setFocusSubscriptionId(null)
     const forceUpdate = true
     context
       .getSubscriptions(forceUpdate)
