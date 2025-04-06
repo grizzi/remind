@@ -1,6 +1,6 @@
 import LoginForm from '../components/forms/LoginForm'
 
-export const Login = () => {
+export const LoginPage = () => {
   return (
     <div className='px-6 pt-8 flex flex-col items-center'>
       <LoginForm />
@@ -8,4 +8,4 @@ export const Login = () => {
   )
 }
 
-export default Login
+export default LoginPage

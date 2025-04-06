@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from django.core.validators import validate_email
 
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.settings import api_settings
+
 from .models import Subscription, UserSettings, Label, Plan
 
 from loguru import logger
@@ -33,7 +37,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         user = User.objects.create_user(**validated_data)
         return user
-
 
 class UserSettingsSerializer(serializers.ModelSerializer):
 
@@ -122,7 +125,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                                  labels_data: dict,
                                  user=User()):
         """
-        If label already was attached to this subscription, update it, 
+        If label already was attached to this subscription, update it,
         otherwise create a new one
         """
         existing_labels = {label.id: label for label in all_labels}
@@ -144,3 +147,34 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         # Delete labels that were removed
         for label in existing_labels.values():
             label.delete()
+
+
+# Customization of the token api
+class UserTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [ "username", "email"]
+
+
+class TokenObtainPairWithUserSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data["user"] =  UserTokenSerializer(self.user).data
+
+        return data
+
+class TokenRefreshWithUserSerializer(TokenRefreshSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = RefreshToken(attrs["refresh"])
+        user_id = refresh.payload.get(api_settings.USER_ID_CLAIM, None)
+
+        if user_id:
+            user = User.objects.get(id=user_id)
+            data["user"] =  UserTokenSerializer(user).data
+        else:
+            raise serializers.ValidationError("Invalid token: missing user_id")
+
+        return data

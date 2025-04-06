@@ -2,7 +2,6 @@ import { z } from 'zod'
 import axios from 'axios'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants'
 
-import { User } from './types'
 import {
   SubscriptionsListSchema,
   UserSettingsSchema,
@@ -106,10 +105,6 @@ export const refreshToken = async (): Promise<string | null> => {
 }
 
 export namespace Api {
-  export const login = async (user: User) => {
-    return await api.post('/api/token/', user)
-  }
-
   interface Result {
     success: boolean
     data: any

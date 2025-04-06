@@ -13,9 +13,10 @@ from rest_framework import generics, views
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.exceptions import APIException
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .serializers import UserSerializer, SubscriptionSerializer, UserSettingsSerializer, LabelSerializer, PlanSerializer
+
+from .serializers import UserSerializer, SubscriptionSerializer, UserSettingsSerializer, LabelSerializer, PlanSerializer, TokenObtainPairWithUserSerializer, TokenRefreshWithUserSerializer
 from .models import Subscription, UserSettings, Label, Plan
 from .tasks import send_welcome_email
 
@@ -214,11 +215,13 @@ class CreateUserView(views.APIView):
             with transaction.atomic():
                 user: User = None
                 serializer = UserSerializer(data=request.data)
+
+
                 if serializer.is_valid():
                     user = serializer.save()
                 else:
                     logger.error(serializer.errors)
-                    raise NameError("Invalid data")
+                    raise NameError("A user with that username already exists")
 
                 # Create default user settings
                 user_settings = UserSettings.objects.create(user=user)
@@ -246,7 +249,8 @@ class CreateUserView(views.APIView):
                                 status=status.HTTP_201_CREATED)
 
         except Exception as exc:
-            return Response(exc, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response(str(exc), status=status.HTTP_400_BAD_REQUEST)
 
 
 class DeleteUserView(generics.DestroyAPIView):
@@ -305,3 +309,10 @@ class LabelsList(generics.ListCreateAPIView):
                                 status=status.HTTP_400_BAD_REQUEST)
 
         return Response(LabelSerializer(updated_labels, many=True).data)
+
+
+class TokenObtainPairWithUserView(TokenObtainPairView):
+    serializer_class = TokenObtainPairWithUserSerializer
+
+class TokenRefreshWithUserView(TokenRefreshView):
+    serializer_class = TokenRefreshWithUserSerializer

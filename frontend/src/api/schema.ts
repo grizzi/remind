@@ -1,5 +1,10 @@
 import { z } from 'zod'
 
+export type User = {
+  username: string
+  email: string
+}
+
 export const CurrencySchema = z.object({
   code: z.string(),
   name: z.string(),

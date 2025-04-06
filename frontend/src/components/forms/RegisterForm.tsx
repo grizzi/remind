@@ -2,11 +2,11 @@ import { useState } from 'react'
 import Logo from '../shared/Logo'
 import { useAuth } from '../../hooks/auth'
 
-function LoginForm() {
+function RegisterForm() {
   const [username, setUserName] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-
-  const { loginUser } = useAuth()
+  const { registerUser } = useAuth()
 
   return (
     <div className='flex flex-col shadow-2xl p-2 rounded-md justify-start'>
@@ -23,6 +23,13 @@ function LoginForm() {
         />
         <input
           className='mb-2 border-1 border-gray-200 p-1'
+          type='text'
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder='Enter email'
+        />
+        <input
+          className='mb-2 border-1 border-gray-200 p-1'
           type='password'
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -31,11 +38,10 @@ function LoginForm() {
 
         <div className='flex'>
           <button
-            className='m-4 p-2 w-full w-min-12 border-0 shadow-lg rounded-md'
-            type='button'
-            onClick={() => loginUser(username, password)}
+            className='m-4 p-2 w-full w-min-12 border-0 bg-purple-500 text-white rounded-md shadow-lg'
+            onClick={() => registerUser(username, password, email)}
           >
-            Login
+            Register
           </button>
         </div>
       </div>
@@ -43,4 +49,4 @@ function LoginForm() {
   )
 }
 
-export default LoginForm
+export default RegisterForm
