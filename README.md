@@ -93,3 +93,8 @@ python manage.py createsuperuser
 # user: admin
 # pwd: admin
 ```
+
+# Development
+
+sudo apt install pipx
+pipx install pre-commit

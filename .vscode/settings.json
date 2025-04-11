@@ -11,6 +11,7 @@
     "typescript": "typescript",
     "typescriptreact": "typescriptreact"
   },
+  "ruff.nativeServer": "on",
   "[python]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {

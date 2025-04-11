@@ -1,23 +1,22 @@
-from django.db import transaction
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
-
-from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.settings import api_settings
-
-from .models import Subscription, UserSettings, Label, Plan
-
+from django.db import transaction
 from loguru import logger
+from rest_framework import serializers
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer,
+    TokenRefreshSerializer,
+)
+from rest_framework_simplejwt.settings import api_settings
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from .models import Label, Plan, Subscription, UserSettings
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
-        fields = ["id", "username", "email",
-                  "password"]  # include only these fields
+        fields = ["id", "username", "email", "password"]  # include only these fields
 
         # we want to tell Django to return (serialize) the user withouth
         # the password and instead write the user (deserialize from the frontend)
@@ -38,40 +37,32 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
-class UserSettingsSerializer(serializers.ModelSerializer):
 
+class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSettings
-        exclude = ('task', )
+        exclude = ("task",)
 
         extra_kwargs = {"user": {"read_only": True}}
 
 
 class LabelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Label
-        fields = ['name', 'subscription']
+        fields = ["name", "subscription"]
 
         extra_kwargs = {"user": {"read_only": True}}
 
 
 class PlanSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Plan
         fields = "__all__"
 
         extra_kwargs = {
-            "user": {
-                "read_only": True
-            },
-            "last_reminder_at": {
-                "read_only": True
-            },
-            "total_reminder": {
-                "read_only": True
-            }
+            "user": {"read_only": True},
+            "last_reminder_at": {"read_only": True},
+            "total_reminder": {"read_only": True},
         }
 
 
@@ -103,27 +94,26 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         return subscription
 
     def update(self, instance, validated_data):
-        labels_data = validated_data.pop("labels",
-                                         [])  # Get nested labels data
+        labels_data = validated_data.pop("labels", [])  # Get nested labels data
 
         # Ensures all database operations succeed or fail together
         with transaction.atomic():
-
             # Update subscription fields
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
             instance.save()
 
-            self._create_or_update_labels(all_labels=instance.labels.all(),
-                                          labels_data=labels_data,
-                                          user=instance.user)
+            self._create_or_update_labels(
+                all_labels=instance.labels.all(),
+                labels_data=labels_data,
+                user=instance.user,
+            )
 
         return instance
 
-    def _create_or_update_labels(self,
-                                 all_labels: list[Label],
-                                 labels_data: dict,
-                                 user=User()):
+    def _create_or_update_labels(
+        self, all_labels: list[Label], labels_data: dict, user=User()
+    ):
         """
         If label already was attached to this subscription, update it,
         otherwise create a new one
@@ -139,7 +129,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                     setattr(label, key, value)
                 label.save()
                 existing_labels.pop(
-                    label_id)  # Remove from dict to track remaining ones
+                    label_id
+                )  # Remove from dict to track remaining ones
             else:
                 logger.info(f"Creating new label: {label_data}")
                 Label.objects.create(user=user, **label_data)
@@ -153,19 +144,18 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class UserTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [ "username", "email"]
+        fields = ["username", "email"]
 
 
 class TokenObtainPairWithUserSerializer(TokenObtainPairSerializer):
-
     def validate(self, attrs):
         data = super().validate(attrs)
-        data["user"] =  UserTokenSerializer(self.user).data
+        data["user"] = UserTokenSerializer(self.user).data
 
         return data
 
-class TokenRefreshWithUserSerializer(TokenRefreshSerializer):
 
+class TokenRefreshWithUserSerializer(TokenRefreshSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         refresh = RefreshToken(attrs["refresh"])
@@ -173,7 +163,7 @@ class TokenRefreshWithUserSerializer(TokenRefreshSerializer):
 
         if user_id:
             user = User.objects.get(id=user_id)
-            data["user"] =  UserTokenSerializer(user).data
+            data["user"] = UserTokenSerializer(user).data
         else:
             raise serializers.ValidationError("Invalid token: missing user_id")
 

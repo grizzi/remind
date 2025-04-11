@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Subscription, Label, Plan, UserSettings
 
+from .models import Label, Plan, Subscription, UserSettings
 
 admin.site.register(Subscription)
 admin.site.register(Label)

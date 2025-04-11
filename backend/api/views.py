@@ -1,26 +1,28 @@
 import json
 
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.http import Http404
-from django.contrib.auth.models import User
-from djmoney.settings import CURRENCY_CHOICES
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django_filters.rest_framework import DjangoFilterBackend
-from django_celery_beat.models import PeriodicTask, IntervalSchedule
-
-from rest_framework import generics, views
+from djmoney.settings import CURRENCY_CHOICES
+from loguru import logger
+from rest_framework import generics, status, views
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-
-from .serializers import UserSerializer, SubscriptionSerializer, UserSettingsSerializer, LabelSerializer, PlanSerializer, TokenObtainPairWithUserSerializer, TokenRefreshWithUserSerializer
-from .models import Subscription, UserSettings, Label, Plan
+from .models import Label, Plan, Subscription, UserSettings
+from .serializers import (
+    LabelSerializer,
+    PlanSerializer,
+    SubscriptionSerializer,
+    TokenObtainPairWithUserSerializer,
+    TokenRefreshWithUserSerializer,
+    UserSerializer,
+    UserSettingsSerializer,
+)
 from .tasks import send_welcome_email
-
-from loguru import logger
 
 
 class CurrencyChoicesView(views.APIView):
@@ -28,10 +30,7 @@ class CurrencyChoicesView(views.APIView):
 
     def get(self, request):
         _ = request
-        currencies = [{
-            "code": code,
-            "name": name
-        } for code, name in CURRENCY_CHOICES]
+        currencies = [{"code": code, "name": name} for code, name in CURRENCY_CHOICES]
         return Response(currencies)
 
 
@@ -56,16 +55,15 @@ class SubscriptionsListCreate(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             logger.error(f"Validation failed: {serializer.errors}")
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         subscription = serializer.save(user=request.user)
 
         # Now create the label objects and associate them with the new subscription
         for label in labels_data:
-            Label.objects.create(name=label["name"],
-                                 user=request.user,
-                                 subscription=subscription)
+            Label.objects.create(
+                name=label["name"], user=request.user, subscription=subscription
+            )
 
         # Re-serialize to include the created labels in the response
         output_serializer = self.get_serializer(subscription)
@@ -77,11 +75,9 @@ class SubscriptionDetails(views.APIView):
 
     def get_object(self, pk):
         try:
-            return Subscription.objects.filter(user=self.request.user).get(
-                pk=pk)
+            return Subscription.objects.filter(user=self.request.user).get(pk=pk)
         except Subscription.DoesNotExist:
-            logger.error(
-                f"Subscription {pk} for user {self.request.user} not found")
+            logger.error(f"Subscription {pk} for user {self.request.user} not found")
             raise Http404
 
     def get(self, request, pk, format=None):
@@ -122,7 +118,7 @@ class PlanListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        subscription_id = self.kwargs['subscription_id']
+        subscription_id = self.kwargs["subscription_id"]
         return Plan.objects.filter(subscription=subscription_id)
 
     def create(self, request, *args, **kwargs):
@@ -132,8 +128,7 @@ class PlanListCreate(generics.ListCreateAPIView):
         if not serializer.is_valid():
             logger.error(f"Got data: {request.data}")
             logger.error(f"Validation failed: {serializer.errors}")
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -216,7 +211,6 @@ class CreateUserView(views.APIView):
                 user: User = None
                 serializer = UserSerializer(data=request.data)
 
-
                 if serializer.is_valid():
                     user = serializer.save()
                 else:
@@ -239,17 +233,17 @@ class CreateUserView(views.APIView):
                     interval=schedule,
                     name=f"user_{user.id}_monitor",
                     task="api.tasks.user_monitor",
-                    args=json.dumps([
-                        user.id,
-                    ]),
+                    args=json.dumps(
+                        [
+                            user.id,
+                        ]
+                    ),
                 )
                 user_settings.task = task
                 user_settings.save()
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         except Exception as exc:
-
             return Response(str(exc), status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -265,15 +259,16 @@ class DeleteUserView(generics.DestroyAPIView):
         _ = request, args, kwargs
         user = self.get_object()
         user.delete()
-        return Response({"message": "User deleted successfully"},
-                        status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"message": "User deleted successfully"}, status=status.HTTP_204_NO_CONTENT
+        )
 
 
 class LabelsList(generics.ListCreateAPIView):
     serializer_class = LabelSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['subscription']
+    filterset_fields = ["subscription"]
 
     def get_queryset(self):
         return Label.objects.filter(user=self.request.user)
@@ -282,21 +277,21 @@ class LabelsList(generics.ListCreateAPIView):
         data = request.data
 
         if not isinstance(data, list):
-            return Response({"error": "Expected a list of objects"},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Expected a list of objects"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Fetch existing labels
         existing_labels = {label.id: label for label in self.get_queryset()}
         updated_labels = []
 
         for item in data:
-            label_id = item.get('id')
+            label_id = item.get("id")
             if label_id and label_id in existing_labels:
                 # Update existing label
                 label_instance = existing_labels[label_id]
-                serializer = LabelSerializer(label_instance,
-                                             data=item,
-                                             partial=True)
+                serializer = LabelSerializer(label_instance, data=item, partial=True)
             else:
                 # Create new label
                 serializer = LabelSerializer(data=item)
@@ -305,14 +300,14 @@ class LabelsList(generics.ListCreateAPIView):
                 updated_labels.append(serializer.save(user=self.request.user))
             else:
                 logger.error(serializer.errors)
-                return Response(serializer.errors,
-                                status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(LabelSerializer(updated_labels, many=True).data)
 
 
 class TokenObtainPairWithUserView(TokenObtainPairView):
     serializer_class = TokenObtainPairWithUserSerializer
+
 
 class TokenRefreshWithUserView(TokenRefreshView):
     serializer_class = TokenRefreshWithUserSerializer

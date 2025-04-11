@@ -1,0 +1,54 @@
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    command:
+      python manage.py runserver 0.0.0.0:8000 && celery -A backend worker --beat
+      --scheduler django --loglevel=info
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /srv/app
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: ./backend/pyproject.toml
+    ports:
+      - 8000:8000
+    env_file:
+      - .env.dev
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:16.1-alpine
+    container_name: db
+    ports:
+      - 5432:5432
+    env_file: .env.dev
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    command: npm dev
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /src
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+    ports:
+      - 3000:3000
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - 8025:8025
+      - 1025:1025
