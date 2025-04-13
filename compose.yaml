@@ -34,7 +34,7 @@ services:
   frontend:
     build: ./frontend
     container_name: frontend
-    command: npm dev
+    command: npm run dev -- --host # expose the port to the host
     develop:
       watch:
         - action: sync
@@ -46,6 +46,7 @@ services:
           path: package.json
     ports:
       - 3000:3000
+      - 5173:5173
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
