@@ -1,11 +1,13 @@
 from celery import shared_task
 from django.core.mail import send_mail
+from loguru import logger
 
 from .models import Plan, Subscription, UserSettings
 
 
 @shared_task
 def send_welcome_email(username, user_email):
+    logger.info(f"Sending welcome email to {user_email}")
     send_mail(
         "Welcome to reMind!",
         f"Hello, {username}! Welcome to reMind. We are glad to have you on board.",

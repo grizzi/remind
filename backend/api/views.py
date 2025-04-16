@@ -187,7 +187,6 @@ class UserSettingsDetails(views.APIView):
     def get(self, request, format=None):
         settings = self.get_queryset().first()
         serializer = UserSettingsSerializer(settings)
-        logger.info(f"Returning settings: {serializer.data}")
         return Response(serializer.data)
 
     def put(self, request, format=None):
@@ -218,17 +217,21 @@ class CreateUserView(views.APIView):
                     raise NameError("A user with that username already exists")
 
                 # Create default user settings
+                logger.info("Creating user settings")
                 user_settings = UserSettings.objects.create(user=user)
 
                 # Send welcome email
+                logger.info("Sending welcome email")
                 send_welcome_email.delay(user.username, user.email)
 
                 # Create monitoring task
+                logger.info("Creating monitoring task")
                 schedule, _ = IntervalSchedule.objects.get_or_create(
                     every=1,
                     period=IntervalSchedule.HOURS,
                 )
 
+                logger.info("Creating periodic task for this user")
                 task = PeriodicTask.objects.create(
                     interval=schedule,
                     name=f"user_{user.id}_monitor",
@@ -240,6 +243,7 @@ class CreateUserView(views.APIView):
                     ),
                 )
                 user_settings.task = task
+                logger.info("Saving user settings")
                 user_settings.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 

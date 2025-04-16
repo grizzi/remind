@@ -1,10 +1,10 @@
 services:
+
   backend:
     build: ./backend
-    container_name: backend
-    command:
-      python manage.py runserver 0.0.0.0:8000 && celery -A backend worker --beat
-      --scheduler django --loglevel=info
+    container_name: django
+    command: python manage.py runserver 0.0.0.0:8000
+    restart: on-failure
     develop:
       watch:
         - action: sync
@@ -20,17 +20,40 @@ services:
       - .env.dev
     depends_on:
       - postgres
+
+  celery:
+    build: ./backend
+    container_name: celery
+    entrypoint: ''
+    command: celery -A backend worker --beat --scheduler django --loglevel=info
+    restart: on-failure
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend
+          target: /srv/app
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: ./backend/pyproject.toml
+    env_file:
+      - .env.dev
+    depends_on:
+      - backend
   postgres:
     image: postgres:16.1-alpine
     container_name: db
     ports:
       - 5432:5432
     env_file: .env.dev
+
   redis:
     image: redis:latest
     container_name: redis
+    hostname: redis
     ports:
       - 6379:6379
+
   frontend:
     build: ./frontend
     container_name: frontend
@@ -39,7 +62,7 @@ services:
       watch:
         - action: sync
           path: ./frontend
-          target: /src
+          target: /srv/app
           ignore:
             - node_modules/
         - action: rebuild
@@ -47,6 +70,7 @@ services:
     ports:
       - 3000:3000
       - 5173:5173
+
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog

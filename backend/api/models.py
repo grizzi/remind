@@ -46,6 +46,12 @@ class UserSettings(models.Model):
         PeriodicTask, null=True, blank=True, on_delete=models.SET_NULL
     )
 
+    def delete(self, *args, **kwargs):
+        # Also delete the related task if it exists
+        if self.task:
+            self.task.delete()
+        super().delete(*args, **kwargs)
+
 
 class PlanFrequencyChoices(models.TextChoices):
     DAILY = "daily"
