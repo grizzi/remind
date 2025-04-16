@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django_celery_beat.models import PeriodicTask
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
@@ -46,11 +48,12 @@ class UserSettings(models.Model):
         PeriodicTask, null=True, blank=True, on_delete=models.SET_NULL
     )
 
-    def delete(self, *args, **kwargs):
-        # Also delete the related task if it exists
-        if self.task:
-            self.task.delete()
-        super().delete(*args, **kwargs)
+
+@receiver(pre_delete, sender=UserSettings)
+def delete_associated_task(sender, instance, **kwargs):
+    _ = sender, kwargs
+    if instance.task:
+        instance.task.delete()
 
 
 class PlanFrequencyChoices(models.TextChoices):

@@ -248,6 +248,7 @@ class CreateUserView(views.APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         except Exception as exc:
+            logger.error(f"Error creating user: {exc}")
             return Response(str(exc), status=status.HTTP_400_BAD_REQUEST)
 
 

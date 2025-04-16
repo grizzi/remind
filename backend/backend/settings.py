@@ -179,6 +179,9 @@ CURRENCIES = ("CHF", "USD", "EUR", "GBP", "JPY", "CNY", "CAD", "RUB")
 
 # Celery
 CELERY_RESULT_BACKEND = "django-db"
+
+# Apparently I also need to set this variable for the redis connection to work
+REDIS_HOST = os.environ.get("REDIS_HOST")
 CELERY_REDIS_HOST = os.environ.get("REDIS_HOST")
 CELERY_REDIS_URL = (
     f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}"
