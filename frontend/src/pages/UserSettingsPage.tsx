@@ -5,12 +5,14 @@ import { UserSettings } from '../api/schema'
 import UserSettingsView from '../components/views/UserSettingsView'
 import { Navigate } from 'react-router'
 import { Api } from '../api/api'
+import { useAuth } from '../hooks/auth'
 
 const UserSettingsPage = () => {
   const { getUserSettings } = useAppContext()
   const [editing, setEditing] = useState<boolean>(false)
   const [userDeleted, setUserDeleted] = useState<boolean>(false)
   const [settings, setSettings] = useState<UserSettings>()
+  const { logout } = useAuth()
 
   useEffect(() => {
     getUserSettings()
@@ -18,7 +20,7 @@ const UserSettingsPage = () => {
         setSettings(settings)
       })
       .catch(err => {
-        alert(err)
+        console.error(err)
       })
   }, [])
 
@@ -33,12 +35,13 @@ const UserSettingsPage = () => {
   const deleteUser = () => {
     Api.deleteUser()
       .then(() => setUserDeleted(true))
-      .catch(error => alert(error?.response?.message))
+      .catch(error => console.error(error?.response?.message))
   }
 
   if (userDeleted) {
-    return <Navigate to='/register' />
+    logout()
   }
+
   return (
     <div>
       <UserSettingsView

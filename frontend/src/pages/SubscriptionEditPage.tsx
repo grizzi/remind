@@ -31,7 +31,6 @@ const SubscriptionEditPage = () => {
 
     const forceUpdate = true
     context.getSubscriptions(forceUpdate).then(subs => {
-      console.log('Getting all subscriptions!')
       console.log(JSON.stringify(subs))
       setSubscription(subs.find(sub => sub.id === id))
       console.log('Subscription is now set!')
@@ -45,7 +44,7 @@ const SubscriptionEditPage = () => {
       Api.getPlans(subId!)
         .then(plans => setPlans(plans))
         .catch(error =>
-          alert(`Failed to get subscription plans: ${error.message}`),
+          console.error(`Failed to get subscription plans: ${error.message}`),
         )
     }
   }, [subId])
@@ -58,7 +57,7 @@ const SubscriptionEditPage = () => {
           setSettings(settings)
         })
         .catch(err => {
-          alert(err)
+          console.error(err)
         })
 
       context
@@ -67,7 +66,7 @@ const SubscriptionEditPage = () => {
           setCurrencies(curr)
         })
         .catch(err => {
-          alert(err)
+          console.error(err)
         })
     }
 
@@ -84,7 +83,7 @@ const SubscriptionEditPage = () => {
           navigate(`/subscriptions/${subscription.id}/edit/`)
         })
         .catch(error => {
-          alert(`Failed to create subscription!: ${JSON.stringify(error)}`)
+          console.error(`Failed to create subscription!: ${JSON.stringify(error)}`)
         })
     } else {
       Api.updateSubscription(id, subscription)
@@ -92,7 +91,7 @@ const SubscriptionEditPage = () => {
           setEditing(false)
         })
         .catch(error => {
-          alert(
+          console.error(
             `Failed to update subscription!: ${error.message} ${JSON.stringify(
               error,
             )}`,

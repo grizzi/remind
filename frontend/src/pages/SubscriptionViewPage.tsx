@@ -22,18 +22,18 @@ const SubscriptionViewPage = () => {
     context
       .getSubscriptions(forceUpdate)
       .then(subs => setSubscription(subs.find(sub => sub.id === Number(id))))
-      .catch(err => alert(err.message))
+      .catch(err => console.error(err.message))
 
     context
       .getLabels()
       .then(l => setLabels(l.filter(l => l.subscription === id)))
-      .catch(_ => alert('Failed to retrieve subscription labels'))
+      .catch(_ => console.error('Failed to retrieve subscription labels'))
 
     if (subId) {
       Api.getPlans(subId)
         .then(p => setPlans(p))
         .catch(error =>
-          alert(`Failed to get subscription plans: ${error.message}`),
+          console.error(`Failed to get subscription plans: ${error.message}`),
         )
     }
   }, [])

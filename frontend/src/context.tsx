@@ -2,6 +2,8 @@ import { Currency, Label, Subscription, UserSettings } from './api/schema'
 import { createContext, useState, useContext, ReactNode } from 'react'
 import { Api } from './api/api'
 
+import axios from 'axios'
+
 interface AppContextInterface {
   getCurrencies: () => Promise<Currency[]>
   getUserSettings: () => Promise<UserSettings>
@@ -42,7 +44,7 @@ export default function AppContextProvider({
       setCurrencies(curr)
       return curr // Ensure this resolves to the new currencies
     } catch (err) {
-      alert(err)
+      console.error('Error fetching currencies:', err)
       return []
     }
   }
@@ -59,6 +61,9 @@ export default function AppContextProvider({
       return subscriptions
     }
 
+    console.log('Getting all subscriptions!')
+    // print the axios bearer token
+    console.log(axios.defaults.headers.common['Authorization'])
     const subs = await Api.getSubscriptions()
     setSubscriptions(subs)
     return subs

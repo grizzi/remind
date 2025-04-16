@@ -32,12 +32,14 @@ export const AuthContextProvider = ({
   children: React.ReactNode
 }) => {
   const navigate = useNavigate()
-  const [_, setAccessToken] = useState<string | null>(null)
+  const [accessToken, setAccessToken] = useState<string | null>(null)
   const [refreshToken, setRefreshToken] = useState<string | null>(null)
+  const [loggedIn, setLoggedIn] = useState<boolean>(false)
 
   const [user, setUser] = useState<User | null>(null)
   const [isReady, setIsReady] = useState(false)
 
+  // Set the user credentials on refresh or first load
   useEffect(() => {
     const user = localStorage.getItem(USER)
     const access = localStorage.getItem(ACCESS_TOKEN)
@@ -47,10 +49,24 @@ export const AuthContextProvider = ({
       setUser(JSON.parse(user))
       setAccessToken(access)
       setRefreshToken(refresh)
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + access
+      setIsReady(true)
+      console.log("User is ready")
     }
+
     setIsReady(true)
   }, [])
+
+  useEffect(() => {
+    if (accessToken) {
+      console.log("Setting access token authentication", accessToken)
+      api.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken
+      setLoggedIn(true)
+    } else {
+      console.log("Removing access token authentication")
+      delete api.defaults.headers.common['Authorization']
+      setLoggedIn(false)
+    }
+  }, [accessToken])
 
   const registerUser = async (
     username: string,
@@ -60,24 +76,19 @@ export const AuthContextProvider = ({
     await api
       .post('/api/register/', { username, password, email })
       .then(res => {
-        if (res) {
+        if (res.status === 201) {
           const userObj = {
             username: username,
             email: email,
           }
 
-          localStorage.setItem(ACCESS_TOKEN, res?.data.access)
-          localStorage.setItem(REFRESH_TOKEN, res?.data.refresh)
-          localStorage.setItem(USER, JSON.stringify(userObj))
-          setAccessToken(res?.data.access!)
-          setRefreshToken(res?.data.refresh!)
-          setUser(userObj!)
+          setUser(userObj)
           toast.success('Registration successful!')
           navigate('/login')
         }
       })
       .catch((error: Error | AxiosError) => {
-        let errorMessage = 'Failed to login!'
+        let errorMessage = 'Failed to register!'
         if (axios.isAxiosError(error)) {
           if (error.status && error.status === 401) {
             errorMessage += ' Invalid username or password!'
@@ -103,16 +114,17 @@ export const AuthContextProvider = ({
             email: res?.data?.user!.email,
           }
           localStorage.setItem(ACCESS_TOKEN, res?.data.access)
-          localStorage.setItem(REFRESH_TOKEN, res?.data.access)
+          localStorage.setItem(REFRESH_TOKEN, res?.data.refresh)
           localStorage.setItem(USER, JSON.stringify(userObj))
           setAccessToken(res?.data.access!)
           setRefreshToken(res?.data.refresh!)
           setUser(userObj!)
           toast.success('Login Success!')
+          console.info("Logged in with user", userObj, res?.data.access, res?.data.refresh)
           navigate('/subscriptions', { replace: true })
         }
       })
-      .catch(_ => toast.warning('Server error occured'))
+      .catch(_ => toast.warning('Invalid username or password!'))
   }
 
   const isLoggedIn = () => {
@@ -125,12 +137,12 @@ export const AuthContextProvider = ({
     const tokenExpiration = decoded.exp
     const now = Date.now() / 1000
 
-    if (tokenExpiration === undefined || tokenExpiration < now) {
+    if (tokenExpiration && tokenExpiration < now) {
       return false
-    } else {
-      return true
     }
+    return loggedIn
   }
+
 
   const refreshUser = (from: string) => {
     api

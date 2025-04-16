@@ -56,7 +56,7 @@ const SubscriptionsPage = () => {
     context
       .getSubscriptions(forceUpdate)
       .then(subs => setSubscriptions(subs))
-      .catch(err => alert(`Failed to get subscriptions: ${err.message}`))
+      .catch(err => console.error(`Failed to get subscriptions: ${err.message}`))
 
     context.getLabels().then(l => setLabels(l))
     context.getUserSettings().then(settings => setSettings(settings))

@@ -21,7 +21,7 @@ const UserSettingsEditPage = () => {
         setCurrencies(curr)
       })
       .catch(err => {
-        alert(err)
+        console.error(err)
       })
 
     context
@@ -30,7 +30,7 @@ const UserSettingsEditPage = () => {
         setSettings(settings)
       })
       .catch(err => {
-        alert(err)
+        console.error(err)
       })
   }, [])
 
@@ -38,7 +38,7 @@ const UserSettingsEditPage = () => {
     Api.updateUserSettings(settings)
       .then(() => setSubmit(true))
       .catch(error => {
-        alert(
+        console.error(
           `Failed to update user settings!: ${error.message} ${JSON.stringify(
             error,
           )}`,
