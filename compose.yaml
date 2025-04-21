@@ -6,11 +6,6 @@ services:
     restart: on-failure
     develop:
       watch:
-        - action: sync
-          path: ./backend
-          target: /srv/app
-          ignore:
-            - .venv/
         - action: rebuild
           path: ./backend/pyproject.toml
     ports:
@@ -19,6 +14,9 @@ services:
       - .env.dev
     depends_on:
       - postgres
+    volumes:
+      - ./backend/backend:/srv/app/backend
+      - ./backend/api:/srv/app/api
 
   celery:
     build: ./backend
@@ -34,6 +32,9 @@ services:
       - .env.dev
     depends_on:
       - django
+    volumes:
+      - ./backend/backend:/srv/app/backend
+      - ./backend/api:/srv/app/api
 
   postgres:
     image: postgres:16.1-alpine
@@ -55,16 +56,13 @@ services:
     command: npm run dev -- --host # expose the port to the host
     develop:
       watch:
-        - action: sync
-          path: ./frontend
-          target: /srv/app
-          ignore:
-            - node_modules/
         - action: rebuild
           path: package.json
     ports:
       - 3000:3000
       - 5173:5173
+    volumes:
+      - ./frontend/src:/srv/app/src
 
   mailhog:
     image: mailhog/mailhog
