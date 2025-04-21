@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Logo from '../shared/Logo'
 import { useAuth } from '../../hooks/auth'
 import { useNavigate } from 'react-router'
@@ -7,9 +7,13 @@ function RegisterForm() {
   const [username, setUserName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const { registerUser } = useAuth()
+  const { logout, registerUser } = useAuth()
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    logout()
+  }, [])
 
   return (
     <div className='flex flex-col justify-center items-center'>

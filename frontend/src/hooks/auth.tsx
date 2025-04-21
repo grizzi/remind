@@ -50,7 +50,7 @@ export const AuthContextProvider = ({
       setAccessToken(access)
       setRefreshToken(refresh)
       setIsReady(true)
-      console.log("User is ready")
+      console.log('User is ready')
     }
 
     setIsReady(true)
@@ -58,11 +58,11 @@ export const AuthContextProvider = ({
 
   useEffect(() => {
     if (accessToken) {
-      console.log("Setting access token authentication", accessToken)
+      console.log('Setting access token authentication', accessToken)
       api.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken
       setLoggedIn(true)
     } else {
-      console.log("Removing access token authentication")
+      console.log('Removing access token authentication')
       delete api.defaults.headers.common['Authorization']
       setLoggedIn(false)
     }
@@ -120,7 +120,12 @@ export const AuthContextProvider = ({
           setRefreshToken(res?.data.refresh!)
           setUser(userObj!)
           toast.success('Login Success!')
-          console.info("Logged in with user", userObj, res?.data.access, res?.data.refresh)
+          console.info(
+            'Logged in with user',
+            userObj,
+            res?.data.access,
+            res?.data.refresh,
+          )
           navigate('/subscriptions', { replace: true })
         }
       })
@@ -142,7 +147,6 @@ export const AuthContextProvider = ({
     }
     return loggedIn
   }
-
 
   const refreshUser = (from: string) => {
     api
@@ -180,7 +184,6 @@ export const AuthContextProvider = ({
     setUser(null)
     setAccessToken(null)
     setRefreshToken(null)
-    navigate('/login')
   }
 
   return (

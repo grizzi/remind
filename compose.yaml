@@ -10,8 +10,14 @@ services:
           path: ./backend/pyproject.toml
     ports:
       - 8000:8000
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8000"]
+      interval: 10s
+      timeout: 1s
+      retries: 3
+      start_period: 10s
     env_file:
-      - .env.dev
+      - ./backend/.env.dev
     depends_on:
       - postgres
     volumes:
@@ -29,9 +35,10 @@ services:
         - action: rebuild
           path: ./backend/pyproject.toml
     env_file:
-      - .env.dev
+      - ./backend/.env.dev
     depends_on:
-      - django
+      django:
+        condition: service_healthy
     volumes:
       - ./backend/backend:/srv/app/backend
       - ./backend/api:/srv/app/api
@@ -41,7 +48,7 @@ services:
     container_name: db
     ports:
       - 5432:5432
-    env_file: .env.dev
+    env_file: ./backend/.env.dev
 
   redis:
     image: redis:latest

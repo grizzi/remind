@@ -40,6 +40,7 @@ const UserSettingsPage = () => {
 
   if (userDeleted) {
     logout()
+    return <Navigate to='/' />
   }
 
   return (

@@ -1,106 +1,42 @@
-## Quickstart
+<img src="./docs/reMind_Logo_transparent.png" alt="logo" width="200"/>
 
-### Install and Operate Postgresql DB
+An app to remind users about their online purchase and auto-renewing
+subscriptions.
 
-##### Run Database
+## How it works
 
-Install postgresql
+1. A simple `react` webapp with JWT based authentication
+2. A `django` backend to store data in a postgres database
+3. A combination of `celery` workers and recurring schedule to perform
+   asynchronous tasks like sending reminders and emails.
+4. A `redis` server to allow communication between `celery` workers and `django`
 
-```
-sudo apt-get update
-sudo apt-get install postgresql postgresql-contrib
-```
+## Run locally
 
-```
-sudo -u postgres psql
+- Install
+  [`docker compose`](https://docs.docker.com/compose/install/standalone/)
+- In the root of directory of this repository run:
 
-```
+  ```bash
+  docker compose up
+  ```
 
-Change user password:
+- Open the webapp in your browser at
+  [http://localhost:5173/login](http://localhost:5173/login)
 
-```
-sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
-```
+## Run tests
 
-Allow passwordless permissions to user
-
-1. Open your pg_hba.conf file. You can locate it by running:
-
-```
-sudo -u postgres psql -c "SHOW hba_file;"
-```
-
-Edit the file and change the method for 127.0.0.1/32 from md5 or scram-sha-256
-to trust:
-
-```
-# TYPE  DATABASE        USER            ADDRESS                 METHOD
-host    all             all             127.0.0.1/32            trust
+```bash
+docker compose run --rm django python manage.py test
 ```
 
-Restart PostgreSQL to apply changes:
+## Create admin and log to admin panel
 
-```
-sudo systemctl restart postgresql
-```
+- Create a superuser in the `django` container:
 
-Create a database if not there yet
+  ```bash
+  docker compose run --rm django python manage.py createsuperuser
+  ```
 
-```
-sudo -u postgres createdb remind
-```
-
-### Instal Redis
-
-From
-https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/
-
-```
-curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-sudo chmod 644 /usr/share/keyrings/redis-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
-sudo apt-get update
-sudo apt-get install redis
-```
-
-Run the redis server
-
-```
-sudo systemctl enable redis-server
-sudo systemctl start redis-server
-```
-
-### Run Mailhog to test sending emails
-
-```
-docker run --rm -p 1025:1025 -p 8025:8025 --name mailhog mailhog/mailhog
-```
-
-### Run celery workers and beat
-
-From the backend folder
-
-```
-celery -A backend worker --beat --scheduler django --loglevel=info
-```
-
-### Make migrations
-
-python manage.py makemigrations
-
-### Apply migrations
-
-python manage.py migrate
-
-### Create superuser
-
-```
-python manage.py createsuperuser
-# user: admin
-# pwd: admin
-```
-
-# Development
-
-sudo apt install pipx
-pipx install pre-commit
+- Log in to the admin panel at
+  [http://localhost:8000/admin](http://localhost:8000/admin)
