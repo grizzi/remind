@@ -1,5 +1,7 @@
 from celery import shared_task
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives, send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from loguru import logger
 
 from .models import Plan, Subscription, UserSettings
@@ -8,13 +10,19 @@ from .models import Plan, Subscription, UserSettings
 @shared_task
 def send_welcome_email(username, user_email):
     logger.info(f"Sending welcome email to {user_email}")
-    send_mail(
-        "Welcome to reMind!",
-        f"Hello, {username}! Welcome to reMind. We are glad to have you on board.",
-        "info@re.mind",
-        [user_email],
-        fail_silently=False,
+
+    subject = "Welcome to reMind!"
+    html_message = render_to_string("content/welcome_email.html")
+    plain_message = strip_tags(html_message)
+
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=plain_message,
+        from_email="info@re.mind",
+        to=[user_email],
     )
+    email.attach_alternative(html_message, "text/html")
+    email.send()
 
 
 @shared_task

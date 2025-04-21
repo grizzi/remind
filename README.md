@@ -16,6 +16,12 @@ sudo -u postgres psql
 
 ```
 
+Change user password:
+
+```
+sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+```
+
 Allow passwordless permissions to user
 
 1. Open your pg_hba.conf file. You can locate it by running:

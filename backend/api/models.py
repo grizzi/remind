@@ -1,10 +1,13 @@
+import json
+
 from django.contrib.auth.models import User
-from django.db import models
-from django.db.models.signals import pre_delete
+from django.db import models, transaction
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from django_celery_beat.models import PeriodicTask
+from django_celery_beat.models import CrontabSchedule, IntervalSchedule, PeriodicTask
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
+from loguru import logger
 
 # See money django lib: https://github.com/django-money/django-money
 
@@ -59,6 +62,60 @@ class UserSettings(models.Model):
         on_delete=models.SET_NULL,
         related_name="user_settings_report",
     )
+
+
+@receiver(post_save, sender=UserSettings)
+def add_tasks(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    try:
+        with transaction.atomic():
+            user = instance.user
+            logger.info("Creating monitoring task")
+            plans_monitor_schedule, _ = IntervalSchedule.objects.get_or_create(
+                every=1,
+                period=IntervalSchedule.HOURS,
+            )
+
+            logger.info("Creating plans monitor for this user")
+            plans_monitor = PeriodicTask.objects.create(
+                interval=plans_monitor_schedule,
+                name=f"user_{user.id}_monitor",
+                task="api.tasks.create_plans_alert",
+                args=json.dumps(
+                    [
+                        user.id,
+                    ]
+                ),
+            )
+
+            report_schedule, _ = CrontabSchedule.objects.get_or_create(
+                minute="0",
+                hour="8",
+                day_of_week="*",
+                day_of_month="1",
+                month_of_year="*",
+            )
+
+            logger.info("Creating report task for this user")
+            report_task = PeriodicTask.objects.create(
+                crontab=report_schedule,
+                name=f"user_{user.id}_report",
+                task="api.tasks.create_report",
+                args=json.dumps(
+                    [
+                        user.id,
+                    ]
+                ),
+            )
+
+            instance.plans_monitor = plans_monitor
+            instance.report_task = report_task
+            instance.save()
+    except Exception as e:
+        logger.error(f"Error creating tasks: {e}")
+        raise
 
 
 @receiver(pre_delete, sender=UserSettings)
