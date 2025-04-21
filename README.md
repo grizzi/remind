@@ -24,6 +24,9 @@ subscriptions.
 - Open the webapp in your browser at
   [http://localhost:5173/login](http://localhost:5173/login)
 
+- Open the mail catcher in your browser at
+  [http://localhost:8025](http://localhost:8025)
+
 ## Run tests
 
 ```bash
