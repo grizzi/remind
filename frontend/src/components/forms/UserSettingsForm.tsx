@@ -69,8 +69,12 @@ const UserSettingsForm = ({
             </div>
           </div>
           <div className='flex flex-row justify-between'>
-            <p>Reminders active</p>
+            <p>Reminders enabled</p>
             <CheckboxField id='reminders_active' />
+          </div>
+          <div className='flex flex-row justify-between'>
+            <p>Monthly report enabled</p>
+            <CheckboxField id='monthly_report_active' />
           </div>
           <button
             className='fixed border-0 bottom-8 right-8 flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'

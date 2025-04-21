@@ -8,7 +8,9 @@ done
 echo "PostgreSQL started"
 
 
+echo "Making migrations..."
 python manage.py makemigrations api
 python manage.py migrate
+
 
 exec "$@"

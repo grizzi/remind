@@ -5,10 +5,10 @@ import {
   TbCalendarRepeat,
   TbBell,
   TbTimeDuration5,
+  TbReport,
 } from 'react-icons/tb'
 
 import React from 'react'
-import CheckboxField from '../inputs/CheckboxField'
 
 interface UserSettingsViewProps {
   settings: UserSettings
@@ -26,6 +26,7 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
     remind_frequency,
     remind_at_most,
     reminders_active,
+    monthly_report_active,
     budget,
     budget_currency,
   } = settings
@@ -76,7 +77,17 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
           <p>
             Reminders:{' '}
             <span className='font-extrabold'>
-              {reminders_active ? 'Active' : 'Disabled'}
+              {reminders_active ? 'Enabled' : 'Disabled'}
+            </span>
+          </p>
+        </div>
+
+        <TbReport className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <div className='flex flex-row items-center gap-2'>
+          <p>
+            Monthly Report:{' '}
+            <span className='font-extrabold'>
+              {monthly_report_active ? 'Enabled' : 'Disabled'}
             </span>
           </p>
         </div>

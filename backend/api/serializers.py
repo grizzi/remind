@@ -41,7 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSettings
-        exclude = ("task",)
+        exclude = ("plans_monitor", "report_task")
 
         extra_kwargs = {"user": {"read_only": True}}
 

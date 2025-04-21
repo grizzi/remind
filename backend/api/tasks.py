@@ -18,7 +18,7 @@ def send_welcome_email(username, user_email):
 
 
 @shared_task
-def user_monitor(user_id):
+def create_plans_alert(user_id):
     user_settings: UserSettings = UserSettings.objects.get(user=user_id)
     if not user_settings.reminders_active:
         return
@@ -39,3 +39,10 @@ def user_monitor(user_id):
         [user_settings.user.email],
         fail_silently=True,
     )
+
+
+@shared_task
+def create_report(user_id):
+    user_settings: UserSettings = UserSettings.objects.get(user=user_id)
+    if not user_settings.monthly_report_active:
+        return

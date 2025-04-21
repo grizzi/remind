@@ -37,6 +37,7 @@ class UserSettings(models.Model):
     )
     remind_at_most = models.SmallIntegerField(default=1)
     reminders_active = models.BooleanField(default=True)
+    monthly_report_active = models.BooleanField(default=True)
     budget = MoneyField(
         max_digits=10,
         decimal_places=2,
@@ -44,16 +45,30 @@ class UserSettings(models.Model):
         default_currency="USD",
         validators=[MinMoneyValidator(0)],
     )
-    task = models.OneToOneField(
-        PeriodicTask, null=True, blank=True, on_delete=models.SET_NULL
+    plans_monitor = models.OneToOneField(
+        PeriodicTask,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="user_settings_plans_monitor",
+    )
+    report_task = models.OneToOneField(
+        PeriodicTask,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="user_settings_report",
     )
 
 
 @receiver(pre_delete, sender=UserSettings)
-def delete_associated_task(sender, instance, **kwargs):
+def delete_tasks(sender, instance, **kwargs):
     _ = sender, kwargs
-    if instance.task:
-        instance.task.delete()
+    if instance.plans_monitor:
+        instance.plans_monitor.delete()
+
+    if instance.report_task:
+        instance.report_task.delete()
 
 
 class PlanFrequencyChoices(models.TextChoices):

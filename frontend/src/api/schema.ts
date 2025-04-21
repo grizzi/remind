@@ -61,6 +61,7 @@ export const UserSettingsSchema = z.object({
   remind_frequency: RemindFrequencySchema,
   remind_at_most: z.coerce.number(),
   reminders_active: z.boolean(),
+  monthly_report_active: z.boolean(),
   budget: z.coerce.number(),
   budget_currency: z.string(),
 })

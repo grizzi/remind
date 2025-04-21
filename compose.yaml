@@ -1,6 +1,5 @@
 services:
-
-  backend:
+  django:
     build: ./backend
     container_name: django
     command: python manage.py runserver 0.0.0.0:8000
@@ -29,17 +28,13 @@ services:
     restart: on-failure
     develop:
       watch:
-        - action: sync+restart
-          path: ./backend
-          target: /srv/app
-          ignore:
-            - .venv/
         - action: rebuild
           path: ./backend/pyproject.toml
     env_file:
       - .env.dev
     depends_on:
-      - backend
+      - django
+
   postgres:
     image: postgres:16.1-alpine
     container_name: db

@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.http import Http404
-from django_celery_beat.models import IntervalSchedule, PeriodicTask
+from django_celery_beat.models import CrontabSchedule, IntervalSchedule, PeriodicTask
 from django_filters.rest_framework import DjangoFilterBackend
 from djmoney.settings import CURRENCY_CHOICES
 from loguru import logger
@@ -226,23 +226,46 @@ class CreateUserView(views.APIView):
 
                 # Create monitoring task
                 logger.info("Creating monitoring task")
-                schedule, _ = IntervalSchedule.objects.get_or_create(
+                plans_monitor_schedule, _ = IntervalSchedule.objects.get_or_create(
                     every=1,
                     period=IntervalSchedule.HOURS,
                 )
 
-                logger.info("Creating periodic task for this user")
-                task = PeriodicTask.objects.create(
-                    interval=schedule,
+                logger.info("Creating plans monitor for this user")
+                plans_monitor = PeriodicTask.objects.create(
+                    interval=plans_monitor_schedule,
                     name=f"user_{user.id}_monitor",
-                    task="api.tasks.user_monitor",
+                    task="api.tasks.create_plans_alert",
                     args=json.dumps(
                         [
                             user.id,
                         ]
                     ),
                 )
-                user_settings.task = task
+
+                report_schedule, _ = CrontabSchedule.objects.get_or_create(
+                    minute="0",
+                    hour="8",
+                    day_of_week="*",
+                    day_of_month="1",
+                    month_of_year="*",
+                )
+
+                logger.info("Creating report task for this user")
+                report_task = PeriodicTask.objects.create(
+                    interval=report_schedule,
+                    name=f"user_{user.id}_monitor",
+                    task="api.tasks.create_report",
+                    args=json.dumps(
+                        [
+                            user.id,
+                        ]
+                    ),
+                )
+
+                user_settings.plans_monitor = plans_monitor
+                user_settings.report_task = report_task
+
                 logger.info("Saving user settings")
                 user_settings.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
