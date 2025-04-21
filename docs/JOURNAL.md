@@ -49,6 +49,9 @@
 - I can now send confirmation emails when a user registers, using django
   templates. There is no "confirm your email step", maybe I will add it later if
   I have time
+- I am using `mailhog` to test sending emails. It is a great tool to test
+  sending emails locally. I can send emails to any address and they will be
+  stored in the mailhog server. I can then access them through a web interface
 
 ### TODOs
 
