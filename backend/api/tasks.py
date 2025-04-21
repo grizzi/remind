@@ -11,8 +11,16 @@ from .models import Plan, Subscription, UserSettings
 def send_welcome_email(username, user_email):
     logger.info(f"Sending welcome email to {user_email}")
 
+    welcome_message = "Welcome to reMind!"
+    link_app = "http://localhost:5173"
+    context = {
+        "username": username,
+        "welcome_message": welcome_message,
+        "link_app": link_app,
+    }
+
     subject = "Welcome to reMind!"
-    html_message = render_to_string("content/welcome_email.html")
+    html_message = render_to_string("content/welcome_email.html", context=context)
     plain_message = strip_tags(html_message)
 
     email = EmailMultiAlternatives(
