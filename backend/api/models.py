@@ -32,11 +32,11 @@ class UserSettings(models.Model):
         verbose_name_plural = "Users Settings"
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    remind_within_days = models.BigIntegerField(default=0)
+    remind_within_days = models.BigIntegerField(default=30)
     remind_frequency = models.CharField(
         max_length=20,
         choices=RemindFrequencyChoices,
-        default=RemindFrequencyChoices.MONTHLY,
+        default=RemindFrequencyChoices.WEEKLY,
     )
     remind_at_most = models.SmallIntegerField(default=1)
     reminders_active = models.BooleanField(default=True)

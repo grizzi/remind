@@ -1,10 +1,14 @@
+from datetime import date, timedelta
+
 from celery import shared_task
-from django.core.mail import EmailMultiAlternatives, send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.db import models
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.html import strip_tags
 from loguru import logger
 
-from .models import Plan, Subscription, UserSettings
+from .models import Plan, RemindFrequencyChoices, Subscription, User, UserSettings
 
 
 @shared_task
@@ -37,24 +41,93 @@ def send_welcome_email(username, user_email):
 def create_plans_alert(user_id):
     user_settings: UserSettings = UserSettings.objects.get(user=user_id)
     if not user_settings.reminders_active:
+        logger.info(f"Reminders are disabled for user {user_id}")
         return
 
-    subs = Subscription.objects.filter(user=user_id)
-    report = []
-    for sub in subs:
-        entry = {"subscription": sub.title, "plans": []}
-        plans = Plan.objects.filter(subscription=sub)
-        for plan in plans:
-            entry["plans"].append(plan.name)
-        report.append(entry)
+    # Compute time information
+    today = date.today()
+    now = timezone.now()
 
-    send_mail(
-        "reMind report",
-        f"{report}",
-        "info@re.mind",
-        [user_settings.user.email],
-        fail_silently=True,
+    max_reminders: int = user_settings.remind_at_most
+
+    # Remind frequency
+    remind_again_after = today - timedelta(days=1)
+    if user_settings.remind_frequency == RemindFrequencyChoices.WEEKLY:
+        remind_again_after = now - timedelta(weeks=1)
+    elif user_settings.remind_frequency == RemindFrequencyChoices.MONTHLY:
+        remind_again_after = now - timedelta(weeks=4)
+
+    # Each plan with its end date within the configured buffer
+    expiring_soon_date = today + timedelta(days=user_settings.remind_within_days)
+
+    logger.info(f"Remind again after: {remind_again_after}")
+    logger.info(f"Expiring soon date: {expiring_soon_date}")
+    # Get all plans that are eligible for reminders
+    # for all the subscriptions of this user
+    # To send an alert the following conditions must be met:
+    # 1. The end date - remind buffer is in the past
+    # 2. The last reminder is more than remind frequency ago in the past
+    # 3. The total reminders is less than the max reminders
+    # 4. There has been no reminder sent yet
+    subs = Subscription.objects.filter(user=user_id)
+    plans_to_remind = {}
+    all_plans_to_remind = []
+    for sub in subs:
+        sub_plans_to_remind: list[Plan] = (
+            sub.plans.filter(
+                end_date__lte=expiring_soon_date,
+                total_reminders__lt=max_reminders,
+            )
+            .filter(
+                models.Q(last_reminder_at__isnull=True)
+                | models.Q(last_reminder_at__lt=remind_again_after)
+            )
+            .order_by("end_date")
+        )
+
+        if sub_plans_to_remind:
+            plans_to_remind[sub.title] = sub_plans_to_remind
+
+    plans_updated = []
+    for plan in all_plans_to_remind:
+        try:
+            plan.last_reminder_at = now
+            plan.total_reminders += 1
+            plans_updated.append(plan)
+
+        except Exception as e:
+            logger.error(f"Error updating plan {plan.id}: {e}")
+            continue
+
+    if plans_updated:
+        Plan.objects.bulk_update(plans_updated, ["last_reminder_at", "total_reminders"])
+        logger.info(f"Updated {len(plans_updated)} plans with reminders")
+
+    if len(plans_to_remind) == 0:
+        logger.info("No plans to remind")
+        return
+    else:
+        logger.info(f"Plans to remind: {plans_to_remind}")
+
+    # Send email with all the plans to remind
+    user = User.objects.get(id=user_id)
+    context = {
+        "user": user,
+        "plans_to_remind": plans_to_remind,
+    }
+
+    subject = "reMind Alert"
+    html_message = render_to_string("content/alert_email.html", context=context)
+    plain_message = strip_tags(html_message)
+
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=plain_message,
+        from_email="info@re.mind",
+        to=[user.email],
     )
+    email.attach_alternative(html_message, "text/html")
+    email.send()
 
 
 @shared_task
