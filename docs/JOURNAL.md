@@ -52,6 +52,7 @@
 - I am using `mailhog` to test sending emails. It is a great tool to test
   sending emails locally. I can send emails to any address and they will be
   stored in the mailhog server. I can then access them through a web interface
+- Adding the alerting logic and the corresponding unit tests (WIP)
 
 ### TODOs
 
