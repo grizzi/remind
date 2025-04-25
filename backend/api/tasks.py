@@ -24,7 +24,7 @@ def send_welcome_email(username, user_email):
     }
 
     subject = "Welcome to reMind!"
-    html_message = render_to_string("content/welcome_email.html", context=context)
+    html_message = render_to_string("welcome_email.html", context=context)
     plain_message = strip_tags(html_message)
 
     email = EmailMultiAlternatives(
@@ -113,12 +113,14 @@ def create_plans_alert(user_id):
     # Send email with all the plans to remind
     user = User.objects.get(id=user_id)
     context = {
-        "user": user,
+        "username": user.username,
         "plans_to_remind": plans_to_remind,
+        "remind_within_days": user_settings.remind_within_days,
+        "remind_at_most": user_settings.remind_at_most,
     }
 
     subject = "reMind Alert"
-    html_message = render_to_string("content/alert_email.html", context=context)
+    html_message = render_to_string("alert_email.html", context=context)
     plain_message = strip_tags(html_message)
 
     email = EmailMultiAlternatives(

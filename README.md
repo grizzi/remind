@@ -40,7 +40,7 @@ docker compose run --rm django python manage.py test --pattern="tests_*.py" # to
 - Create a superuser in the `django` container:
 
   ```bash
-  docker compose run --rm django python manage.py createsuperuser
+  docker compose run django python manage.py createsuperuser
   ```
 
 - Log in to the admin panel at

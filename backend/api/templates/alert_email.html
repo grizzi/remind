@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expiring Plans Reminder</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f3ff;
+        margin: 0;
+        padding: 20px;
+        color: #2d0353;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(99, 60, 140, 0.1);
+      }
+
+      .logo {
+        display: block;
+        margin: 0 auto 20px auto;
+        max-width: 150px;
+      }
+
+      h2 {
+        color: #5e2b97;
+      }
+
+      h3 {
+        color: #7d3fc0;
+        margin-top: 20px;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
+
+      li {
+        margin-bottom: 8px;
+        line-height: 1.4;
+      }
+
+      p {
+        margin: 16px 0;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+
+        .container {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      {% load static %}
+      <img
+        src="http://127.0.0.1:8000/{% static 'reMind_Logo_transparent.png' %}"
+        alt="reMind"
+        class="logo"
+      />
+      <h2>Hello {{ username }},</h2>
+      <p>The following plans are about to expire ⌛</p>
+
+      {% for sub_title, plans in plans_to_remind.items %}
+      <h3>{{ sub_title }}</h3>
+      <ul>
+        {% for plan in plans %}
+        <li>{{ plan.name }} — ends on {{ plan.end_date }}</li>
+        {% endfor %}
+      </ul>
+      {% endfor %}
+
+      <p>
+        We are reminding you within {{ remind_within_days }} days from expiration for
+        at most {{ remind_at_most }} time/s.
+      </p>
+      <p>Best regards,<br />Your reMind Team</p>
+    </div>
+  </body>
+</html>
