@@ -62,6 +62,7 @@ def create_plans_alert(user_id):
 
     logger.info(f"Remind again after: {remind_again_after}")
     logger.info(f"Expiring soon date: {expiring_soon_date}")
+
     # Get all plans that are eligible for reminders
     # for all the subscriptions of this user
     # To send an alert the following conditions must be met:

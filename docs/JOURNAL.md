@@ -62,6 +62,11 @@
 - [ ] Test alert generation
 - [ ] Make it clear that no multi-currency are allowed. So change all the
       currency to reflect the user's currency
+- [ ] Add function to autorenew the subscriptions when the end date is reached
+      and has autorenewal
+- [ ] Add function to send email when the subscription is renewed
+- [ ] Add functionality that makes a subscription expired when the end date is
+      reached and does not have autorenewal
 
 ### WHISHLIST
 

@@ -161,6 +161,9 @@ class Plan(models.Model):
         max_length=20, choices=PlanFrequencyChoices, blank=True, null=True
     )
 
+    def __str__(self):
+        return f"Plan({self.subscription.title}) - {self.name}"
+
 
 class Label(models.Model):
     name = models.CharField(max_length=20)
