@@ -53,13 +53,12 @@
   sending emails locally. I can send emails to any address and they will be
   stored in the mailhog server. I can then access them through a web interface
 - Adding the alerting logic and the corresponding unit tests (WIP)
+- Function to send alert based on user settings and basic alert unittesting done
 
 ### TODOs
 
 - [ ] Function to create a monthly report based on user subscriptions
 - [ ] Test monthly report generation
-- [ ] Function to send alert based on user settings
-- [ ] Test alert generation
 - [ ] Make it clear that no multi-currency are allowed. So change all the
       currency to reflect the user's currency
 - [ ] Add function to autorenew the subscriptions when the end date is reached
