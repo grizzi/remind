@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # This is also the server jwt signing key
-SECRET_KEY = "django-insecure-727=8n2)3#7&w=bzp(t80no@1c_lby)a$1cp&t@!g(+ar6-w=t"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -100,7 +100,6 @@ DATABASES = {
         "NAME": "test_remind",
     },
 }
-print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

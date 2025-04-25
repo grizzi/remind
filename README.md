@@ -31,6 +31,8 @@ subscriptions.
 
 ```bash
 docker compose run --rm django python manage.py test
+docker compose run --rm django python manage.py test --pattern="tests_*.py" # to run specific tests
+
 ```
 
 ## Create admin and log to admin panel
