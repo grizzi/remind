@@ -119,7 +119,6 @@ export const AuthContextProvider = ({
           setAccessToken(res?.data.access!)
           setRefreshToken(res?.data.refresh!)
           setUser(userObj!)
-          toast.success('Login Success!')
           console.info(
             'Logged in with user',
             userObj,
