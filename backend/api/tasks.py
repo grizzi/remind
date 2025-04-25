@@ -71,7 +71,6 @@ def create_plans_alert(user_id):
     # 4. There has been no reminder sent yet
     subs = Subscription.objects.filter(user=user_id)
     plans_to_remind = {}
-    all_plans_to_remind = []
     for sub in subs:
         sub_plans_to_remind: list[Plan] = (
             sub.plans.filter(
@@ -86,22 +85,23 @@ def create_plans_alert(user_id):
         )
 
         if sub_plans_to_remind:
-            plans_to_remind[sub.title] = sub_plans_to_remind
+            plans_to_remind[sub.title] = list(sub_plans_to_remind)
 
     plans_updated = []
-    for plan in all_plans_to_remind:
-        try:
+    for plans in plans_to_remind.values():
+        for plan in plans:
             plan.last_reminder_at = now
             plan.total_reminders += 1
             plans_updated.append(plan)
 
-        except Exception as e:
-            logger.error(f"Error updating plan {plan.id}: {e}")
-            continue
-
-    if plans_updated:
-        Plan.objects.bulk_update(plans_updated, ["last_reminder_at", "total_reminders"])
-        logger.info(f"Updated {len(plans_updated)} plans with reminders")
+    try:
+        if plans_updated:
+            Plan.objects.bulk_update(
+                plans_updated, ["last_reminder_at", "total_reminders"]
+            )
+            logger.info(f"Updated {len(plans_updated)} plans with reminders")
+    except Exception as exc:
+        logger.error(f"Error updating plans! {exc}")
 
     if len(plans_to_remind) == 0:
         logger.info("No plans to remind")
