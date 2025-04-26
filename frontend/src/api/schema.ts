@@ -28,29 +28,17 @@ export const BillingFrequencySchema = z.enum([
 
 export type BillingFrequency = z.infer<typeof BillingFrequencySchema>
 
-export const PlanSchema = z
-  .object({
-    id: z.number().optional(),
-    name: z.string(),
-    subscription: z.number().optional(),
-    auto_renew: z.boolean(),
-    start_date: z.string().date(),
-    end_date: z.string().date().nullable(),
-    cost: z.coerce.number().gt(0, 'Insert a positive amount').optional(),
-    cost_currency: z.string().optional(),
-    billing_frequency: BillingFrequencySchema.optional(),
-  })
-  .refine(
-    data => {
-      return (
-        (data?.cost && data?.cost_currency) ||
-        (!data?.cost && !data?.cost_currency)
-      )
-    },
-    {
-      message: 'Both currency and plan cost must be specified!',
-    },
-  )
+export const PlanSchema = z.object({
+  id: z.number().optional(),
+  name: z.string().nonempty('Name should not be empty!'),
+  subscription: z.number().optional(),
+  auto_renew: z.boolean(),
+  start_date: z.string().date(),
+  end_date: z.string().date().nullable(),
+  cost: z.coerce.number().gte(0, 'Insert a non negative amount'),
+  cost_currency: z.string(),
+  billing_frequency: BillingFrequencySchema.optional(),
+})
 
 export type Plan = z.infer<typeof PlanSchema>
 

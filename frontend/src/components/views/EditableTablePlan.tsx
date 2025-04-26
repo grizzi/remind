@@ -12,7 +12,8 @@ import TextField from '../inputs/TextField'
 import SelectField from '../inputs/SelectField'
 import CheckboxField from '../inputs/CheckboxField'
 import DateField from '../inputs/DateField'
-import TimedParagraph from '../shared/TimedParagraph'
+import NumericField from '../inputs/NumericField'
+import { toast } from 'react-toastify'
 
 type EditablePlanTableProps = {
   subscription?: Subscription
@@ -23,11 +24,6 @@ type EditablePlanTableProps = {
   onDelete: (plan: Plan) => Promise<void>
 }
 
-type PopupInfo = {
-  when: number
-  reason: string
-}
-
 const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
   subscription,
   plans,
@@ -36,17 +32,12 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
   onUpdate,
   onDelete,
 }) => {
-  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [_, setEditingIndex] = useState<number | null>(null)
   const [editedPlans, setEditedPlans] = useState<Plan[]>([])
-  const [submissionSuccess, setSubmissionSuccess] = useState<PopupInfo | null>(
-    null,
-  )
 
   const formatDate = (date: Date) => {
     return date.toISOString().split('T')[0]
   }
-
-  const [submissionError, setSubmissionError] = useState<PopupInfo | null>(null)
 
   const currenciesOptions = currencies.map(c => ({
     value: c.code,
@@ -64,22 +55,6 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
 
   return (
     <div>
-      {submissionError && (
-        <TimedParagraph
-          variant='error'
-          key={submissionError.when}
-          text={submissionError.reason}
-        />
-      )}
-
-      {submissionSuccess && (
-        <TimedParagraph
-          variant='success'
-          key={submissionSuccess.when}
-          text={submissionSuccess.reason}
-        />
-      )}
-
       <p className='text-xl mt-2 mb-2'>Plans</p>
       <button
         className='flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
@@ -132,19 +107,12 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
               enableReinitialize
               validate={toFormikValidate(PlanSchema)}
               onSubmit={values => {
+                console.log('Submitting the following plan: ', values)
                 onUpdate(values)
                   .then(() => setEditingIndex(null))
-                  .then(() =>
-                    setSubmissionSuccess({
-                      reason: 'Plan updated',
-                      when: Date.now(),
-                    }),
-                  )
+                  .then(() => toast.success('Plan updated successfully'))
                   .catch(err =>
-                    setSubmissionError({
-                      reason: `Failed to update the plan: ${err}`,
-                      when: Date.now(),
-                    }),
+                    toast.success(`Could not update plan: ${err.message}`),
                   )
               }}
             >
@@ -152,7 +120,7 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
                 <TextField id='name' />
                 <DateField id='start_date' />
                 <DateField id='end_date' />
-                <TextField id='cost' />
+                <NumericField id='cost' />
                 <SelectField id='cost_currency' options={currenciesOptions} />
                 <SelectField id='billing_frequency' options={billingOptions} />
                 <div className='w-full'>
@@ -168,13 +136,12 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
                   <button
                     type='button'
                     onClick={() => {
-                      onDelete(plan)
+                      // Can delete only plans that were already saved
+                      if (plan.id) {
+                        onDelete(plan)
+                      }
                       setEditedPlans(editedPlans.filter((_, i) => i !== index))
                       setEditingIndex(null)
-                      setSubmissionSuccess({
-                        reason: 'Plan deleted',
-                        when: Date.now(),
-                      })
                     }}
                     className='text-gray-500 hover:underline'
                   >

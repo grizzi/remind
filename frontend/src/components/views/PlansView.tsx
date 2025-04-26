@@ -14,6 +14,9 @@ type PlanTableProps = {
 }
 
 const PlansView: React.FC<PlanTableProps> = ({ plans }) => {
+  const formatCost = (plan: Plan) =>
+    plan.cost > 0 ? `${plan.cost.toFixed(2)} ${plan.cost_currency}` : 'Free'
+
   return (
     <div className='overflow-x-auto border-gray-200 shadow-sm'>
       {plans.map((plan, _) => (
@@ -46,9 +49,7 @@ const PlansView: React.FC<PlanTableProps> = ({ plans }) => {
           </div>
           <div className='px-4 py-3 flex items-center gap-2'>
             <FaDollarSign className='text-gray-500' />
-            {plan.cost !== undefined && plan.cost_currency
-              ? `${plan.cost.toFixed(2)} ${plan.cost_currency}`
-              : '—'}
+            {formatCost(plan)}
           </div>
           <div className='px-4 py-3 flex items-center gap-2'>
             <FaRegClock className='text-gray-500' />
