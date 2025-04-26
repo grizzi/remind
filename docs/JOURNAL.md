@@ -55,6 +55,7 @@
 - Adding the alerting logic and the corresponding unit tests (WIP)
 - Function to send alert based on user settings and basic alert unittesting done
 - Function that auto-renews plans if they autorenew and corresponding testing
+  and marking others as expired
   - Note: the handling of time is really naive!
     - Not considering timezones
     - Not considering leap years
@@ -66,11 +67,7 @@
 - [ ] Test monthly report generation
 - [ ] Make it clear that no multi-currency are allowed. So change all the
       currency to reflect the user's currency
-- [ ] Add function to autorenew the subscriptions when the end date is reached
-      and has autorenewal
-- [ ] Add function to send email when the subscription is renewed
-- [ ] Add functionality that makes a subscription expired when the end date is
-      reached and does not have autorenewal
+- [ ] Filtering in the subscrition list
 
 ### WHISHLIST
 

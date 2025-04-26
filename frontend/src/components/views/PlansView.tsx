@@ -7,6 +7,7 @@ import {
   FaRegClock,
   FaCheckCircle,
   FaTimesCircle,
+  FaCalendarTimes,
 } from 'react-icons/fa'
 
 type PlanTableProps = {
@@ -25,14 +26,19 @@ const PlansView: React.FC<PlanTableProps> = ({ plans }) => {
             {plan.name === '' ? '(Untitled)' : plan.name}
           </div>
           <div className='min-w-40 px-4 py-3 flex items-center gap-2'>
-            {plan.auto_renew ? (
+            {plan.expired ? (
+              <>
+                <FaTimesCircle className='text-red-500' />
+                Expired
+              </>
+            ) : plan.auto_renew ? (
               <>
                 <FaCheckCircle className='text-green-600' />
                 Autorenews
               </>
             ) : (
               <>
-                <FaTimesCircle className='text-red-500' />
+                <FaCalendarTimes className='text-orange-400' />
                 Expires
               </>
             )}
