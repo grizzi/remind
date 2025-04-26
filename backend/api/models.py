@@ -160,6 +160,7 @@ class Plan(models.Model):
     billing_frequency = models.CharField(
         max_length=20, choices=PlanFrequencyChoices, blank=True, null=True
     )
+    expired = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Plan({self.subscription.title}) - {self.name}"

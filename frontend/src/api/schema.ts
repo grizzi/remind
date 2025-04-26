@@ -38,6 +38,7 @@ export const PlanSchema = z.object({
   cost: z.coerce.number().gte(0, 'Insert a non negative amount'),
   cost_currency: z.string(),
   billing_frequency: BillingFrequencySchema.optional(),
+  expired: z.boolean().optional(),
 })
 
 export type Plan = z.infer<typeof PlanSchema>

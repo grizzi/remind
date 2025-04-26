@@ -38,6 +38,12 @@ def send_welcome_email(username, user_email):
 
 
 @shared_task
+def alert_and_update(user_id):
+    create_plans_alert(user_id)
+    renew_plans(user_id)
+
+
+@shared_task
 def create_plans_alert(user_id):
     user_settings: UserSettings = UserSettings.objects.get(user=user_id)
     if not user_settings.reminders_active:
@@ -131,6 +137,31 @@ def create_plans_alert(user_id):
     )
     email.attach_alternative(html_message, "text/html")
     email.send()
+
+
+@shared_task
+def renew_plans(user_id):
+    plans = Plan.objects.filter(subscription__user_id=user_id)
+    plans_to_update = []
+    for plan in plans:
+        logger.info(
+            f"Plan: {plan.name}, start date: {plan.start_date}, end date: {plan.end_date}"
+        )
+        if plan.end_date and plan.end_date <= timezone.now().date():
+            if plan.auto_renew:
+                logger.info("Renewing plan...")
+                plan_duration = plan.end_date - plan.start_date
+                plan.start_date = plan.end_date + timedelta(days=1)
+                plan.end_date = plan.start_date + plan_duration
+            else:
+                plan.exprired = True
+                logger.info("Plan expired!")
+            plans_to_update.append(plan)
+        else:
+            logger.info("Plan is not expired yet!")
+
+    if plans_to_update:
+        Plan.objects.bulk_update(plans_to_update, ["start_date", "end_date"])
 
 
 @shared_task
