@@ -54,6 +54,11 @@
   stored in the mailhog server. I can then access them through a web interface
 - Adding the alerting logic and the corresponding unit tests (WIP)
 - Function to send alert based on user settings and basic alert unittesting done
+- Function that auto-renews plans if they autorenew and corresponding testing
+  - Note: the handling of time is really naive!
+    - Not considering timezones
+    - Not considering leap years
+    - Errors might cumulate over time for long term subscriptions
 
 ### TODOs
 
@@ -72,3 +77,4 @@
 - [ ] Reset your password
 - [ ] OAuth authentication
 - [ ] Choose settings on the first login
+- [ ] Proper handling of time and timezones (it could be part of user settings)
