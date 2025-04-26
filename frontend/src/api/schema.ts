@@ -39,6 +39,7 @@ export const PlanSchema = z.object({
   cost_currency: z.string(),
   billing_frequency: BillingFrequencySchema.optional(),
   expired: z.boolean().optional(),
+  renewed: z.boolean().optional(),
 })
 
 export type Plan = z.infer<typeof PlanSchema>

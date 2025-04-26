@@ -8,6 +8,8 @@ import FloatingActionButton from '../components/buttons/FloatingActionButton'
 import SubscriptionCardView from '../components/views/SubscriptionCardView'
 import { Api } from '../api/api'
 import { BillingFrequency } from '../api/schema'
+import TagChip from '../components/shared/TagChip'
+import { TbFilter } from 'react-icons/tb'
 
 const MetricCard = ({
   header,
@@ -41,6 +43,7 @@ const SubscriptionsPage = () => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>()
   const [addSubscription, setAddSubscription] = useState<boolean>(false)
   const [labels, setLabels] = useState<Label[]>([])
+  const [selectedLabels, setSelectedLabels] = useState<Label[]>([])
   const [focusSubscriptionId, setFocusSubscriptionId] = useState<number | null>(
     null,
   )
@@ -56,7 +59,9 @@ const SubscriptionsPage = () => {
     context
       .getSubscriptions(forceUpdate)
       .then(subs => setSubscriptions(subs))
-      .catch(err => console.error(`Failed to get subscriptions: ${err.message}`))
+      .catch(err =>
+        console.error(`Failed to get subscriptions: ${err.message}`),
+      )
 
     context.getLabels().then(l => setLabels(l))
     context.getUserSettings().then(settings => setSettings(settings))
@@ -154,6 +159,25 @@ const SubscriptionsPage = () => {
     return totalCost
   }
 
+  const toggleLabel = (name: string) => {
+    const label = selectedLabels.find(l => l.name === name)
+    if (label) {
+      setSelectedLabels(selectedLabels.filter(l => l.name !== name))
+    } else {
+      setSelectedLabels([...selectedLabels, { name }])
+    }
+  }
+
+  const getUniqueLabelNames = (labels: Label[]) => {
+    const uniqueLabels = new Set<string>()
+    labels.forEach(label => {
+      if (!uniqueLabels.has(label.name)) {
+        uniqueLabels.add(label.name)
+      }
+    })
+    return Array.from(uniqueLabels)
+  }
+
   return (
     <div>
       <div className='flex flex-row justify-evenly w-full mb-4'>
@@ -182,7 +206,46 @@ const SubscriptionsPage = () => {
       <FloatingActionButton onClick={() => setAddSubscription(true)} />
       <div className='pr-2 pl-2'>
         <p className='text-4xl'>Subscriptions</p>
+
+        <div className='flex flex-wrap gap-0 items-center justify-end mt-2 mb-2'>
+          {getUniqueLabelNames(labels).map(ln => (
+            <div className='text-xs hover:cursor-pointer' key={ln}>
+              <TagChip
+                key={ln}
+                onClick={() => toggleLabel(ln)}
+                name={ln}
+                disabled={!selectedLabels.some(sl => sl.name === ln)}
+              />
+            </div>
+          ))}
+
+          <div className='flex items-center gap-3'>
+            <button
+              onClick={() => {
+                if (selectedLabels.length > 0) {
+                  setSelectedLabels([])
+                }
+              }}
+              className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-150
+      ${
+        selectedLabels.length > 0
+          ? 'text-purple-600 hover:bg-blue-100'
+          : 'text-gray-500 hover:bg-gray-200'
+      }`}
+            >
+              <TbFilter className='text-lg' />
+            </button>
+          </div>
+        </div>
+
         {subscriptions
+          .filter(sub =>
+            sub.labels.some(
+              l =>
+                selectedLabels.find(ls => l.name === ls.name) ||
+                selectedLabels.length === 0,
+            ),
+          )
           .sort((a, b) => {
             if (a.created_at < b.created_at) {
               return -1

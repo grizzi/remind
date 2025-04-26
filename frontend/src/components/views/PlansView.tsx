@@ -16,7 +16,7 @@ type PlanTableProps = {
 
 const PlansView: React.FC<PlanTableProps> = ({ plans }) => {
   const formatCost = (plan: Plan) =>
-    plan.cost > 0 ? `${plan.cost.toFixed(2)} ${plan.cost_currency}` : 'Free'
+    plan.cost > 0 ? `${plan.cost.toFixed(2)}` : 'Free'
 
   return (
     <div className='overflow-x-auto border-gray-200 shadow-sm'>

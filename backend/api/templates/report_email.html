@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333333;
+        background-color: #f9f9f9;
+        padding: 20px;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        max-width: 700px;
+        margin: auto;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        display: block;
+        margin: 0 auto 20px auto;
+        max-width: 150px;
+      }
+
+      h2 {
+        color: #2a7ae2;
+        border-bottom: 2px solid #e2e2e2;
+        padding-bottom: 5px;
+      }
+      .section {
+        margin-bottom: 30px;
+      }
+      .plan-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      .plan-table th,
+      .plan-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      .plan-table th {
+        background-color: #f2f2f2;
+      }
+      .footer {
+        font-size: 12px;
+        color: #777777;
+        margin-top: 20px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      {% load static %}
+      <img
+        src="http://127.0.0.1:8000/{% static 'reMind_Logo_transparent.png' %}"
+        alt="reMind"
+        class="logo"
+      />
+
+      <h1>Monthly Subscription Report</h1>
+      <p>Hello {{ username }},</p>
+      <p>
+        Here’s your subscription summary for
+        <strong>{{ report_month }}</strong>.
+      </p>
+
+      <div class="section">
+        <h2>New Subscriptions</h2>
+        {% if new_subscriptions %}
+        <table class="plan-table">
+          <thead>
+            <tr>
+              <th>Subscription</th>
+              <th>Plan</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sub in new_subscriptions %}
+            <tr>
+              <td>{{ sub.title }}</td>
+              <td>{{ sub.plan_name }}</td>
+              <td>{{ sub.start_date }}</td>
+              <td>{{ sub.end_date }}</td>
+              <td>{{ sub.cost }} {{ sub.currency }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p>No new subscriptions for this month.</p>
+        {% endif %}
+      </div>
+
+      <div class="section">
+        <h2>Expired Subscriptions</h2>
+        {% if expired_subscriptions %}
+        <table class="plan-table">
+          <thead>
+            <tr>
+              <th>Subscription</th>
+              <th>Plan</th>
+              <th>Ended On</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sub in expired_subscriptions %}
+            <tr>
+              <td>{{ sub.title }}</td>
+              <td>{{ sub.plan_name }}</td>
+              <td>{{ sub.end_date }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p>No subscriptions expired this month.</p>
+        {% endif %}
+      </div>
+
+      <div class="section">
+        <h2>Renewed Subscriptions</h2>
+        {% if renewed_subscriptions %}
+        <table class="plan-table">
+          <thead>
+            <tr>
+              <th>Subscription</th>
+              <th>Old Plan End</th>
+              <th>New Plan Start</th>
+              <th>New Plan End</th>
+              <th>Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sub in renewed_subscriptions %}
+            <tr>
+              <td>{{ sub.title }}</td>
+              <td>{{ sub.old_end }}</td>
+              <td>{{ sub.new_start }}</td>
+              <td>{{ sub.new_end }}</td>
+              <td>{{ sub.cost }} {{ sub.currency }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p>No renewals this month.</p>
+        {% endif %}
+      </div>
+
+      <p>Thank you for using our service!</p>
+
+      <div class="footer">
+        &copy; {{ current_year }} Your Company. All rights reserved.
+      </div>
+    </div>
+  </body>
+</html>

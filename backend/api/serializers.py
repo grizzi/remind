@@ -63,6 +63,8 @@ class PlanSerializer(serializers.ModelSerializer):
             "user": {"read_only": True},
             "last_reminder_at": {"read_only": True},
             "total_reminder": {"read_only": True},
+            "renewed": {"read_only": True},
+            "expired": {"read_only": True},
         }
 
 

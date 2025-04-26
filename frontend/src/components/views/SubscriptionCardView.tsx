@@ -13,7 +13,6 @@ const SubscriptionCardView = ({
   onClick: () => void
 }) => {
   const [plans, setPlans] = useState<Plan[]>([])
-
   useEffect(() => {
     Api.getPlans(subscription.id.toString()).then(plans => setPlans(plans))
   }, [])
@@ -26,13 +25,11 @@ const SubscriptionCardView = ({
     >
       <div className='flex flex-col justify-around p-1'>
         <p className='text-2xl'>{subscription.title}</p>
-        {plans.length > 0 ? (
-          <p>
-            {plans[0].cost} {plans[0].cost_currency}
-          </p>
-        ) : (
-          <></>
-        )}
+        <p className='text-sm text-gray-500'>
+          {plans.length > 0
+            ? `Plans: ${plans.map(p => p.name).join(', ')}`
+            : 'No plans available'}
+        </p>
       </div>
       <div className='flex flex-wrap justify-end items-start p-2'>
         {labels.map(l => (

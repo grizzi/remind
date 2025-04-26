@@ -91,10 +91,10 @@ def add_tasks(sender, instance, created, **kwargs):
             )
 
             report_schedule, _ = CrontabSchedule.objects.get_or_create(
-                minute="0",
-                hour="8",
+                minute="*",
+                hour="*",
                 day_of_week="*",
-                day_of_month="1",
+                day_of_month="*",
                 month_of_year="*",
             )
 
@@ -102,7 +102,7 @@ def add_tasks(sender, instance, created, **kwargs):
             report_task = PeriodicTask.objects.create(
                 crontab=report_schedule,
                 name=f"user_{user.id}_report",
-                task="api.tasks.create_report",
+                task="api.tasks.send_monthly_report",
                 args=json.dumps(
                     [
                         user.id,
@@ -161,6 +161,7 @@ class Plan(models.Model):
         max_length=20, choices=PlanFrequencyChoices, blank=True, null=True
     )
     expired = models.BooleanField(default=False)
+    renewed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Plan({self.subscription.title}) - {self.name}"

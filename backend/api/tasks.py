@@ -8,7 +8,13 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 from loguru import logger
 
-from .models import Plan, RemindFrequencyChoices, Subscription, User, UserSettings
+from .models import (
+    Plan,
+    RemindFrequencyChoices,
+    Subscription,
+    User,
+    UserSettings,
+)
 
 
 @shared_task
@@ -153,6 +159,7 @@ def renew_plans(user_id):
                 plan_duration = plan.end_date - plan.start_date
                 plan.start_date = plan.end_date + timedelta(days=1)
                 plan.end_date = plan.start_date + plan_duration
+                plan.renewed = True
             else:
                 plan.exprired = True
                 logger.info("Plan expired!")
@@ -164,8 +171,109 @@ def renew_plans(user_id):
         Plan.objects.bulk_update(plans_to_update, ["start_date", "end_date"])
 
 
+def created_last_month(user_id):
+    today = timezone.now().date()
+    last_date_last_month = today.replace(day=1) - timedelta(days=1)
+
+    # Created plans are those plans that have a start date in the last month
+    # and have not been renewed, rather created.
+    created = Plan.objects.filter(
+        subscription__user_id=user_id,
+        start_date__month=last_date_last_month.month,
+        renewed=False,
+    ).exclude(end_date__month=last_date_last_month.month)
+
+    return list(created)
+
+
+def renewed_last_month(user_id):
+    today = timezone.now().date()
+    last_date_last_month = today.replace(day=1) - timedelta(days=1)
+
+    # Renewed plans are those plans that have a start date in the last month
+    # and have been renewed.
+    renewed = Plan.objects.filter(
+        subscription__user_id=user_id,
+        start_date__month=last_date_last_month.month,
+        renewed=True,
+    ).exclude(end_date__month=last_date_last_month.month)
+
+    return list(renewed)
+
+
+def expired_last_month(user_id):
+    today = timezone.now().date()
+    last_date_last_month = today.replace(day=1) - timedelta(days=1)
+
+    # Expired plans are those that do not renew and have an end date in the last month
+    expired = Plan.objects.filter(
+        subscription__user_id=user_id,
+        end_date__month=last_date_last_month.month,
+        renewed=False,
+    )
+
+    return list(expired)
+
+
 @shared_task
-def create_report(user_id):
-    user_settings: UserSettings = UserSettings.objects.get(user=user_id)
-    if not user_settings.monthly_report_active:
+def send_monthly_report(user_id):
+    today = timezone.now().date()
+    last_date_last_month = today.replace(day=1) - timedelta(days=1)
+
+    created = created_last_month(user_id)
+    renewed = renewed_last_month(user_id)
+    expired = expired_last_month(user_id)
+
+    user = User.objects.get(id=user_id)
+    settings = UserSettings.objects.get(user=user_id)
+    if not settings.monthly_report_active:
         return
+
+    context = {
+        "username": user.username,
+        "report_month": last_date_last_month.strftime("%B %Y"),
+        "current_year": today.year,
+        "new_subscriptions": [
+            {
+                "title": plan.subscription.title,
+                "plan_name": plan.name,
+                "start_date": plan.start_date,
+                "end_date": plan.end_date,
+                "cost": plan.cost.amount,
+                "currency": settings.budget.currenct,  # plan.cost.currency, TODO(giuseppe) when supporting more than one currency
+            }
+            for plan in created
+        ],
+        "expired_subscriptions": [
+            {
+                "title": plan.subscription.title,
+                "plan_name": plan.name,
+                "end_date": plan.end_date,
+            }
+            for plan in expired
+        ],
+        "renewed_subscriptions": [
+            {
+                "title": plan.subscription.title,
+                "old_end": plan.start_date - timedelta(days=1),
+                "new_start": plan.start_date,
+                "new_end": plan.end_date,
+                "cost": plan.cost.amount,
+                "currency": settings.budget.currenct,  # plan.cost.currency, TODO(giuseppe) when supporting more than one currency
+            }
+            for plan in renewed
+        ],
+    }
+
+    subject = "Subscription Report"
+    html_message = render_to_string("report_email.html", context)
+    plain_message = strip_tags(html_message)
+
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=plain_message,
+        from_email="info@re.mind",
+        to=[user.email],
+    )
+    email.attach_alternative(html_message, "text/html")
+    email.send()

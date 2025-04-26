@@ -39,10 +39,11 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
     return date.toISOString().split('T')[0]
   }
 
-  const currenciesOptions = currencies.map(c => ({
-    value: c.code,
-    label: c.code,
-  }))
+  // TODO(giuseppe): multicurrency support in the future
+  // const currenciesOptions = currencies.map(c => ({
+  //   value: c.code,
+  //   label: c.code,
+  // }))
 
   const billingOptions = ['daily', 'weekly', 'monthly', 'yearly'].map(b => ({
     value: b,
@@ -67,7 +68,7 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
               start_date: formatDate(new Date()),
               end_date: formatDate(new Date()),
               cost: 0,
-              cost_currency: settings?.budget_currency || 'USD',
+              cost_currency: settings.budget_currency,
               billing_frequency: 'monthly',
             },
             ...editedPlans,
@@ -121,7 +122,17 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
                 <DateField id='start_date' />
                 <DateField id='end_date' />
                 <NumericField id='cost' />
-                <SelectField id='cost_currency' options={currenciesOptions} />
+                <SelectField
+                  id='cost_currency'
+                  // TODO(giuseppe): multicurrency support in the future
+                  options={[
+                    {
+                      value: settings.budget_currency,
+                      label: settings.budget_currency,
+                    },
+                  ]}
+                  disabled={true}
+                />
                 <SelectField id='billing_frequency' options={billingOptions} />
                 <div className='w-full'>
                   <CheckboxField id='auto_renew' />

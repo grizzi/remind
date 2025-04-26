@@ -60,14 +60,14 @@
     - Not considering timezones
     - Not considering leap years
     - Errors might cumulate over time for long term subscriptions
+- Simple filtering of subscriptions based on tags, won't do more complex
+  filtering
+- Reflect user currency when this is changed in the UI, basically just somethign visual
 
 ### TODOs
 
 - [ ] Function to create a monthly report based on user subscriptions
 - [ ] Test monthly report generation
-- [ ] Make it clear that no multi-currency are allowed. So change all the
-      currency to reflect the user's currency
-- [ ] Filtering in the subscrition list
 
 ### WHISHLIST
 
@@ -75,3 +75,8 @@
 - [ ] OAuth authentication
 - [ ] Choose settings on the first login
 - [ ] Proper handling of time and timezones (it could be part of user settings)
+- [ ] More complex filtering options for subscriptions and plans
+- [ ] Multi-currency support
+- [ ] Add a "confirm your email" step
+- [ ] Add a "forgot your password" step
+- [ ] Add a "reset your password" step
