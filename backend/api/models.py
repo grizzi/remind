@@ -82,7 +82,7 @@ def add_tasks(sender, instance, created, **kwargs):
             plans_monitor = PeriodicTask.objects.create(
                 interval=plans_monitor_schedule,
                 name=f"user_{user.id}_monitor",
-                task="api.tasks.create_plans_alert",
+                task="api.tasks.alert_and_update",
                 args=json.dumps(
                     [
                         user.id,

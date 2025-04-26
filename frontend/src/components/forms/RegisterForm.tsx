@@ -79,7 +79,7 @@ function RegisterForm() {
             className='text-purple-600 hover:text-purple-500 hover:cursor-pointer font-semibold'
             onClick={() => navigate('/login')}
           >
-            login here!
+            Login here!
           </a>
         </p>
       </div>

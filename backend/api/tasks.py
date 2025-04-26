@@ -43,8 +43,8 @@ def alert_and_update(user_id):
     renew_plans(user_id)
 
 
-@shared_task
 def create_plans_alert(user_id):
+    logger.info(f"Creating plans alert for user {user_id}")
     user_settings: UserSettings = UserSettings.objects.get(user=user_id)
     if not user_settings.reminders_active:
         logger.info(f"Reminders are disabled for user {user_id}")
@@ -139,8 +139,8 @@ def create_plans_alert(user_id):
     email.send()
 
 
-@shared_task
 def renew_plans(user_id):
+    logger.info(f"Renewing plans for user {user_id}")
     plans = Plan.objects.filter(subscription__user_id=user_id)
     plans_to_update = []
     for plan in plans:
