@@ -2,40 +2,15 @@ import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router'
 import { useAppContext } from '../context'
 
-import { Label, Plan, Subscription, UserSettings } from '../api/schema'
+import { Label, Subscription, UserSettings } from '../api/schema'
 import FloatingActionButton from '../components/buttons/FloatingActionButton'
 
 import SubscriptionCardView from '../components/views/SubscriptionCardView'
 import { Api } from '../api/api'
-import { BillingFrequency } from '../api/schema'
 import TagChip from '../components/shared/TagChip'
 import { TbFilter } from 'react-icons/tb'
-
-const MetricCard = ({
-  header,
-  details,
-  loadingDetails,
-}: {
-  header: string
-  details: string
-  loadingDetails?: boolean
-}) => {
-  return (
-    <div className='flex flex-row bg-gradient-to-r from-pink-500 to-violet-500 text-white rounded-xl p-1 shadow-md w-full m-2'>
-      <div className='w-full flex flex-col'>
-        <p className='pl-2 pt-2 text-md sm:text-3xl '>{header}</p>
-
-        <div className='flex flex-row justify-end min-h-[2.5rem] p-1 mr-2'>
-          {!loadingDetails ? (
-            <p className='text-sm sm:text-xl'>{details}</p>
-          ) : (
-            <div className='h-6 w-32 animate-pulse opacity-0 rounded-md bg-white/50 backdrop-blur-2xl shadow-inner' />
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
+import MetricCard from '../components/views/MetricCard'
+import { getTotalCost } from '../shared/TimeUtils'
 
 const SubscriptionsPage = () => {
   const context = useAppContext()
@@ -103,60 +78,6 @@ const SubscriptionsPage = () => {
 
   if (focusSubscriptionId) {
     return <Navigate to={'/subscriptions/' + focusSubscriptionId} />
-  }
-
-  const billingFrequencyToMilliseconds = (
-    billing_frequency?: BillingFrequency,
-  ) => {
-    if (billing_frequency === 'daily') {
-      return 60 * 60 * 24 * 1000
-    }
-
-    if (billing_frequency === 'weekly') {
-      return 60 * 60 * 24 * 7 * 1000
-    }
-
-    if (billing_frequency === 'monthly') {
-      return 60 * 60 * 24 * 31 * 1000
-    }
-
-    if (billing_frequency === 'yearly') {
-      return 60 * 60 * 24 * 365 * 1000
-    }
-    return 0
-  }
-
-  const getTotalCost = (
-    start_time_unix_ms: number,
-    end_time_unix_ms: number,
-    plans: Plan[],
-  ) => {
-    // TODO(giuseppe) this is slightly hacky, not accounting for
-    // leap years and february and different months, but in practice
-    // just for an overview it will eventually be right most of the times
-
-    // UNIX timestamp in milliseconds
-    const totalCost = plans
-      .map(plan => {
-        const start = Math.max(
-          start_time_unix_ms,
-          new Date(plan.start_date).getTime(),
-        )
-        const end = plan.end_date
-          ? Math.min(end_time_unix_ms, new Date(plan.end_date).getTime())
-          : end_time_unix_ms
-        const delta = billingFrequencyToMilliseconds(plan.billing_frequency)
-        const cost = plan.cost ?? 0
-
-        return { start, end, delta, cost }
-      })
-      .filter(info => info.delta > 0 && info.end > info.start)
-      .map(info => {
-        const periods = Math.ceil((info.end - info.start) / info.delta)
-        return info.cost * periods
-      })
-      .reduce((acc, cost) => acc + cost, 0.0)
-    return totalCost
   }
 
   const toggleLabel = (name: string) => {

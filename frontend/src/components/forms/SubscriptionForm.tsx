@@ -69,7 +69,7 @@ const SubscriptionForm = ({
         }}
         validate={toFormikValidate(SubscriptionReadWriteSchema)}
       >
-        <Form className='max-w-3xl'>
+        <Form className='w-full'>
           <TextField id='title' label='Title' />
           <TextField id='external_link' label='External Link' />
           <div className='flex flex-col items-end'>

@@ -38,9 +38,9 @@ const SubscriptionEditPage = () => {
 
     context.getLabels().then(l => setLabels(l))
 
-    console.log("Sub Id is: ", subId)
+    console.log('Sub Id is: ', subId)
     if (subId !== 'new') {
-      console.log("Fetching plans!!!")
+      console.log('Fetching plans!!!')
       Api.getPlans(subId!)
         .then(plans => setPlans(plans))
         .catch(error =>
@@ -83,7 +83,9 @@ const SubscriptionEditPage = () => {
           navigate(`/subscriptions/${subscription.id}/edit/`)
         })
         .catch(error => {
-          console.error(`Failed to create subscription!: ${JSON.stringify(error)}`)
+          console.error(
+            `Failed to create subscription!: ${JSON.stringify(error)}`,
+          )
         })
     } else {
       Api.updateSubscription(id, subscription)
@@ -113,18 +115,17 @@ const SubscriptionEditPage = () => {
       <p className='mb-4 text-3xl'>
         {subscription?.title || 'Add Subscription'}
       </p>
-      <div className='flex flex-col'>
-        <div>
-          <p className='text-xl mb-2'>General</p>
-          <SubscriptionForm
-            settings={settings}
-            currencies={currencies}
-            subscription={subscription}
-            onSubmit={onSubmit}
-            labels={labels}
-          />
-        </div>
-
+      <div>
+        <p className='text-xl mb-2 w-full'>General</p>
+        <SubscriptionForm
+          settings={settings}
+          currencies={currencies}
+          subscription={subscription}
+          onSubmit={onSubmit}
+          labels={labels}
+        />
+      </div>
+      <div className='flex flex-col w-full'>
         {subscription?.id && (
           <div>
             <EditablePlanTable

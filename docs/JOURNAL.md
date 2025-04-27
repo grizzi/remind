@@ -63,11 +63,10 @@
 - Simple filtering of subscriptions based on tags, won't do more complex
   filtering
 - Reflect user currency when this is changed in the UI, basically just somethign visual
+- Function to create a monthly report based on user subscriptions
 
 ### TODOs
 
-- [ ] Function to create a monthly report based on user subscriptions
-- [ ] Test monthly report generation
 
 ### WHISHLIST
 

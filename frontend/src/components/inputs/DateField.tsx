@@ -1,11 +1,10 @@
 import { useField, useFormikContext } from 'formik'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
-const formatDateToInput = (date: Date | string | null) => {
-  if (!date) return ''
-  if (typeof date === 'string') return date
-  return date.toISOString().split('T')[0] // "YYYY-MM-DD"
-}
-
+import { registerLocale } from 'react-datepicker'
+import { de } from 'date-fns/locale/de'
+registerLocale('de-CH', de)
 
 const DateField = (props: {
   label?: string
@@ -15,22 +14,29 @@ const DateField = (props: {
   const [field, meta] = useField(props.id)
   const { setFieldValue } = useFormikContext()
 
-  const valueAsString = formatDateToInput(field.value)
+  const selectedDate = field.value ? new Date(field.value) : null
 
   return (
-    <div className='flex flex-col w-full'>
-      <input
+    <div className='flex flex-col w-full relative'>
+      {props.label && (
+        <label htmlFor={props.id} className='text-sm font-medium mb-1'>
+          {props.label}
+        </label>
+      )}
+
+      <DatePicker
         id={props.id}
-        name={props.id}
-        type='date'
-        disabled={props.disabled}
-        value={valueAsString}
-        onChange={e => {
-          setFieldValue(props.id, e.target.value)
+        selected={selectedDate}
+        onChange={(date: Date | null) => {
+          setFieldValue(props.id, date ? date.toISOString().split('T')[0] : '')
         }}
-        placeholder={props?.label}
+        locale='de-CH'
+        dateFormat='dd.MM.yyyy' // Swiss format
         className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm'
+        disabled={props.disabled}
+        placeholderText='Select a date'
       />
+
       <div className='min-h-[1.25rem] text-red-500 text-xs mt-1'>
         {meta.touched && meta.error && <span>{meta.error}</span>}
       </div>

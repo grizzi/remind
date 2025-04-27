@@ -240,7 +240,7 @@ def send_monthly_report(user_id):
                 "start_date": plan.start_date,
                 "end_date": plan.end_date,
                 "cost": plan.cost.amount,
-                "currency": settings.budget.currenct,  # plan.cost.currency, TODO(giuseppe) when supporting more than one currency
+                "currency": settings.budget.currency,  # plan.cost.currency, TODO(giuseppe) when supporting more than one currency
             }
             for plan in created
         ],
@@ -259,7 +259,7 @@ def send_monthly_report(user_id):
                 "new_start": plan.start_date,
                 "new_end": plan.end_date,
                 "cost": plan.cost.amount,
-                "currency": settings.budget.currenct,  # plan.cost.currency, TODO(giuseppe) when supporting more than one currency
+                "currency": settings.budget.currency,  # plan.cost.currency, TODO(giuseppe) when supporting more than one currency
             }
             for plan in renewed
         ],

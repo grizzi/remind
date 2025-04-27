@@ -14,6 +14,8 @@ import CheckboxField from '../inputs/CheckboxField'
 import DateField from '../inputs/DateField'
 import NumericField from '../inputs/NumericField'
 import { toast } from 'react-toastify'
+import { FaSave } from 'react-icons/fa'
+import { MdDeleteOutline } from 'react-icons/md'
 
 type EditablePlanTableProps = {
   subscription?: Subscription
@@ -55,28 +57,8 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
   }, [])
 
   return (
-    <div>
+    <div className='flex flex-col gap-2'>
       <p className='text-xl mt-2 mb-2'>Plans</p>
-      <button
-        className='flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
-        onClick={() => {
-          setEditedPlans([
-            {
-              subscription: subscription?.id,
-              name: '',
-              auto_renew: false,
-              start_date: formatDate(new Date()),
-              end_date: formatDate(new Date()),
-              cost: 0,
-              cost_currency: settings.budget_currency,
-              billing_frequency: 'monthly',
-            },
-            ...editedPlans,
-          ])
-        }}
-      >
-        Add Plan
-      </button>
 
       {editedPlans.length === 0 && (
         <div>
@@ -86,8 +68,8 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
         </div>
       )}
       {editedPlans.length > 0 && (
-        <div className='overflow-x-auto rounded-2xl shadow-2xl max-w-600'>
-          <div className='grid grid-cols-8 gap-4 bg-gray-100 p-2 items-center'>
+        <div className='overflow-x-auto max-w-600'>
+          <div className='grid grid-cols-9 gap-4 bg-gray-100 p-2 items-center'>
             <div className='flex flex-row justify-center'>Name</div>
             <div className='flex flex-row justify-center'>Start Date</div>
             <div className='flex flex-row justify-center'>End Date</div>
@@ -97,7 +79,9 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
               Billing Frequency
             </div>
             <div className='flex flex-row justify-center'>Auto Renew</div>
-            <div className='flex flex-row justify-center'>Actions</div>
+            <div className='flex flex-row justify-center col-span-2'>
+              Actions
+            </div>
           </div>
 
           {/* Rows */}
@@ -117,7 +101,7 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
                   )
               }}
             >
-              <Form className='grid grid-cols-8 gap-4 items-start p-2 mt-2'>
+              <Form className='grid grid-cols-9 gap-4 items-start p-2 mt-2'>
                 <TextField id='name' />
                 <DateField id='start_date' />
                 <DateField id='end_date' />
@@ -134,36 +118,68 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
                   disabled={true}
                 />
                 <SelectField id='billing_frequency' options={billingOptions} />
+
                 <div className='w-full'>
                   <CheckboxField id='auto_renew' />
                 </div>
-                <div className='flex gap-2'>
+
+                <div className='flex gap-2 justify-center items-center'>
                   <button
                     type='submit'
                     className='text-green-600 hover:underline'
                   >
-                    Save
+                    <FaSave className='text-3xl' />
                   </button>
-                  <button
-                    type='button'
-                    onClick={() => {
-                      // Can delete only plans that were already saved
-                      if (plan.id) {
-                        onDelete(plan)
-                      }
-                      setEditedPlans(editedPlans.filter((_, i) => i !== index))
-                      setEditingIndex(null)
-                    }}
-                    className='text-gray-500 hover:underline'
-                  >
-                    Cancel
-                  </button>
+                </div>
+
+                <div className='col-start-9 col-end-9'>
+                  <div className='flex justify-center items-center'>
+                    <button
+                      type='button'
+                      onClick={() => {
+                        // Can delete only plans that were already saved
+                        if (plan.id) {
+                          onDelete(plan)
+                        }
+                        setEditedPlans(
+                          editedPlans.filter((_, i) => i !== index),
+                        )
+                        setEditingIndex(null)
+                      }}
+                      className='text-gray-500 hover:underline'
+                    >
+                      <MdDeleteOutline className='text-3xl' />
+                    </button>
+                  </div>
                 </div>
               </Form>
             </Formik>
           ))}
         </div>
       )}
+
+      <div className='flex flex-col items-end justify-center'>
+        <button
+          className='flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
+          onClick={() => {
+            setEditedPlans([
+              {
+                subscription: subscription?.id,
+                name: '',
+                auto_renew: false,
+                start_date: formatDate(new Date()),
+                end_date: formatDate(new Date()),
+                cost: 0,
+                cost_currency: settings.budget_currency,
+                billing_frequency: 'monthly',
+              },
+              ...editedPlans,
+            ])
+          }}
+        >
+          Add Plan
+        </button>
+      </div>
     </div>
   )
 }
