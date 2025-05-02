@@ -1,9 +1,27 @@
-# Install Terraform on Ubuntu
+# Install OpenTofu
 
-Instruction for other distributions availabe at the [official page](https://developer.hashicorp.com/terraform/install)
+Instruction for other distributions availabe at the [official page](https://opentofu.org/docs/intro/install/standalone/)
 
 ```bash
-wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt update && sudo apt install terraform
+# Download the installer script:
+curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh
+# Alternatively: wget --secure-protocol=TLSv1_2 --https-only https://get.opentofu.org/install-opentofu.sh -O install-opentofu.sh
+
+# Grant execution permissions:
+chmod +x install-opentofu.sh
+
+# Please inspect the downloaded script at this point.
+
+# Run the installer:
+./install-opentofu.sh --install-method standalone
+
+# Remove the installer:
+rm -f install-opentofu.sh
+```
+
+
+## Init Tofu
+
+```bash
+tofu init
 ```
