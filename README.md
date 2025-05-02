@@ -48,8 +48,33 @@ docker compose run --rm django python manage.py test --pattern="tests_*.py" # to
 
 ## Deploy webapp
 
-bash```
-cd frontend
-npm install
-npm run build
+Install aws cli
+
+Make sure you have the following in your `~/.aws/config` file:
+
+```
+[profile app-admin]
+region = eu-central-1
+```
+
+Export the aws credentials set in the `~/.aws/credentials` file:
+
+```bash
+
+[app-admin]
+aws_access_key_id = xxx
+aws_secret_access_key = xxx
+```
+
+Export the aws profile:
+
+```bash
+export AWS_PROFILE=app-admin
+```
+
+Sync webapp
+
+```bash
+cd frontend npm install npm run build aws s3 cp dist/
+s3://remind-webapp/ --recursive
 ```
