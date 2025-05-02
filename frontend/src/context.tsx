@@ -31,7 +31,7 @@ export default function AppContextProvider({
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [, setUserSettings] = useState<UserSettings | undefined>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
-  const [labels, setLabels] = useState<Label[]>([])
+  const [_, setLabels] = useState<Label[]>([])
 
   // Get currencies lazily and cache them
   const getCurrencies = async () => {

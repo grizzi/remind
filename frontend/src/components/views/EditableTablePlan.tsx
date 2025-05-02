@@ -42,6 +42,7 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
   }
 
   // TODO(giuseppe): multicurrency support in the future
+  currencies
   // const currenciesOptions = currencies.map(c => ({
   //   value: c.code,
   //   label: c.code,

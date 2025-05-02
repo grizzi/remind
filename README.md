@@ -45,3 +45,11 @@ docker compose run --rm django python manage.py test --pattern="tests_*.py" # to
 
 - Log in to the admin panel at
   [http://localhost:8000/admin](http://localhost:8000/admin)
+
+## Deploy webapp
+
+bash```
+cd frontend
+npm install
+npm run build
+```
