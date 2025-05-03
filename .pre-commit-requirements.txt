@@ -1,0 +1,2 @@
+pre-commit=4.2.0
+checkov=3.2.414

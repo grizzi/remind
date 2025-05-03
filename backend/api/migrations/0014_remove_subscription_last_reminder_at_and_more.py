@@ -4,33 +4,36 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0013_remove_subscription_amount_and_more'),
+        ("api", "0013_remove_subscription_amount_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='subscription',
-            name='last_reminder_at',
+            model_name="subscription",
+            name="last_reminder_at",
         ),
         migrations.RemoveField(
-            model_name='subscription',
-            name='total_reminders',
+            model_name="subscription",
+            name="total_reminders",
         ),
         migrations.AddField(
-            model_name='plan',
-            name='last_reminder_at',
+            model_name="plan",
+            name="last_reminder_at",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='plan',
-            name='total_reminders',
+            model_name="plan",
+            name="total_reminders",
             field=models.SmallIntegerField(default=0),
         ),
         migrations.AlterField(
-            model_name='usersettings',
-            name='remind_frequency',
-            field=models.CharField(choices=[('weekly', 'Weekly'), ('monthly', 'Monthly')], default='monthly', max_length=20),
+            model_name="usersettings",
+            name="remind_frequency",
+            field=models.CharField(
+                choices=[("weekly", "Weekly"), ("monthly", "Monthly")],
+                default="monthly",
+                max_length=20,
+            ),
         ),
     ]

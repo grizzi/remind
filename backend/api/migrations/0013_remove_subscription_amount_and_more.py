@@ -7,50 +7,105 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0012_remove_subscription_billed_at_subscription_date_end_and_more'),
+        ("api", "0012_remove_subscription_billed_at_subscription_date_end_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='subscription',
-            name='amount',
+            model_name="subscription",
+            name="amount",
         ),
         migrations.RemoveField(
-            model_name='subscription',
-            name='amount_currency',
+            model_name="subscription",
+            name="amount_currency",
         ),
         migrations.RemoveField(
-            model_name='subscription',
-            name='autorenewal',
+            model_name="subscription",
+            name="autorenewal",
         ),
         migrations.RemoveField(
-            model_name='subscription',
-            name='date_end',
+            model_name="subscription",
+            name="date_end",
         ),
         migrations.RemoveField(
-            model_name='subscription',
-            name='date_start',
+            model_name="subscription",
+            name="date_start",
         ),
         migrations.RemoveField(
-            model_name='subscription',
-            name='expiring_at',
+            model_name="subscription",
+            name="expiring_at",
         ),
         migrations.CreateModel(
-            name='Plan',
+            name="Plan",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('auto_renew', models.BooleanField(default=True)),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField(blank=True, null=True)),
-                ('cost_currency', djmoney.models.fields.CurrencyField(choices=[('GBP', 'British Pound'), ('CAD', 'Canadian Dollar'), ('CNY', 'Chinese Yuan'), ('EUR', 'Euro'), ('JPY', 'Japanese Yen'), ('RUB', 'Russian Ruble'), ('CHF', 'Swiss Franc'), ('USD', 'US Dollar')], default='CHF', editable=False, max_length=3, null=True)),
-                ('cost', djmoney.models.fields.MoneyField(blank=True, decimal_places=2, default_currency='CHF', max_digits=10, null=True, validators=[djmoney.models.validators.MinMoneyValidator(0)])),
-                ('billing_frequency', models.CharField(blank=True, choices=[('daily', 'Daily'), ('weekly', 'Weekly'), ('monthly', 'Monthly'), ('yearly', 'Yearly')], max_length=20, null=True)),
-                ('subscription', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='plans', to='api.subscription')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("auto_renew", models.BooleanField(default=True)),
+                ("start_date", models.DateField()),
+                ("end_date", models.DateField(blank=True, null=True)),
+                (
+                    "cost_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[
+                            ("GBP", "British Pound"),
+                            ("CAD", "Canadian Dollar"),
+                            ("CNY", "Chinese Yuan"),
+                            ("EUR", "Euro"),
+                            ("JPY", "Japanese Yen"),
+                            ("RUB", "Russian Ruble"),
+                            ("CHF", "Swiss Franc"),
+                            ("USD", "US Dollar"),
+                        ],
+                        default="CHF",
+                        editable=False,
+                        max_length=3,
+                        null=True,
+                    ),
+                ),
+                (
+                    "cost",
+                    djmoney.models.fields.MoneyField(
+                        blank=True,
+                        decimal_places=2,
+                        default_currency="CHF",
+                        max_digits=10,
+                        null=True,
+                        validators=[djmoney.models.validators.MinMoneyValidator(0)],
+                    ),
+                ),
+                (
+                    "billing_frequency",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("daily", "Daily"),
+                            ("weekly", "Weekly"),
+                            ("monthly", "Monthly"),
+                            ("yearly", "Yearly"),
+                        ],
+                        max_length=20,
+                        null=True,
+                    ),
+                ),
+                (
+                    "subscription",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="plans",
+                        to="api.subscription",
+                    ),
+                ),
             ],
         ),
         migrations.DeleteModel(
-            name='Transaction',
+            name="Transaction",
         ),
     ]
