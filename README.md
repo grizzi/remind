@@ -3,13 +3,15 @@
 An app to remind users about their online purchase and auto-renewing
 subscriptions.
 
-## How it works
+# How it works
 
 1. A simple `react` webapp with JWT based authentication
 2. A `django` backend to store data in a postgres database
 3. A combination of `celery` workers and recurring schedule to perform
    asynchronous tasks like sending reminders and emails.
 4. A `redis` server to allow communication between `celery` workers and `django`
+
+# Running the app
 
 ## Run locally
 
@@ -46,7 +48,34 @@ docker compose run --rm django python manage.py test --pattern="tests_*.py" # to
 - Log in to the admin panel at
   [http://localhost:8000/admin](http://localhost:8000/admin)
 
-## Deploy webapp
+# Contributing
+
+We use pre-commit hooks to ensure code quality. Install all the required
+dependencies for the hook to run.
+
+### Pre-commit Hooks
+
+- `pre-commit` is a framework for managing and maintaining multi-language
+  pre-commit hooks.
+
+- `checkov` is run as a precommit hook to check for security issues in the
+  infrastructure. Integration instructions are available at the
+  [official page](https://www.checkov.io/2.Basics/Installing%20Checkov.html)
+
+- `infracost-breakdown` is run as a precommit hook to check for cost changes in
+  the infrastructure. Integration instructions are available at the
+  [official page](https://www.infracost.io/docs/#2-get-api-key)
+
+```bash
+pipx install pre-commit checkov
+
+# required once
+curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
+infracost auth login # required once or to reauthenticate
+infracost configure set currency CHF
+```
+
+# Deployment workflow
 
 Install aws cli
 
