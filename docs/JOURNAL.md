@@ -62,11 +62,14 @@
     - Errors might cumulate over time for long term subscriptions
 - Simple filtering of subscriptions based on tags, won't do more complex
   filtering
-- Reflect user currency when this is changed in the UI, basically just somethign visual
+- Reflect user currency when this is changed in the UI, basically just somethign
+  visual
 - Function to create a monthly report based on user subscriptions
+- Deployment of the webapp using aws S3 static hosting and terraform to manage
+  infrastructure
+- CI pipeline using github actions to build and deploy the webapp
 
 ### TODOs
-
 
 ### WHISHLIST
 
