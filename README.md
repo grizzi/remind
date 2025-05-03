@@ -107,3 +107,9 @@ Sync webapp
 cd frontend npm install npm run build
 aws s3 cp dist/ s3://remind-webapp-static/ --recursive
 ```
+
+Install flyio
+
+```bash
+curl -L https://fly.io/install.sh | sh
+```

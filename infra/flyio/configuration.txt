@@ -1,0 +1,21 @@
+Set secrets on remind-backend: SECRET_KEY
+
+Your database remind-backend-redis is ready. Apps in the personal org can connect to Redis at redis://default:e1e2ec3b10a044f898524f5ad879141e@fly-remind-backend-redis.upstash.io:6379
+
+If you have redis-cli installed, use fly redis connect to get a Redis console.
+
+Your database is billed at $0.20 per 100K commands. If you're using Sidekiq or BullMQ, which poll Redis frequently, consider switching to a fixed-price plan. See https://fly.io/docs/reference/redis/#pricing
+
+Redis database remind-backend-redis is set on remind-backend as the REDIS_URL environment variable
+Wrote config file fly.toml
+
+[INFO] Python 3.12.3 was detected. 'python:3.12-slim' image will be set in the Dockerfile.
+
+Validating /home/beppe/git/remind/backend/fly.toml
+✓ Configuration is valid
+
+Your Django app is almost ready to deploy!
+
+We recommend using the django-environ(pip install django-environ) or dj-database-url(pip install dj-database-url) to parse the DATABASE_URL from os.environ['DATABASE_URL']
+
+For detailed documentation, see https://fly.dev/docs/django/
