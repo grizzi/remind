@@ -24,7 +24,7 @@ jobs:
         id: cache-pipx
         uses: actions/cache@v4
         with:
-          path: ~/.local/share/pipx
+          path: ~/.local/pipx
           key:
             ${{ runner.os }}-pipx-${{ hashFiles('.pre-commit-requirements.txt')
             }}
