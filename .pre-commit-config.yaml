@@ -41,7 +41,7 @@ repos:
       # Make sure we do not start paying for resources
       - id: infracost_breakdown
         args:
-          - --args=--path=./env/dev
+          - --args=--path=./infra
           - --hook-config='.totalMonthlyCost|tonumber == 0'
           - --hook-config='.projects[].diff.totalMonthlyCost|tonumber != 10000'
           - --hook-config='.currency == "CHF"'

@@ -1,9 +1,3 @@
-#checkov:skip=CKV2_AWS_62: We do not need to ensure S3 buckets have event notifications enabled
-#checkov:skip=CKV_AWS_144: We do not need to ensure that S3 buckets have cross-region replication enabled
-#checkov:skip=CKV_AWS_18: We do not need to enable access logging for this bucket
-#checkov:skip=CKV_AWS_20: This bucket is intentionally public for static hosting
-#checkov:skip=CKV2_AWS_6: This bucket intentionally allows public access
-
 terraform {
   required_providers {
     aws = {
@@ -28,7 +22,6 @@ resource "aws_s3_bucket_public_access_block" "webapp" {
   #checkov:skip=CKV_AWS_55: The bucket is a public static content host
   #checkov:skip=CKV_AWS_56: The bucket is a public static content host
   #checkov:skip=CKV2_AWS_6: The bucket is a public static content host
-
   bucket = aws_s3_bucket.webapp.id
 
   block_public_acls       = false
