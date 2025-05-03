@@ -43,8 +43,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pipx install pre-commit=4.2.0
-          pipx install checkov=3.2.414
+          pipx install pre-commit==4.2.0
+          pipx install checkov==3.2.414
 
       - name: Run pre-commit
         run: pre-commit run --all-files
