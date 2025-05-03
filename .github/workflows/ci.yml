@@ -2,6 +2,9 @@ name: CI
 on:
   pull_request:
     branches: [main]
+    # exclude the docs folder
+    paths-ignore:
+      - 'docs/**'
 jobs:
   format_and_lint:
     runs-on: ubuntu-latest
