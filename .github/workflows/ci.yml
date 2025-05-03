@@ -41,6 +41,11 @@ jobs:
             pipx install "$package"=="$version"
           done < .pre-commit-requirements.txt
 
+      - name: Install OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.9.1
+
       - name: Install dependencies
         run: |
           pipx install pre-commit==4.2.0
