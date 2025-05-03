@@ -23,3 +23,23 @@ repos:
       - id: ruff
         args: [--fix]
       - id: ruff-format
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.99.0
+    hooks:
+      # Format Terraform code
+      - id: terraform_fmt
+        args:
+          - --args=-no-color
+          - --args=-diff
+      # Static analysis to spot security issues
+      - id: terraform_checkov
+        args:
+          - --args=--quiet
+      # Make sure we do not start paying for resources
+      - id: infracost_breakdown
+        args:
+          - --args=--path=./env/dev
+          - --hook-config='.totalMonthlyCost|tonumber == 0'
+          - --hook-config='.projects[].diff.totalMonthlyCost|tonumber != 10000'
+          - --hook-config='.currency == "CHF"'
+        verbose: true
