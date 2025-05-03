@@ -39,7 +39,7 @@ jobs:
         run: |
           while IFS== read -r package version; do
             pipx install "$package"=="$version"
-          done < requirements-tools.txt
+          done < .pre-commit-requirements.txt
 
       - name: Install dependencies
         run: |
