@@ -6,6 +6,12 @@ terraform {
     }
   }
   required_version = ">= 1.2.0"
+
+  backend "s3" {
+    bucket = "remind-terraform-state"
+    key    = "terraform.tfstate"
+    region = "eu-central-1"
+  }
 }
 
 provider "aws" {
@@ -42,7 +48,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "webapp" {
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "aws:kms"
+      sse_algorithm = "AES256"
     }
   }
 }

@@ -104,6 +104,6 @@ export AWS_PROFILE=app-admin
 Sync webapp
 
 ```bash
-cd frontend npm install npm run build aws s3 cp dist/
-s3://remind-webapp/ --recursive
+cd frontend npm install npm run build
+aws s3 cp dist/ s3://remind-webapp-static/ --recursive
 ```

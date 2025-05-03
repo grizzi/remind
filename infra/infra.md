@@ -1,5 +1,13 @@
 ## Dependencies
 
+# AWS CLI
+
+```bash
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+rm -rf awscliv2.zip aws
+```
 # OpenTofu
 
 Instruction for other distributions availabe at the
@@ -11,7 +19,6 @@ chmod +x install-opentofu.sh
 ./install-opentofu.sh --install-method standalone
 rm -f install-opentofu.sh
 ```
-
 
 
 ## Init Tofu
