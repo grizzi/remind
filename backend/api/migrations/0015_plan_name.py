@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0014_remove_subscription_last_reminder_at_and_more'),
+        ("api", "0014_remove_subscription_last_reminder_at_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='plan',
-            name='name',
-            field=models.CharField(default='', max_length=100),
+            model_name="plan",
+            name="name",
+            field=models.CharField(default="", max_length=100),
         ),
     ]

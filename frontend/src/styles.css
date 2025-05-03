@@ -1,8 +1,8 @@
-/*  
+/*
 * Specifies the specificity of the layers
 *
-* That means tailwind-theme is the least powerful layer 
-* and any code in it will be overridden by all the subsequent layers. 
+* That means tailwind-theme is the least powerful layer
+* and any code in it will be overridden by all the subsequent layers.
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins');

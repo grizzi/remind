@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("api", "0005_delete_currency_alter_subscription_amount_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
