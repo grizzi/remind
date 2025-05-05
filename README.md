@@ -29,6 +29,22 @@ subscriptions.
 - Open the mail catcher in your browser at
   [http://localhost:8025](http://localhost:8025)
 
+## Run remotely
+
+- Deploy backend
+
+  ```bash
+  cd frontend npm install npm run build
+  aws s3 cp dist/ s3://remind-webapp-static/ --recursive
+  ```
+
+
+For now django with remote db will be done using
+
+```bash
+PROFILE=prod docker compose up
+```
+
 ## Run tests
 
 ```bash
@@ -77,6 +93,9 @@ infracost configure set currency CHF
 
 # Deployment workflow
 
+
+### Static website hosting on AWS S3
+
 Install aws cli
 
 Make sure you have the following in your `~/.aws/config` file:
@@ -107,3 +126,14 @@ Sync webapp
 cd frontend npm install npm run build
 aws s3 cp dist/ s3://remind-webapp-static/ --recursive
 ```
+
+### Supabase PostgreSQL Free Tier
+
+```
+TODO
+```
+
+### Flyio managed machine
+
+Redis is still managed
+This machine will just run django and celery

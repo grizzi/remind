@@ -17,7 +17,7 @@ services:
       retries: 3
       start_period: 10s
     env_file:
-      - ./backend/.env.dev
+      - .env.${PROFILE:-dev}
     depends_on:
       - postgres
     volumes:
@@ -35,7 +35,7 @@ services:
         - action: rebuild
           path: ./backend/pyproject.toml
     env_file:
-      - ./backend/.env.dev
+      - .env.${PROFILE:-dev}
     depends_on:
       django:
         condition: service_healthy
@@ -48,7 +48,7 @@ services:
     container_name: db
     ports:
       - 5432:5432
-    env_file: ./backend/.env.dev
+    env_file: .env.${PROFILE:-dev}
 
   redis:
     image: redis:latest
