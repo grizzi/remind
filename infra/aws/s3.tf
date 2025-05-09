@@ -1,23 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.16"
-    }
-  }
-  required_version = ">= 1.2.0"
-
-  backend "s3" {
-    bucket = "remind-terraform-state"
-    key    = "terraform.tfstate"
-    region = "eu-central-1"
-  }
-}
-
-provider "aws" {
-  region = "eu-central-1"
-}
-
 resource "aws_s3_bucket" "webapp" {
   bucket = "remind-webapp-static"
 }
@@ -60,6 +40,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "webapp" {
     id     = "expire-old"
     status = "Enabled"
 
+    filter {
+      prefix = ""
+    }
     expiration {
       days = 365
     }
@@ -69,7 +52,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "webapp" {
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
     }
-    filter {}
+
+    filter {
+      prefix = "" # Apply to all objects
+    }
+
     id     = "log"
     status = "Enabled"
   }

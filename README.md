@@ -67,7 +67,8 @@ dependencies for the hook to run.
   [official page](https://www.infracost.io/docs/#2-get-api-key)
 
 ```bash
-pipx install pre-commit checkov
+pipx install pre-commit
+pipx install checkov
 
 # required once
 curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh

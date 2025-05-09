@@ -70,6 +70,8 @@
 - CI pipeline using github actions to build and deploy the webapp
 
 ### TODOs
+- [ ] Remote Backend: https://www.linkedin.com/pulse/deploy-django-application-ec2-instance-nginx-dtechnologies-cqdif/
+- [ ] Social authentication Cognito authentication? https://djangostars.com/blog/bootstrap-django-app-with-cognito/
 
 ### WHISHLIST
 
