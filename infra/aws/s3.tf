@@ -41,7 +41,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "webapp" {
     status = "Enabled"
 
     filter {
-      prefix = "*"
+      prefix = ""
     }
     expiration {
       days = 365
