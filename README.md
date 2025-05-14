@@ -114,3 +114,41 @@ Running the backend in the EC2 instance
 ```bash
 docker compose -f compose.deploy.yaml up
 ```
+
+Serving with https on nginx
+
+```
+sudo apt install nginx
+
+cd backend
+uv add gunicorn
+export $(cat .env.dev | xargs) # load the environment variables
+gunicorn --bind unix:/home/ubuntu/remind/backend/gunicorn.sock --log-level debug --access-logfile - --error-logfile - backend.wsgi:application
+# TODO(run the other services)
+# change user in /etc/nginx/nginx.conf to ubuntu
+sudo nano /etc/nginx/sites-available/api.remnd.co
+server {
+    listen 80;
+    server_name api.remnd.co;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /home/ubuntu/yourproject;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/remind/backend/gunicorn.sock;
+    }
+}
+sudo ln -s /etc/nginx/sites-available/api.remnd.co /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+
+# Enable certificate through certbot
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d api.remnd.co
+
+# Test autorenewal
+sudo certbot renew --dry-run
+```
