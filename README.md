@@ -108,3 +108,9 @@ Sync webapp
 cd frontend npm install npm run build
 aws s3 cp dist/ s3://remind-webapp-static/ --recursive
 ```
+
+Running the backend in the EC2 instance
+
+```bash
+docker compose -f compose.deploy.yaml up
+```
