@@ -115,18 +115,30 @@ Running the backend in the EC2 instance
 docker compose -f compose.deploy.yaml up
 ```
 
-Serving with https on nginx
+
+## Serving with https on nginx
 
 ```
 sudo apt install nginx
+```
 
-cd backend
-uv add gunicorn
-export $(cat .env.dev | xargs) # load the environment variables
-gunicorn --bind unix:/home/ubuntu/remind/backend/gunicorn.sock --log-level debug --access-logfile - --error-logfile - backend.wsgi:application
-# TODO(run the other services)
-# change user in /etc/nginx/nginx.conf to ubuntu
-sudo nano /etc/nginx/sites-available/api.remnd.co
+Set up nginx basic configuration by changing the user in `/etc/nginx/nginx.conf` to be not root:
+
+```git
+- user root;
++ user ubuntu;
+```
+
+Also remove the old version of TLS protocols:
+
+```git
+- ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
++ ssl_protocols TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
+```
+
+Then we create the configuration file for our server (sudo edit `/etc/nginx/sites-available/api.remnd.co`) and add the following:
+
+```bash
 server {
     listen 80;
     server_name api.remnd.co;
@@ -141,14 +153,46 @@ server {
         proxy_pass http://unix:/home/ubuntu/remind/backend/gunicorn.sock;
     }
 }
-sudo ln -s /etc/nginx/sites-available/api.remnd.co /etc/nginx/sites-enabled
-sudo nginx -t
-sudo systemctl restart nginx
+```
 
-# Enable certificate through certbot
+Enable certificate through certbot
+
+```bash
 sudo apt install certbot python3-certbot-nginx
 sudo certbot --nginx -d api.remnd.co
+```
 
-# Test autorenewal
+
+Test autorenewal
+
+```bash
 sudo certbot renew --dry-run
+```
+
+Enable serving this website creating a symbolic link to the sites-enabled directory:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/api.remnd.co /etc/nginx/sites-enabled
+```
+
+Make sure that nginx configuration is correct:
+
+```bash
+sudo nginx -t
+```
+
+Now we can restart the ngixn service:
+
+
+```bash
+sudo systemctl restart nginx
+```
+
+
+Now install gunicorn (should alredy be added to the backend dependencies).
+
+```bash
+source .venv/bin/activate
+export $(cat .env.dev | xargs) # load the environment variables
+gunicorn --bind unix:/home/ubuntu/remind/backend/gunicorn.sock --log-level debug --access-logfile - --error-logfile - backend.wsgi:application
 ```
