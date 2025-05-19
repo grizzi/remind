@@ -13,6 +13,10 @@ RUN echo 'backend ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 # Switch to the 'backed' user
 USER backend
 
+# Set up directory structure for gunicorn logs
+RUN sudo mkdir -pv /var/{log,run}/gunicorn/
+RUN sudo chown -cR backend:backend /var/{log,run}/gunicorn/
+
 # Set work directory
 WORKDIR /srv/app
 
