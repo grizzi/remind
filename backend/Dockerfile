@@ -10,10 +10,6 @@ RUN useradd -ms /bin/bash -u 1000 backend
 # Add 'backed' user to the sudoers file with no password required
 RUN echo 'backend ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-# Set up directory structure for gunicorn logs
-RUN mkdir -pv /var/{log,run}/gunicorn/
-RUN chown -cR backend:backend /var/{log,run}/gunicorn/
-
 # Switch to the 'backed' user
 USER backend
 

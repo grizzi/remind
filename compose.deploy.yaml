@@ -24,8 +24,9 @@ services:
       - ./backend/backend:/srv/app/backend
       - ./backend/api:/srv/app/api
       - ./backend/config:/srv/app/config
-      - /etc/remdn/backend/static:/etc/remnd/backend/static
-      - /etc/remnd/backend:/etc/remnd/backend
+      - gunicorn-logs:/var/log/gunicorn
+      - gunicorn-run:/var/run/gunicorn
+      - static-data:/var/www/api.remnd.co/static
 
   backend-proxy:
     image: nginx:latest
@@ -34,7 +35,7 @@ services:
       - 443:443
     volumes:
       - ./backend/config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - /etc/remnd/static:/static:ro
+      - static-data:/static:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - backend
@@ -83,3 +84,6 @@ services:
 
 volumes:
   postgres_data:
+  gunicorn-logs:
+  gunicorn-run:
+  static-data:
