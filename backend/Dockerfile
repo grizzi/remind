@@ -4,15 +4,6 @@ FROM python:3.12-slim-bullseye
 RUN apt-get update && apt-get install -y --no-install-recommends netcat-openbsd && \
     rm -rf /var/lib/apt/lists/*
 
-# Create a user with the username 'backend'
-RUN useradd -ms /bin/bash -u 1000 backend
-
-# Add 'backed' user to the sudoers file with no password required
-RUN echo 'backend ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-# Switch to the 'backed' user
-USER backend
-
 # Set work directory
 WORKDIR /srv/app
 
@@ -41,9 +32,6 @@ COPY --chown=backend:backend . .
 # Prepend the venv path to use this before
 # the system python
 ENV PATH="/srv/app/.venv/bin:$PATH"
-
-# Add tools binary path
-ENV PATH="/home/backend/.local/bin:$PATH"
 
 COPY ./entrypoint.sh .
 ENTRYPOINT ["/srv/app/entrypoint.sh"]
