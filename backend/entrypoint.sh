@@ -8,8 +8,10 @@ done
 echo "PostgreSQL started"
 
 echo "Making migrations..."
-python manage.py makemigrations api
-python manage.py migrate
+python manage.py makemigrations api --noinput
+python manage.py migrate --noinput
 
+echo "Collecting static files..."
+python manage.py collectstatic --noinput
 
 exec "$@"

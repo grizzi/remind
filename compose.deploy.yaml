@@ -1,0 +1,90 @@
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    command: gunicorn -c config/gunicorn.prod.py
+    restart: on-failure
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/pyproject.toml
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ['CMD', 'nc', '-z', 'localhost', '8000']
+      interval: 10s
+      timeout: 1s
+      retries: 3
+      start_period: 10s
+    env_file:
+      - ./backend/.env.dev
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend/backend:/srv/app/backend
+      - ./backend/api:/srv/app/api
+      - ./backend/config:/srv/app/config
+      - gunicorn-logs:/var/log/gunicorn
+      - gunicorn-run:/var/run/gunicorn
+      - static-data:/var/www/api.remnd.co/static
+
+  backend-proxy:
+    image: nginx:latest
+    container_name: backend-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./backend/config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static-data:/static:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - backend
+
+  celery:
+    build: ./backend
+    container_name: celery
+    entrypoint: ''
+    command: celery -A backend worker --beat --scheduler django --loglevel=info
+    restart: on-failure
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/pyproject.toml
+    env_file:
+      - ./backend/.env.dev
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - ./backend/backend:/srv/app/backend
+      - ./backend/api:/srv/app/api
+
+  postgres:
+    image: postgres:16.1-alpine
+    container_name: db
+    ports:
+      - 5432:5432
+    env_file: ./backend/.env.dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    hostname: redis
+    ports:
+      - 6379:6379
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - 8025:8025
+      - 1025:1025
+
+volumes:
+  postgres_data:
+  gunicorn-logs:
+  gunicorn-run:
+  static-data:

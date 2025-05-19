@@ -108,3 +108,22 @@ Sync webapp
 cd frontend npm install npm run build
 aws s3 cp dist/ s3://remind-webapp-static/ --recursive
 ```
+
+Running the backend in the EC2 instance
+
+```bash
+docker compose -f compose.deploy.yaml up
+```
+
+## Create certificate for backend server
+
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot -d api.remnd.co
+```
+
+Test autorenewal
+
+```bash
+sudo certbot renew --dry-run
+```

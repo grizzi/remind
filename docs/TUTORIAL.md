@@ -5,6 +5,7 @@
 - [Another one](https://dev.to/koladev/django-rest-authentication-cmh)
 - [React Router](https://ui.dev/react-router-tutorial)
 - [Auth0 Full stack example](https://developer.auth0.com/resources/code-samples/full-stack/hello-world/basic-access-control/spa/react-typescript/django-python)
+- [Django on EC2](https://testdriven.io/blog/django-docker-https-aws/)
 
 We can force refresh tokens to be used only once, so that even if they gets
 stoled they cannot be used again to generate another refresh token.
