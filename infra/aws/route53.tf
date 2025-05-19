@@ -15,3 +15,14 @@ resource "aws_route53_record" "www" {
     evaluate_target_health = false
   }
 }
+
+# This is the record to be used for secure connections (HTTPS) with the
+# webapp
+# EC2 addresses can change on every restart, so we need to use a dynamic
+resource "aws_route53_record" "api" {
+  zone_id = aws_route53_zone.primary.zone_id
+  name    = "api.${var.domain_name}"
+  type    = "A"
+  ttl     = 300
+  records = [var.ec2_public_ip]
+}
