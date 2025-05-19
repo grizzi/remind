@@ -23,7 +23,9 @@ services:
     volumes:
       - ./backend/backend:/srv/app/backend
       - ./backend/api:/srv/app/api
-      - /var/www/api.remnd.co/static:/var/www/api.remnd.co/static
+      - ./backend/config:/srv/app/config
+      - /etc/remdn/backend/static:/etc/remnd/backend/static
+      - /etc/remnd/backend:/etc/remnd/backend
 
   backend-proxy:
     image: nginx:latest
@@ -32,7 +34,7 @@ services:
       - 443:443
     volumes:
       - ./backend/config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - /var/www/api.remnd.co/static:/var/www/api.remnd.co/static:ro
+      - /etc/remnd/static:/static:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - backend
