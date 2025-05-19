@@ -30,6 +30,7 @@ services:
 
   backend-proxy:
     image: nginx:latest
+    container_name: backend-proxy
     ports:
       - 80:80
       - 443:443
