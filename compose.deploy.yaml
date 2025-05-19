@@ -1,7 +1,7 @@
 services:
   backend:
     build: ./backend
-    container_name: django
+    container_name: backend
     command: gunicorn -c config/gunicorn.prod.py
     restart: on-failure
     develop:
@@ -50,7 +50,7 @@ services:
     env_file:
       - ./backend/.env.dev
     depends_on:
-      django:
+      backend:
         condition: service_healthy
     volumes:
       - ./backend/backend:/srv/app/backend
