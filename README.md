@@ -42,7 +42,7 @@ docker compose run --rm django python manage.py test --pattern="tests_*.py" # to
 - Create a superuser in the `django` container:
 
   ```bash
-  docker compose run django python manage.py createsuperuser
+  docker compose run backend python manage.py createsuperuser
   ```
 
 - Log in to the admin panel at
@@ -105,7 +105,9 @@ export AWS_PROFILE=app-admin
 Sync webapp
 
 ```bash
-cd frontend npm install npm run build
+cd frontend
+npm install
+npm run build
 aws s3 cp dist/ s3://remind-webapp-static/ --recursive
 ```
 
