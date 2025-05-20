@@ -202,6 +202,8 @@ if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
     EMAIL_PORT = os.environ.get("EMAIL_PORT")
 elif EMAIL_BACKEND == "django_ses.SESBackend":
     EMAIL_BACKEND = "django_ses.SESBackend"
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
     AWS_SESSION_PROFILE = os.environ.get("AWS_ACCESS_KEY_ID")
     AWS_SES_REGION_NAME = os.environ.get("AWS_SES_REGION_NAME")
     AWS_SES_REGION_ENDPOINT = os.environ.get("AWS_SES_REGION_ENDPOINT")

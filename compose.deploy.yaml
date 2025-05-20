@@ -18,6 +18,9 @@ services:
       start_period: 10s
     env_file:
       - ./backend/.env.prod
+    environment: # this are sourced from the .bashrc
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     depends_on:
       - postgres
     volumes:
