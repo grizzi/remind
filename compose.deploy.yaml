@@ -56,6 +56,9 @@ services:
           path: ./backend/pyproject.toml
     env_file:
       - ./backend/.env.prod
+    environment: # this are sourced from the .bashrc
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     depends_on:
       backend:
         condition: service_healthy
