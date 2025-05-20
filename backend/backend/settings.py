@@ -194,7 +194,14 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-# Email
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "mailhog"
-EMAIL_PORT = 1025
+#####  EMAIL Configuration
+
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND")
+if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
+    EMAIL_HOST = os.environ.get("EMAIL_HOST")
+    EMAIL_PORT = os.environ.get("EMAIL_PORT")
+elif EMAIL_BACKEND == "django_ses.SESBackend":
+    EMAIL_BACKEND = "django_ses.SESBackend"
+    AWS_SESSION_PROFILE = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SES_REGION_NAME = os.environ.get("AWS_SES_REGION_NAME")
+    AWS_SES_REGION_ENDPOINT = os.environ.get("AWS_SES_REGION_ENDPOINT")

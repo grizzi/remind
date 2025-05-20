@@ -36,7 +36,7 @@ def send_welcome_email(username, user_email):
     email = EmailMultiAlternatives(
         subject=subject,
         body=plain_message,
-        from_email="info@re.mind",
+        from_email="info@remnd.co",
         to=[user_email],
     )
     email.attach_alternative(html_message, "text/html")
@@ -138,7 +138,7 @@ def create_plans_alert(user_id):
     email = EmailMultiAlternatives(
         subject=subject,
         body=plain_message,
-        from_email="info@re.mind",
+        from_email="info@remnd.co",
         to=[user.email],
     )
     email.attach_alternative(html_message, "text/html")
@@ -272,7 +272,7 @@ def send_monthly_report(user_id):
     email = EmailMultiAlternatives(
         subject=subject,
         body=plain_message,
-        from_email="info@re.mind",
+        from_email="info@remnd.co",
         to=[user.email],
     )
     email.attach_alternative(html_message, "text/html")
