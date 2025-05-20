@@ -147,6 +147,9 @@ CORS_ALLOWED_ORIGINS = [
     "https://remnd.co",
 ]
 CORS_ALLOWS_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    "https://api.remnd.co",
+]
 
 LOGGING = {
     "version": 1,
