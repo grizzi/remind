@@ -134,7 +134,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = "/var/www/api.remnd.co/static"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -144,8 +144,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # TODO: understand these variables
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "https://remnd.co",
 ]
-# CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
 
 LOGGING = {
