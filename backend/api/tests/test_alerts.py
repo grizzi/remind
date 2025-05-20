@@ -220,7 +220,7 @@ class ExpiringPlansReminderTest(TestCase):
             mock_email_class.assert_called_once_with(
                 subject="reMind Alert",
                 body="Email",
-                from_email="info@re.mind",
+                from_email="info@remnd.co",
                 to=[self.user.email],
             )
 

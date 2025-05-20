@@ -17,7 +17,10 @@ services:
       retries: 3
       start_period: 10s
     env_file:
-      - ./backend/.env.dev
+      - ./backend/.env.prod
+    environment: # this are sourced from the .bashrc
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     depends_on:
       - postgres
     volumes:
@@ -52,7 +55,10 @@ services:
         - action: rebuild
           path: ./backend/pyproject.toml
     env_file:
-      - ./backend/.env.dev
+      - ./backend/.env.prod
+    environment: # this are sourced from the .bashrc
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     depends_on:
       backend:
         condition: service_healthy
@@ -65,7 +71,7 @@ services:
     container_name: db
     ports:
       - 5432:5432
-    env_file: ./backend/.env.dev
+    env_file: ./backend/.env.prod
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -75,13 +81,6 @@ services:
     hostname: redis
     ports:
       - 6379:6379
-
-  mailhog:
-    image: mailhog/mailhog
-    container_name: mailhog
-    ports:
-      - 8025:8025
-      - 1025:1025
 
 volumes:
   postgres_data:
