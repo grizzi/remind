@@ -125,22 +125,6 @@ const SubscriptionEditPage = () => {
           labels={labels}
         />
       </div>
-      <div className='flex flex-col w-full'>
-        {subscription?.id && (
-          <div>
-            <EditablePlanTable
-              subscription={subscription}
-              plans={plans}
-              settings={settings}
-              currencies={currencies}
-              onUpdate={async plan => {
-                await Api.updatePlan(subscription!.id, plan)
-              }}
-              onDelete={plan => Api.deletePlan(subscription!.id, plan)}
-            />
-          </div>
-        )}
-      </div>
     </div>
   )
 }

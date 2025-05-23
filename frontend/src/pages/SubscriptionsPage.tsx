@@ -101,7 +101,7 @@ const SubscriptionsPage = () => {
 
   return (
     <div>
-      <div className='flex flex-row justify-evenly w-full mb-4'>
+      <div className='flex flex-col sm:flex-row  justify-evenly w-full mb-4'>
         <MetricCard
           header='This month'
           loadingDetails={
@@ -126,7 +126,7 @@ const SubscriptionsPage = () => {
       </div>
       <FloatingActionButton onClick={() => setAddSubscription(true)} />
       <div className='pr-2 pl-2'>
-        <p className='text-4xl'>Subscriptions</p>
+        <p className='text-3xl'>Subscriptions</p>
 
         <div className='flex flex-wrap gap-0 items-center justify-end mt-2 mb-2'>
           {getUniqueLabelNames(labels).map(ln => (

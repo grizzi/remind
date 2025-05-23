@@ -76,7 +76,7 @@ const LabelEditor = ({
           />
           <button
             type='button'
-            className='m-1 p-2 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 shadow-md transition-all'
+            className='m-1 ml-4 p-2 w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 shadow-md transition-all'
             onClick={onAddLabel}
             aria-label='Add label'
           >
