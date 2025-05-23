@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Formik, Form } from 'formik'
+import React, { useEffect, useState, useRef } from 'react'
+import { Formik, Form, FormikProps } from 'formik'
 import {
   Plan,
   PlanSchema,
@@ -14,7 +14,7 @@ import CheckboxField from '../inputs/CheckboxField'
 import DateField from '../inputs/DateField'
 import NumericField from '../inputs/NumericField'
 import { toast } from 'react-toastify'
-import { FaSave } from 'react-icons/fa'
+import { FaEdit, FaSave } from 'react-icons/fa'
 import { MdDeleteOutline } from 'react-icons/md'
 
 type EditablePlanTableProps = {
@@ -34,11 +34,160 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
   onUpdate,
   onDelete,
 }) => {
-  const [_, setEditingIndex] = useState<number | null>(null)
+  const formikRefs = useRef<{ [key: number]: FormikProps<any> | null }>({})
+
   const [editedPlans, setEditedPlans] = useState<Plan[]>([])
+  const [editedIndex, setEditedIndex] = useState<number | null>()
+  const [beingEdited, setBeingEdited] = useState(false)
 
   const formatDate = (date: Date) => {
     return date.toISOString().split('T')[0]
+  }
+
+  const handlePlanSave = async (index: number) => {
+    const formik = formikRefs.current[index]
+    if (formik) {
+      await formik.submitForm()
+    }
+
+    // refresh plans
+    // setTimeout(() => {
+    //   Api.getPlans(String(subscription?.id!))
+    //     .then(plans => {
+    //       setEditedPlans(plans)
+    //     })
+    //     .catch(error =>
+    //       console.error(`Failed to get subscription plans: ${error.message}`),
+    //     )
+    // }, 1000)
+
+    console.log('Refreshing plans')
+    console.log('Subscription ID: ', subscription?.id)
+  }
+
+  const handlePlanDelete = (index: number) => {
+    onDelete(editedPlans[index])
+    setEditedIndex(null)
+    setEditedPlans(editedPlans.filter((_, i) => i !== index))
+  }
+
+  const handlePlanEdit = (index: number) => {
+    if (editedIndex !== null && beingEdited) {
+      return
+    }
+    setEditedIndex(index)
+    setBeingEdited(true)
+  }
+
+  const Menu = ({ index }: { index: number }) => {
+    return (
+      <div className='ml-6 flex flex-row gap-3'>
+        <div className='flex gap-2 justify-center items-center'>
+          {index !== editedIndex && (
+            <button
+              type='button'
+              className='text-green-600 hover:underline'
+              onClick={() => handlePlanEdit(index)}
+            >
+              <FaEdit className='m-2 text-xl' />
+            </button>
+          )}
+
+          {index === editedIndex && (
+            <button
+              type='button'
+              className='text-green-600 hover:underline'
+              onClick={() => handlePlanSave(index)}
+            >
+              <FaSave className='m-2 text-xl' />
+            </button>
+          )}
+          <div className='flex justify-center items-center'>
+            <button
+              type='button'
+              onClick={() => handlePlanDelete(index)}
+              className='text-gray-500 hover:underline'
+            >
+              <MdDeleteOutline className='m-2 text-xl' />
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const EditableTableRow = ({ plan, index }: { plan: Plan; index: number }) => {
+    return (
+      <div>
+        <Formik
+          key={index}
+          innerRef={instance => {
+            formikRefs.current[index] = instance
+          }}
+          initialValues={plan}
+          enableReinitialize
+          validate={toFormikValidate(PlanSchema)}
+          onSubmit={values => {
+            console.log('Submitting the following plan: ', values)
+            onUpdate(values)
+              .then(() => setEditedIndex(null))
+              .then(() => toast.success('Plan updated successfully'))
+              .then(() => {
+                // add plan to the list
+                setEditedPlans(
+                  editedPlans.map((p, i) => (i === index ? values : p)),
+                )
+                setEditedIndex(null)
+                setBeingEdited(false)
+              })
+              .catch(err =>
+                toast.error(`Could not update plan: ${err.message}`),
+              )
+          }}
+        >
+          <Form className='grid grid-cols-7 gap-2 items-start p-2 mt-1'>
+            <TextField id='name' />
+            <DateField id='start_date' />
+            <DateField id='end_date' />
+            <NumericField id='cost' />
+            {/* <SelectField
+            id='cost_currency'
+            options={[
+              {
+                value: settings.budget_currency,
+                label: settings.budget_currency,
+              },
+            ]}
+            disabled
+          /> */}
+            <SelectField id='billing_frequency' options={billingOptions} />
+            <div className='w-full'>
+              <CheckboxField id='auto_renew' />
+            </div>
+            <Menu index={index} />
+          </Form>
+        </Formik>
+      </div>
+    )
+  }
+
+  const SimpleTableRow = ({ plan, index }: { plan: Plan; index: number }) => {
+    return (
+      <div className='grid grid-cols-7 gap-2 items-start p-2 mt-1'>
+        <div className='flex justify-center'>{plan.name}</div>
+        <div className='flex justify-center'>{plan.start_date}</div>
+        <div className='flex justify-center'>{plan.end_date}</div>
+        <div className='flex justify-center'>
+          {plan.cost} {plan.cost_currency}
+        </div>
+        <div className='flex justify-center'>
+          {plan.billing_frequency!.charAt(0).toUpperCase() +
+            plan.billing_frequency!.slice(1)}
+        </div>
+        <div className='flex justify-center'>{`${plan.auto_renew}`}</div>
+        <Menu index={index} />
+      </div>
+    )
   }
 
   // TODO(giuseppe): multicurrency support in the future
@@ -69,95 +218,25 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
         )}
         {editedPlans.length > 0 && (
           <div className='min-w-300'>
-            <div className='grid grid-cols-9 gap-4 bg-gray-100 p-1 items-center'>
+            <div className='grid grid-cols-7 gap-4 bg-gray-100 p-1 items-center'>
               <div className='flex flex-row justify-center'>Name</div>
               <div className='flex flex-row justify-center'>Start Date</div>
               <div className='flex flex-row justify-center'>End Date</div>
               <div className='flex flex-row justify-center'>Cost</div>
-              <div className='flex flex-row justify-center'>Currency</div>
               <div className='flex flex-row justify-center'>
                 Billing Frequency
               </div>
               <div className='flex flex-row justify-center'>Auto Renew</div>
-              <div className='flex flex-row justify-center col-span-2'>
-                Actions
-              </div>
             </div>
 
             {/* Rows */}
-            {editedPlans.map((plan, index) => (
-              <Formik
-                key={index}
-                initialValues={plan}
-                enableReinitialize
-                validate={toFormikValidate(PlanSchema)}
-                onSubmit={values => {
-                  console.log('Submitting the following plan: ', values)
-                  onUpdate(values)
-                    .then(() => setEditingIndex(null))
-                    .then(() => toast.success('Plan updated successfully'))
-                    .catch(err =>
-                      toast.success(`Could not update plan: ${err.message}`),
-                    )
-                }}
-              >
-                <Form className='grid grid-cols-9 gap-2 items-start p-2 mt-1'>
-                  <TextField id='name' />
-                  <DateField id='start_date' />
-                  <DateField id='end_date' />
-                  <NumericField id='cost' />
-                  <SelectField
-                    id='cost_currency'
-                    // TODO(giuseppe): multicurrency support in the future
-                    options={[
-                      {
-                        value: settings.budget_currency,
-                        label: settings.budget_currency,
-                      },
-                    ]}
-                    disabled={true}
-                  />
-                  <SelectField
-                    id='billing_frequency'
-                    options={billingOptions}
-                  />
-
-                  <div className='w-full'>
-                    <CheckboxField id='auto_renew' />
-                  </div>
-
-                  <div className='flex gap-2 justify-center items-center'>
-                    <button
-                      type='submit'
-                      className='text-green-600 hover:underline'
-                    >
-                      <FaSave className='text-3xl' />
-                    </button>
-                  </div>
-
-                  <div className='col-start-9 col-end-9'>
-                    <div className='flex justify-center items-center'>
-                      <button
-                        type='button'
-                        onClick={() => {
-                          // Can delete only plans that were already saved
-                          if (plan.id) {
-                            onDelete(plan)
-                          }
-                          setEditedPlans(
-                            editedPlans.filter((_, i) => i !== index),
-                          )
-                          setEditingIndex(null)
-                        }}
-                        className='text-gray-500 hover:underline'
-                      >
-                        <MdDeleteOutline className='text-3xl' />
-                      </button>
-                    </div>
-                  </div>
-                </Form>
-              </Formik>
-            ))}
+            {editedPlans.map((plan, index) =>
+              editedIndex !== null && editedIndex === index ? (
+                <EditableTableRow plan={plan} index={index} />
+              ) : (
+                <SimpleTableRow plan={plan} index={index} />
+              ),
+            )}
           </div>
         )}
       </div>
@@ -165,6 +244,10 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
         <button
           className='flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
           onClick={() => {
+            if (beingEdited) {
+              toast.error('Please save or cancel the current edit first')
+              return
+            }
             setEditedPlans([
               {
                 subscription: subscription?.id,
@@ -178,6 +261,8 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
               },
               ...editedPlans,
             ])
+            setEditedIndex(0)
+            setBeingEdited(true)
           }}
         >
           Add Plan
