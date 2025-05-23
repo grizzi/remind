@@ -160,12 +160,12 @@ const SubscriptionsPage = () => {
         </div>
 
         {subscriptions
-          .filter(sub =>
-            sub.labels.some(
-              l =>
-                selectedLabels.find(ls => l.name === ls.name) ||
-                selectedLabels.length === 0,
-            ),
+          .filter(
+            sub =>
+              selectedLabels.length === 0 ||
+              sub.labels?.some(l =>
+                selectedLabels.find(ls => l.name === ls.name),
+              ),
           )
           .sort((a, b) => {
             if (a.created_at < b.created_at) {
