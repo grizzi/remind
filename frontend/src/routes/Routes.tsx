@@ -11,16 +11,31 @@ import NotFound from '../pages/NotFound'
 import LoginPage from '../pages/LoginPage'
 import LogoutPage from '../pages/LogoutPage'
 import RegisterPage from '../pages/RegisterPage'
+import SiteLayout from '../components/SiteLayout'
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
+      // Public routes
+      {
+        path: 'login',
+        element: <LoginPage />,
+      },
+      {
+        path: 'register',
+        element: <RegisterPage />,
+      },
+      {
+        path: 'logout',
+        element: <LogoutPage />,
+      },
+      // Protected routes with SiteLayout
       {
         element: (
           <ProtectedRoute>
-            <Outlet />
+            <SiteLayout />
           </ProtectedRoute>
         ),
         children: [
@@ -44,27 +59,15 @@ export const router = createBrowserRouter([
             path: 'settings/edit',
             element: <UserSettingsEditPage />,
           },
+          {
+            path: '',
+            element: <Navigate to='/subscriptions' replace />,
+          },
         ],
-      },
-      {
-        path: '/login',
-        element: <LoginPage />,
-      },
-      {
-        path: '/register',
-        element: <RegisterPage />,
-      },
-      {
-        path: '/logout',
-        element: <LogoutPage />,
       },
       {
         path: '*',
         element: <NotFound />,
-      },
-      {
-        path: '/',
-        element: <Navigate to='/subscriptions' replace />,
       },
     ],
   },

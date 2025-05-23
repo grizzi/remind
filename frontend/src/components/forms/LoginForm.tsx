@@ -14,41 +14,52 @@ function LoginForm() {
       <div className='flex flex-col p-2 rounded-md justify-start'>
         <div className='flex flex-col'>
           <div className='flex flex-col items-center mb-10'>
-            <p className='text-2xl'>Welcome back to reMind</p>
+            <p className='text-2xl'>Welcome back!</p>
             <p className='text-sm'>Login to your account</p>
           </div>
-          <label className='text-gray-600' htmlFor='username'>
-            Username
-          </label>
-          <input
-            className='mb-2 border-1 border-gray-200 p-1'
-            type='text'
-            value={username}
-            onChange={e => setUserName(e.target.value)}
-            placeholder=''
-            id='username'
-          />
-          <label className='text-gray-600' htmlFor='password'>
-            Password
-          </label>
-          <input
-            className='mb-2 border-1 border-gray-200 p-1'
-            type='password'
-            value={password}
-            id='password'
-            onChange={e => setPassword(e.target.value)}
-            placeholder=''
-          />
+          <form
+            className='flex flex-col items-center mb-10'
+            onSubmit={e => {
+              e.preventDefault()
+              loginUser(username, password)
+            }}
+          >
+            <label
+              className='w-full text-left text-gray-600'
+              htmlFor='username'
+            >
+              Username
+            </label>
+            <input
+              className='mb-2 border-1 border-gray-200 p-1'
+              type='text'
+              value={username}
+              onChange={e => setUserName(e.target.value)}
+              placeholder=''
+              id='username'
+            />
+            <label
+              className='w-full text-left text-gray-600'
+              htmlFor='password'
+            >
+              Password
+            </label>
+            <input
+              className='mb-2 border-1 border-gray-200 p-1'
+              type='password'
+              value={password}
+              id='password'
+              onChange={e => setPassword(e.target.value)}
+              placeholder=''
+            />
 
-          <div className='flex'>
             <button
               className='m-4 p-2 w-full w-min-12 border-0 shadow-lg rounded-md'
-              type='button'
-              onClick={() => loginUser(username, password)}
+              type='submit'
             >
               Login
             </button>
-          </div>
+          </form>
         </div>
       </div>
 

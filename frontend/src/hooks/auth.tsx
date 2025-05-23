@@ -83,7 +83,6 @@ export const AuthContextProvider = ({
           }
 
           setUser(userObj)
-          toast.success('Registration successful!')
           navigate('/login')
         }
       })
