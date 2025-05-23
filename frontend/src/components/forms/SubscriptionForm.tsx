@@ -72,6 +72,12 @@ const SubscriptionForm = ({
         <Form className='w-full'>
           <TextField id='title' label='Title' />
           <TextField id='external_link' label='External Link' />
+          <LabelEditor
+            subscription={subscription}
+            allLabels={labels}
+            setNewLabels={setNewLabels}
+          />
+
           <div className='flex flex-col items-end'>
             <button
               className='flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
@@ -83,12 +89,6 @@ const SubscriptionForm = ({
           </div>
         </Form>
       </Formik>
-
-      <LabelEditor
-        subscription={subscription}
-        allLabels={labels}
-        setNewLabels={setNewLabels}
-      />
     </div>
   )
 }
