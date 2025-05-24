@@ -101,7 +101,7 @@ const SubscriptionsPage = () => {
 
   return (
     <div>
-      <div className='flex flex-col sm:flex-row  justify-evenly w-full mb-4'>
+      <div className='flex flex-col sm:flex-row mb-4'>
         <MetricCard
           header='This month'
           loadingDetails={

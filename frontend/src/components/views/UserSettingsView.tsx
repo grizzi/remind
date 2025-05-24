@@ -10,6 +10,7 @@ import {
 } from 'react-icons/tb'
 
 import React from 'react'
+import ConfirmDeleteModal from '../shared/ConfirmModalNew'
 
 interface UserSettingsViewProps {
   settings: UserSettings
@@ -33,7 +34,7 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
   } = settings
 
   return (
-    <div className='max-w-2xl bg-white'>
+    <div className='bg-white'>
       <div className='mb-6 flex flex-row justify-between items-center mb-6'>
         <p className='text-3xl'>User Settings</p>
         <button onClick={() => onEdit()}>
@@ -98,16 +99,7 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
           </p>
         </div>
       </div>
-      <div className='fixed border-0 bottom-8 right-8 flex flex-row justify-end mt-6 mb-6'>
-        <div className='space-x-2'>
-          <button
-            onClick={onDelete}
-            className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700'
-          >
-            Delete Account
-          </button>
-        </div>
-      </div>
+      <ConfirmDeleteModal onDelete={onDelete} />
     </div>
   )
 }

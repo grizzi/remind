@@ -8,7 +8,7 @@ const MetricCard = ({
   loadingDetails?: boolean
 }) => {
   return (
-    <div className='flex flex-row bg-gradient-to-r from-pink-500 to-violet-500 text-white rounded-xl p-1 shadow-md m-2'>
+    <div className='flex flex-1 flex-row bg-gradient-to-r from-pink-500 to-violet-500 text-white rounded-xl p-1 shadow-md m-2'>
       <div className='w-full flex flex-col'>
         <p className='pl-2 pt-2 text-3xl '>{header}</p>
 
