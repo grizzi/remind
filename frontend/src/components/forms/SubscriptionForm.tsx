@@ -1,6 +1,7 @@
 import { toFormikValidate } from '../../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
+import SimpleButton from '../buttons/SimpleButton'
 
 import {
   SubscriptionReadWrite,
@@ -74,13 +75,7 @@ const SubscriptionForm = ({
           <TextField id='external_link' label='External Link' />
 
           <div className='fixed border-0 bottom-8 right-6 flex flex-col items-end'>
-            <button
-              className='items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-sm shadow-lg hover:bg-purple-600 transition-all'
-              aria-label='Save'
-              type='submit'
-            >
-              Save
-            </button>
+            <SimpleButton text='Save' type='submit' />
           </div>
         </Form>
       </Formik>

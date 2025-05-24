@@ -38,7 +38,7 @@ function TagDisplay({ labels }: { labels: Label[] }) {
 
   return (
     <div
-      className='flex flex-wrap items-start justify-end overflow-hidden max-w-full'
+      className='flex flex-wrap overflow-hidden justify-end max-w-full'
       ref={containerRef}
     >
       {displayedTags.map(label => (

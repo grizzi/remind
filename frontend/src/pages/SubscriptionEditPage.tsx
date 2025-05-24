@@ -13,7 +13,6 @@ import {
   Plan,
 } from '../api/schema'
 import { useAppContext } from '../context'
-import EditablePlanTable from '../components/views/EditableTablePlan'
 
 const SubscriptionEditPage = () => {
   const context = useAppContext()

@@ -11,6 +11,7 @@ import {
 import SelectField, { SelectOption } from '../inputs/SelectField'
 import NumericField from '../inputs/NumericField'
 import CheckboxField from '../inputs/CheckboxField'
+import SimpleButton from '../buttons/SimpleButton'
 
 const UserSettingsForm = ({
   currentSettings,
@@ -36,7 +37,7 @@ const UserSettingsForm = ({
 
   return (
     <div>
-      <p className='text-3xl mb-6'>Edit User Settings</p>
+      <p className='text-3xl mb-6'>User Settings</p>
       <Formik
         initialValues={currentSettings}
         enableReinitialize
@@ -76,13 +77,9 @@ const UserSettingsForm = ({
             <p>Monthly report enabled</p>
             <CheckboxField id='monthly_report_active' />
           </div>
-          <button
-            className='fixed border-0 bottom-8 right-8 flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
-            aria-label='Add new entry'
-            type='submit'
-          >
-            Save
-          </button>
+          <div className='fixed border-0 bottom-8 right-6 flex flex-col items-end'>
+            <SimpleButton text='Save' type='submit' />
+          </div>
         </Form>
       </Formik>
     </div>

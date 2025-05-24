@@ -2,10 +2,17 @@ import { Api } from '../api/api'
 import { useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 
-import { Subscription, UserSettings, Currency, Plan } from '../api/schema'
+import {
+  Subscription,
+  UserSettings,
+  Currency,
+  Plan,
+  Label,
+} from '../api/schema'
 import { useAppContext } from '../context'
 import EditablePlanTable from '../components/views/EditableTablePlan'
-import { FaEdit } from 'react-icons/fa'
+import { TbEdit } from 'react-icons/tb'
+import TagDisplay from '../components/shared/TagDisplay'
 
 const SubscriptionViewPage = () => {
   const context = useAppContext()
@@ -14,6 +21,8 @@ const SubscriptionViewPage = () => {
   const [plans, setPlans] = useState<Plan[]>([])
   const [settings, setSettings] = useState<UserSettings>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
+  const [labels, setLabels] = useState<Label[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -21,14 +30,13 @@ const SubscriptionViewPage = () => {
 
     const forceUpdate = true
     context.getSubscriptions(forceUpdate).then(subs => {
-      console.log(JSON.stringify(subs))
       setSubscription(subs.find(sub => sub.id === id))
-      console.log('Subscription is now set!')
+      setLoading(false)
     })
 
-    console.log('Sub Id is: ', subId)
+    context.getLabels().then(l => setLabels(l))
+
     if (subId !== 'new') {
-      console.log('Fetching plans!!!')
       Api.getPlans(subId!)
         .then(plans => setPlans(plans))
         .catch(error =>
@@ -61,23 +69,32 @@ const SubscriptionViewPage = () => {
     fetchAndUpdate()
   }, [])
 
-  if (!settings || !currencies) {
+  if (!settings || !currencies || loading) {
+    return <div></div>
+  }
+
+  if (subId !== 'new' && !subscription) {
+    navigate('/subscriptions')
     return <div></div>
   }
 
   return (
     <div>
-      <div className='flex flex-row items-center mb-4'>
-        <p className='text-3xl text-center'>{`${subscription?.title}`}</p>
-        <div>
-          <button
-            className='m-2'
-            onClick={() => navigate(`/subscriptions/${subscription?.id}/edit`)}
-          >
-            <FaEdit className="size-5"/>
-          </button>
-        </div>
+      <div className='mb-6 flex flex-row justify-between items-center mb-6'>
+        <p className='text-3xl'>{`${subscription?.title}`}</p>
+        <button
+          onClick={() => navigate(`/subscriptions/${subscription?.id}/edit`)}
+        >
+          <TbEdit className='px-2 size-10 text-purple-700 hover:text-purple-200 transition-all' />
+        </button>
       </div>
+
+      <div className='justify-start items-start'>
+        <TagDisplay
+          labels={labels.filter(l => l.subscription === subscription?.id)}
+        />
+      </div>
+
       <div className='flex flex-col w-full'>
         {subscription?.id && (
           <div>

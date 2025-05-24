@@ -6,6 +6,7 @@ import {
   TbBell,
   TbTimeDuration5,
   TbReport,
+  TbEdit,
 } from 'react-icons/tb'
 
 import React from 'react'
@@ -33,7 +34,12 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
 
   return (
     <div className='max-w-2xl bg-white'>
-      <p className='text-3xl mb-6'>User Settings</p>
+      <div className='mb-6 flex flex-row justify-between items-center mb-6'>
+        <p className='text-3xl'>User Settings</p>
+        <button onClick={() => onEdit()}>
+          <TbEdit className='px-2 size-10 text-purple-700 hover:text-purple-200 transition-all' />
+        </button>
+      </div>
 
       <div className='grid grid-cols-[1.5rem_auto] gap-4'>
         <TbCalendarBolt className='text-purple-700 flex flex-auto justify-center items-center size-8' />
@@ -94,12 +100,6 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
       </div>
       <div className='fixed border-0 bottom-8 right-8 flex flex-row justify-end mt-6 mb-6'>
         <div className='space-x-2'>
-          <button
-            onClick={onEdit}
-            className='px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700'
-          >
-            Edit
-          </button>
           <button
             onClick={onDelete}
             className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700'
