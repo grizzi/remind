@@ -11,7 +11,7 @@ const PlanEditPage = () => {
   const [plan, setPlan] = useState<Plan | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [_, setSettings] = useState<UserSettings | null>(null)
-  const [subscription, setSubscription] = useState<Subscription>([])
+  const [subscription, setSubscription] = useState<Subscription | null>(null)
   const { subId, planId } = useParams()
 
   const navigate = useNavigate()
@@ -82,7 +82,7 @@ const PlanEditPage = () => {
 
   return (
     <div>
-      <p className='mb-4 text-3xl'>{subscription.title} - Edit Plan </p>
+      <p className='mb-4 text-3xl'>{subscription!.title} - Edit Plan </p>
       <PlanForm plan={plan!} onSubmit={onSubmit} />
     </div>
   )

@@ -1,4 +1,4 @@
-import { ErrorMessage, useField } from 'formik'
+import { useField } from 'formik'
 
 const CheckboxField = (props: {
   label?: string

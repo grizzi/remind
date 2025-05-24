@@ -1,6 +1,6 @@
 import SubscriptionForm from '../components/forms/SubscriptionForm'
 import { Api } from '../api/api'
-import { Navigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
@@ -19,7 +19,7 @@ const SubscriptionEditPage = () => {
   const { subId } = useParams()
   const [subscription, setSubscription] = useState<Subscription>()
   const [labels, setLabels] = useState<Label[]>([])
-  const [plans, setPlans] = useState<Plan[]>([])
+  const [_, setPlans] = useState<Plan[]>([])
   const [settings, setSettings] = useState<UserSettings>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
   const navigate = useNavigate()

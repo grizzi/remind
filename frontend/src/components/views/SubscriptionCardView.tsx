@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Label, Plan, Subscription } from '../../api/schema'
-import TagChip from '../shared/TagChip'
 import { Api } from '../../api/api'
 import TagDisplay from '../shared/TagDisplay'
 

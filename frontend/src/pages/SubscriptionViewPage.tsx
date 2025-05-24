@@ -11,7 +11,7 @@ const SubscriptionViewPage = () => {
   const [plans, setPlans] = useState<Plan[]>([])
   const [subscription, setSubscription] = useState<Subscription>()
   const [loading, setLoading] = useState<boolean>(true)
-  const [labels, setLabels] = useState<Label[]>([])
+  const [_, setLabels] = useState<Label[]>([])
   const [openDropdown, setOpenDropdown] = useState<number | null>(null)
 
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -162,7 +162,9 @@ const SubscriptionViewPage = () => {
               className='absolute top-3 right-3 text-gray-500 hover:text-gray-700'
               onClick={e => {
                 e.stopPropagation()
-                setOpenDropdown(openDropdown === plan.id ? null : plan.id)
+                setOpenDropdown(
+                  openDropdown === plan.id ? null : plan.id ?? null,
+                )
               }}
             >
               <HiDotsVertical />
