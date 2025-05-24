@@ -101,6 +101,16 @@ const SubscriptionEditPage = () => {
     }
   }
 
+  const onDelete = async (): Promise<void> => {
+    Api.deleteSubscription(Number(subId!))
+      .then(() => {
+        navigate('/subscriptions')
+      })
+      .catch(error => {
+        console.error(`Failed to delete subscription!: ${error.message}`)
+      })
+  }
+
   if (!editing) {
     return <Navigate to={'/subscriptions'} />
   }
@@ -121,6 +131,7 @@ const SubscriptionEditPage = () => {
           currencies={currencies}
           subscription={subscription}
           onSubmit={onSubmit}
+          onDelete={onDelete}
           labels={labels}
         />
       </div>

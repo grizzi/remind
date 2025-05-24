@@ -99,7 +99,13 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
           </p>
         </div>
       </div>
-      <ConfirmDeleteModal onDelete={onDelete} />
+      <div className='fixed border-0 bottom-8 right-6 flex flex-col items-end'>
+        <ConfirmDeleteModal
+          prompt='Are you sure you want to delete your account? This action cannot be undone.'
+          action='Delete Account'
+          onDelete={onDelete}
+        />
+      </div>
     </div>
   )
 }

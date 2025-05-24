@@ -8,8 +8,12 @@ import {
 import { Fragment, useState } from 'react'
 
 export default function ConfirmDeleteModal({
+  action,
+  prompt,
   onDelete,
 }: {
+  action: string
+  prompt: string
   onDelete: () => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -18,9 +22,10 @@ export default function ConfirmDeleteModal({
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className='fixed border-0 bottom-8 right-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700'
+        type='button'
+        className='px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700'
       >
-        Delete Account
+        {action}
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -56,19 +61,20 @@ export default function ConfirmDeleteModal({
                   </DialogTitle>
                   <div className='mt-2'>
                     <p className='text-sm text-gray-500'>
-                      Are you sure you want to delete your account? This action
-                      cannot be undone.
+                      {prompt}
                     </p>
                   </div>
 
                   <div className='mt-4 flex justify-end gap-2'>
                     <button
+                      type='button'
                       onClick={() => setIsOpen(false)}
                       className='px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200'
                     >
                       Cancel
                     </button>
                     <button
+                      type='button'
                       onClick={() => {
                         onDelete()
                         setIsOpen(false)
