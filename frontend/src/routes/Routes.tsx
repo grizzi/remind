@@ -11,6 +11,7 @@ import NotFound from '../pages/NotFound'
 import LoginPage from '../pages/LoginPage'
 import LogoutPage from '../pages/LogoutPage'
 import RegisterPage from '../pages/RegisterPage'
+import PlanEditPage from '../pages/PlanEditPage'
 import SiteLayout from '../components/SiteLayout'
 
 export const router = createBrowserRouter([
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
           {
             path: 'subscriptions/:subId/edit',
             element: <SubscriptionEditPage />,
+          },
+          {
+            path: 'subscriptions/:subId/plans/:planId/edit',
+            element: <PlanEditPage />,
           },
           {
             path: 'settings',

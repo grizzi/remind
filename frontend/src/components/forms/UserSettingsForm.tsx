@@ -69,13 +69,14 @@ const UserSettingsForm = ({
               />
             </div>
           </div>
-          <div className='flex flex-row justify-between'>
-            <p>Reminders enabled</p>
-            <CheckboxField id='reminders_active' />
+          <div className='mb-4'>
+            <CheckboxField id='reminders_active' label='Reminders enabled' />
           </div>
-          <div className='flex flex-row justify-between'>
-            <p>Monthly report enabled</p>
-            <CheckboxField id='monthly_report_active' />
+          <div className='mb-4'>
+            <CheckboxField
+              id='monthly_report_active'
+              label='Monthly report enabled'
+            />
           </div>
           <div className='fixed border-0 bottom-8 right-6 flex flex-col items-end'>
             <SimpleButton text='Save' type='submit' />

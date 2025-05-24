@@ -16,6 +16,7 @@ import NumericField from '../inputs/NumericField'
 import { toast } from 'react-toastify'
 import { FaEdit, FaSave } from 'react-icons/fa'
 import { MdDeleteOutline } from 'react-icons/md'
+import { useNavigate } from 'react-router'
 
 type EditablePlanTableProps = {
   subscription?: Subscription
@@ -40,6 +41,7 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
   const [editedIndex, setEditedIndex] = useState<number | null>()
   const [beingEdited, setBeingEdited] = useState(false)
 
+  const navigate = useNavigate()
   const formatDate = (date: Date) => {
     return date.toISOString().split('T')[0]
   }
@@ -49,17 +51,6 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
     if (formik) {
       await formik.submitForm()
     }
-
-    // refresh plans
-    // setTimeout(() => {
-    //   Api.getPlans(String(subscription?.id!))
-    //     .then(plans => {
-    //       setEditedPlans(plans)
-    //     })
-    //     .catch(error =>
-    //       console.error(`Failed to get subscription plans: ${error.message}`),
-    //     )
-    // }, 1000)
 
     console.log('Refreshing plans')
     console.log('Subscription ID: ', subscription?.id)
@@ -77,6 +68,7 @@ const EditablePlanTable: React.FC<EditablePlanTableProps> = ({
     }
     setEditedIndex(index)
     setBeingEdited(true)
+    navigate(`/subscriptions/${subscription?.id}/plans/${editedPlans[index].id}/edit`)
   }
 
   const Menu = ({ index }: { index: number }) => {

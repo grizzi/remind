@@ -74,7 +74,7 @@ const SubscriptionForm = ({
           <TextField id='title' label='Title' />
           <TextField id='external_link' label='External Link' />
 
-          <div className='fixed border-0 bottom-8 right-6 flex flex-col items-end'>
+          <div className='fixed bottom-8 right-6 flex flex-col items-end'>
             <SimpleButton text='Save' type='submit' />
           </div>
         </Form>
