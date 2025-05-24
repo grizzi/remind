@@ -89,7 +89,7 @@ const SubscriptionViewPage = () => {
         </button>
       </div>
 
-      <div className='justify-start items-start'>
+      <div className='justify-start items-start mb-4'>
         <TagDisplay
           labels={labels.filter(l => l.subscription === subscription?.id)}
         />
