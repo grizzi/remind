@@ -125,7 +125,7 @@ const SubscriptionsPage = () => {
         />
       </div>
       <FloatingActionButton onClick={() => setAddSubscription(true)} />
-      <div className='pr-2 pl-2'>
+      <div className='pr-2 pl-2 pb-36'>
         <p className='text-3xl'>Subscriptions</p>
 
         <div className='flex flex-wrap gap-0 items-center justify-end mt-2 mb-2'>
