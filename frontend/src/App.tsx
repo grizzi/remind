@@ -1,6 +1,6 @@
 import { AuthContextProvider } from './hooks/auth'
 import AppContextProvider from './context'
-import { ToastContainer } from 'react-toastify'
+import { Flip, ToastContainer } from 'react-toastify'
 import { Outlet } from 'react-router'
 
 function App() {
@@ -9,7 +9,17 @@ function App() {
       <AuthContextProvider>
         <AppContextProvider>
           <Outlet />
-          <ToastContainer />
+          <ToastContainer
+            position='bottom-center'
+            pauseOnHover={false}
+            transition={Flip}
+            autoClose={2000}
+            hideProgressBar={true}
+            toastStyle={{
+              margin: '10px',
+              maxWidth: '300px',
+            }}
+          />
         </AppContextProvider>
       </AuthContextProvider>
     </>

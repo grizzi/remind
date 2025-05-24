@@ -43,7 +43,7 @@ const PlanForm = ({
             ]}
             disabled
           /> */}
-          <SelectField id='billing_frequency' options={billingOptions} />
+          <SelectField id='billing_frequency' options={billingOptions} label="Billing frequency"/>
           <div className='w-full'>
             <CheckboxField id='auto_renew' label='Auto renew' />
           </div>

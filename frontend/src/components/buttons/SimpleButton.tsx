@@ -7,7 +7,7 @@ export default function SimpleButton({
 }) {
   return (
     <button
-      className='items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-sm shadow-lg hover:bg-purple-600 transition-all'
+      className='items-center justify-center w-24 h-10 bg-purple-600 text-white rounded-sm shadow-lg md:bg-purple-300 hover:bg-purple-600 transition-all'
       aria-label={`Button: ${text}`}
       type={type}
     >

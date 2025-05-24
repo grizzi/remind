@@ -22,7 +22,6 @@ const SubscriptionEditPage = () => {
   const [plans, setPlans] = useState<Plan[]>([])
   const [settings, setSettings] = useState<UserSettings>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
-  const [editing, setEditing] = useState<boolean>(true)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -79,7 +78,7 @@ const SubscriptionEditPage = () => {
     if (id === undefined || isNaN(id)) {
       Api.createSubscription(subscription)
         .then(subscription => {
-          navigate(`/subscriptions/${subscription.id}/edit/`)
+          navigate(`/subscriptions/${subscription.id}`)
         })
         .catch(error => {
           console.error(
@@ -89,7 +88,7 @@ const SubscriptionEditPage = () => {
     } else {
       Api.updateSubscription(id, subscription)
         .then(() => {
-          setEditing(false)
+          navigate(`/subscriptions/${subId}`)
         })
         .catch(error => {
           console.error(
@@ -109,10 +108,6 @@ const SubscriptionEditPage = () => {
       .catch(error => {
         console.error(`Failed to delete subscription!: ${error.message}`)
       })
-  }
-
-  if (!editing) {
-    return <Navigate to={'/subscriptions'} />
   }
 
   if (!settings || !currencies) {

@@ -5,6 +5,7 @@ import { useParams } from 'react-router'
 import { Api } from '../api/api'
 import { useAppContext } from '../context'
 import { HiDotsVertical } from 'react-icons/hi'
+import { TbEdit } from 'react-icons/tb'
 
 const SubscriptionViewPage = () => {
   const [plans, setPlans] = useState<Plan[]>([])
@@ -15,25 +16,35 @@ const SubscriptionViewPage = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
-  const context = useAppContext()
+  const { getSubscriptions, getLabels } = useAppContext()
   const { subId } = useParams()
 
   useEffect(() => {
     const id = Number(subId)
     const forceUpdate = true
-    context.getSubscriptions(forceUpdate).then(subs => {
-      setSubscription(subs.find(sub => sub.id === id))
+
+    const loadData = async () => {
+      try {
+        const subs = await getSubscriptions(forceUpdate)
+        setSubscription(subs.find(sub => sub.id === id))
+        setLoading(false)
+
+        const labels_ = await getLabels()
+        setLabels(labels_)
+
+        if (subId !== 'new') {
+          const plans = await Api.getPlans(subId!)
+          setPlans(plans)
+        }
+      } catch (error: any) {
+        console.error(`Failed to load subscription data: ${error.message}`)
+        navigate('/subscriptions')
+      }
+    }
+
+    loadData().then(() => {
       setLoading(false)
     })
-    context.getLabels().then(l => setLabels(l))
-
-    if (subId !== 'new') {
-      Api.getPlans(subId!)
-        .then(plans => setPlans(plans))
-        .catch(error =>
-          console.error(`Failed to get subscription plans: ${error.message}`),
-        )
-    }
   }, [subId])
 
   // Close dropdown on outside click
@@ -52,17 +63,6 @@ const SubscriptionViewPage = () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
-
-  const handleDelete = async (planId: number) => {
-    if (window.confirm('Are you sure you want to delete this plan?')) {
-      try {
-        await Api.deletePlan(planId)
-        setPlans(plans.filter(p => p.id !== planId))
-      } catch (err) {
-        console.error('Failed to delete plan:', err)
-      }
-    }
-  }
 
   const DropDownMenu = ({ plan }: { plan: Plan }) => {
     return (
@@ -134,9 +134,19 @@ const SubscriptionViewPage = () => {
     )
   }
 
+  if (loading) {
+    return <></>
+  }
+
   return (
-    <div className='p-4 md:p-8'>
-      <h1 className='text-2xl font-bold mb-6'>Subscription Overview</h1>
+    <div>
+      <div className='mb-6 flex flex-row justify-between items-center mb-6'>
+        <p className='text-2xl mb-6'>{`${subscription?.title}`}</p>
+        <button onClick={() => navigate(`/subscriptions/${subId}/edit`)}>
+          <TbEdit className='px-2 size-10 text-purple-700 hover:text-purple-200 transition-all' />
+        </button>
+      </div>
+
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
         {plans.map(plan => (
           <div
@@ -165,6 +175,17 @@ const SubscriptionViewPage = () => {
             <PlanCard plan={plan} />
           </div>
         ))}
+
+        <div className='fixed bottom-8 right-6'>
+          <button
+            className='items-center justify-center w-24 h-10 bg-purple-600 md:bg-purple-300 text-white rounded-sm shadow-lg hover:bg-purple-600 transition-all'
+            aria-label={`Button: Add plan`}
+            type='button'
+            onClick={() => navigate(`/subscriptions/${subId}/plans/new/edit`)}
+          >
+            Add plan
+          </button>
+        </div>
       </div>
     </div>
   )

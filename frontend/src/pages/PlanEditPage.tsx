@@ -69,7 +69,10 @@ const PlanEditPage = () => {
 
   const onSubmit = (plan: Plan) => {
     Api.updatePlan(plan.subscription!, plan)
-      .then(() => toast.success('Plan updated successfully'))
+      .then(() => {
+        toast.success('Plan updated successfully')
+        navigate(`/subscriptions/${plan.subscription}`)
+      })
       .catch(err => toast.error(`Could not update plan: ${err.message}`))
   }
 

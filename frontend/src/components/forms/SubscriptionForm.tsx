@@ -79,11 +79,13 @@ const SubscriptionForm = ({
 
           <div className='fixed bottom-8 right-6 flex flex-col items-end'>
             <div className='flex flex-row items-center mb-2 gap-2'>
-              <ConfirmDeleteModal
-                onDelete={onDelete}
-                prompt='Are you sure you want to delete this subscription? This action cannot be undone.'
-                action='Delete Subscription'
-              />
+              {subscription?.id && (
+                <ConfirmDeleteModal
+                  onDelete={onDelete}
+                  prompt='Are you sure you want to delete this subscription? This action cannot be undone.'
+                  action='Delete Subscription'
+                />
+              )}
               <SimpleButton text='Save' type='submit' />
             </div>
           </div>
