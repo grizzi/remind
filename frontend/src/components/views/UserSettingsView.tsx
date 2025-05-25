@@ -10,7 +10,7 @@ import {
 } from 'react-icons/tb'
 
 import React from 'react'
-import ConfirmDeleteModal from '../shared/ConfirmModalNew'
+import ConfirmDeleteModal from '../shared/ConfirmModal'
 
 interface UserSettingsViewProps {
   settings: UserSettings
@@ -101,6 +101,7 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
       </div>
       <div className='fixed border-0 bottom-8 right-6 flex flex-col items-end'>
         <ConfirmDeleteModal
+          dialog_title='Confirm Account Deletion'
           prompt='Are you sure you want to delete your account? This action cannot be undone.'
           action='Delete Account'
           onDelete={onDelete}

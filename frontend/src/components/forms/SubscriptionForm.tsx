@@ -14,7 +14,7 @@ import {
 
 import TextField from '../inputs/TextField'
 import LabelEditor from './LabelsEditor'
-import ConfirmDeleteModal from '../shared/ConfirmModalNew'
+import ConfirmDeleteModal from '../shared/ConfirmModal'
 
 const SubscriptionForm = ({
   subscription,
@@ -81,9 +81,10 @@ const SubscriptionForm = ({
             <div className='flex flex-row items-center mb-2 gap-2'>
               {subscription?.id && (
                 <ConfirmDeleteModal
-                  onDelete={onDelete}
+                  dialog_title='Confirm Subscription Deletion'
                   prompt='Are you sure you want to delete this subscription? This action cannot be undone.'
                   action='Delete Subscription'
+                  onDelete={onDelete}
                 />
               )}
               <SimpleButton text='Save' type='submit' />
