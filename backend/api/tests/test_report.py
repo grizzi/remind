@@ -36,14 +36,6 @@ class SendMonthlyReportTest(TestCase):
             renewed=False,
         )
 
-        # print all plans
-        print(self.last_date_last_month)
-        plans = Plan.objects.all()
-        for plan in plans:
-            print(
-                f"Plan: {plan.name}, Start Date: {plan.start_date}, End Date: {plan.end_date}"
-            )
-
         created = created_last_month(self.user.id)
         renewed = renewed_last_month(self.user.id)
         expired = expired_last_month(self.user.id)
