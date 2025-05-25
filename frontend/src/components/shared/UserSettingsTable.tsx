@@ -10,7 +10,7 @@ import {
 } from 'react-icons/tb'
 
 import React from 'react'
-import ConfirmDeleteModal from '../shared/ConfirmModal'
+import ConfirmDeleteModal from './ConfirmModal'
 
 interface UserSettingsViewProps {
   settings: UserSettings
@@ -18,7 +18,7 @@ interface UserSettingsViewProps {
   onDelete: () => void
 }
 
-const UserSettingsView: React.FC<UserSettingsViewProps> = ({
+const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
   settings,
   onEdit,
   onDelete,
@@ -35,7 +35,7 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
 
   return (
     <div className='bg-white'>
-      <div className='mb-6 flex flex-row justify-between items-center mb-6'>
+      <div className='mb-6 flex flex-row justify-between items-center'>
         <p className='text-3xl'>User Settings</p>
         <button onClick={() => onEdit()}>
           <TbEdit className='px-2 size-10 text-purple-700 hover:text-purple-200 transition-all' />
@@ -111,4 +111,4 @@ const UserSettingsView: React.FC<UserSettingsViewProps> = ({
   )
 }
 
-export default UserSettingsView
+export default UserSettingsTable

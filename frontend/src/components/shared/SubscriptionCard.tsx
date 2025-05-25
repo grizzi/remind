@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Label, Plan, Subscription } from '../../api/schema'
 import { Api } from '../../api/api'
-import TagDisplay from '../shared/TagDisplay'
+import TagDisplay from './TagDisplay'
 
-const SubscriptionCardView = ({
+const SubscriptionCard = ({
   subscription,
   labels,
   onClick,
@@ -39,4 +39,4 @@ const SubscriptionCardView = ({
   )
 }
 
-export default SubscriptionCardView
+export default SubscriptionCard

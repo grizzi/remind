@@ -5,11 +5,11 @@ import { useAppContext } from '../context'
 import { Label, Subscription, UserSettings } from '../api/schema'
 import FloatingActionButton from '../components/buttons/FloatingActionButton'
 
-import SubscriptionCardView from '../components/views/SubscriptionCardView'
+import SubscriptionCard from '../components/shared/SubscriptionCard'
 import { Api } from '../api/api'
 import TagChip from '../components/shared/TagChip'
 import { TbFilter } from 'react-icons/tb'
-import MetricCard from '../components/views/MetricCard'
+import MetricCard from '../components/shared/MetricCard'
 import { getTotalCost } from '../shared/TimeUtils'
 
 const SubscriptionsPage = () => {
@@ -183,7 +183,7 @@ const SubscriptionsPage = () => {
             return 0
           })
           .map(sub => (
-            <SubscriptionCardView
+            <SubscriptionCard
               subscription={sub}
               labels={labels.filter(l => l.subscription === sub.id)}
               key={sub.id}
