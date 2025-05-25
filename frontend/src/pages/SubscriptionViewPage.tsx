@@ -1,22 +1,26 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Label, Plan, Subscription } from '../api/schema'
+import { Label, Plan, Subscription, UserSettings } from '../api/schema'
 import { useParams } from 'react-router'
 import { Api } from '../api/api'
 import { useAppContext } from '../context'
 import { HiDotsVertical } from 'react-icons/hi'
 import { TbEdit } from 'react-icons/tb'
+import PlanCard from '../components/shared/PlanCard'
+import DropDownMenu from '../components/shared/DropDownMenu'
 
 const SubscriptionViewPage = () => {
   const [plans, setPlans] = useState<Plan[]>([])
   const [subscription, setSubscription] = useState<Subscription>()
+  const [settings, setSettings] = useState<UserSettings>()
+
   const [loading, setLoading] = useState<boolean>(true)
   const [_, setLabels] = useState<Label[]>([])
   const [openDropdown, setOpenDropdown] = useState<number | null>(null)
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
-  const { getSubscriptions, getLabels } = useAppContext()
+  const { getSubscriptions, getLabels, getUserSettings } = useAppContext()
   const { subId } = useParams()
 
   useEffect(() => {
@@ -32,6 +36,8 @@ const SubscriptionViewPage = () => {
         const labels_ = await getLabels()
         setLabels(labels_)
 
+        const settings = await getUserSettings()
+        setSettings(settings)
         if (subId !== 'new') {
           const plans = await Api.getPlans(subId!)
           setPlans(plans)
@@ -64,83 +70,13 @@ const SubscriptionViewPage = () => {
     }
   }, [])
 
-  const DropDownMenu = ({ plan }: { plan: Plan }) => {
-    return (
-      <div
-        ref={dropdownRef}
-        className='absolute top-10 right-3 bg-white border border-gray-200 rounded-lg shadow-lg z-10 w-32'
-      >
-        <button
-          onClick={e => {
-            e.stopPropagation()
-            navigate(`/subscriptions/${subId}/plans/${plan.id}/edit`)
-          }}
-          className='w-full px-4 py-2 text-left text-sm hover:bg-gray-100'
-        >
-          Edit
-        </button>
-        <button
-          onClick={e => {
-            e.stopPropagation()
-            Api.deletePlan(Number(subId), plan)
-              .then(() => {
-                setPlans(plans.filter(p => p.id !== plan.id))
-              })
-              .catch(error => {
-                console.error(`Failed to delete plan: ${error.message}`)
-              })
-              .finally(() => {
-                setOpenDropdown(null)
-              })
-          }}
-          className='w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50'
-        >
-          Delete
-        </button>
-      </div>
-    )
-  }
-
-  const PlanCard = ({ plan }: { plan: Plan }) => {
-    return (
-      <div>
-        <div className='flex justify-between items-center mb-2'>
-          <h2 className='text-lg font-semibold'>{plan.name}</h2>
-          {plan.renewed && (
-            <span className='text-green-600 text-sm font-medium'>Renewed</span>
-          )}
-        </div>
-        <p className='text-sm text-gray-600 mb-1'>
-          {plan.start_date} → {plan.end_date || 'Ongoing'}
-        </p>
-        <p className='text-sm text-gray-600 mb-2'>
-          {plan.cost} {plan.cost_currency} / {plan.billing_frequency ?? '—'}
-        </p>
-        <div className='flex justify-between items-center'>
-          <span
-            className={`text-xs font-medium px-2 py-1 rounded-full ${
-              plan.auto_renew
-                ? 'bg-blue-100 text-blue-800'
-                : 'bg-gray-100 text-gray-800'
-            }`}
-          >
-            {plan.auto_renew ? 'Auto-renew ON' : 'Manual Renewal'}
-          </span>
-          {plan.expired && (
-            <span className='text-xs font-semibold text-red-600'>Expired</span>
-          )}
-        </div>
-      </div>
-    )
-  }
-
   if (loading) {
     return <></>
   }
 
   return (
     <div>
-      <div className='mb-6 flex flex-row justify-between items-center mb-6'>
+      <div className='mb-6 flex flex-row justify-between items-center'>
         <p className='text-2xl mb-6'>{`${subscription?.title}`}</p>
         <button onClick={() => navigate(`/subscriptions/${subId}/edit`)}>
           <TbEdit className='px-2 size-10 text-purple-700 hover:text-purple-200 transition-all' />
@@ -171,10 +107,36 @@ const SubscriptionViewPage = () => {
             </button>
 
             {/* Dropdown Menu */}
-            {openDropdown === plan.id && <DropDownMenu plan={plan} />}
+            {openDropdown === plan.id && (
+              <DropDownMenu
+                outerDivRef={dropdownRef}
+                onEdit={() =>
+                  navigate(`/subscriptions/${subId}/plans/${plan.id}/edit`)
+                }
+                onDelete={() =>
+                  Api.deletePlan(Number(subId), plan)
+                    .then(() => {
+                      setPlans(plans.filter(p => p.id !== plan.id))
+                    })
+                    .catch(error => {
+                      console.error(`Failed to delete plan: ${error.message}`)
+                    })
+                    .finally(() => {
+                      setOpenDropdown(null)
+                    })
+                }
+              />
+            )}
 
             {/* Card Content */}
-            <PlanCard plan={plan} />
+            {/* Overwrite currency from global settings since we do not handle multicurrency
+              yet */}
+            <PlanCard
+              plan={{
+                ...plan,
+                cost_currency: settings!.budget_currency,
+              }}
+            />
           </div>
         ))}
 
