@@ -65,7 +65,7 @@
     <div class="container">
       {% load static %}
       <img
-        src="http://127.0.0.1:8000/{% static 'reMind_Logo_transparent.png' %}"
+        src="{{ BACKEND_HOST }}{% static 'reMind_Logo_transparent.png' %}"
         alt="reMind"
         class="logo"
       />
@@ -82,8 +82,8 @@
       {% endfor %}
 
       <p>
-        We are reminding you within {{ remind_within_days }} days from expiration for
-        at most {{ remind_at_most }} time/s.
+        We are reminding you within {{ remind_within_days }} days from
+        expiration for at most {{ remind_at_most }} time/s.
       </p>
       <p>Best regards,<br />Your reMind Team</p>
     </div>

@@ -142,14 +142,9 @@ STATICFILES_DIRS = []
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # TODO: understand these variables
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "https://remnd.co",
-]
+CORS_ALLOWED_ORIGINS = [os.environ.get("FRONTEND_HOST")]
 CORS_ALLOWS_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = [
-    "https://api.remnd.co",
-]
+CSRF_TRUSTED_ORIGINS = [os.environ.get("BACKEND_HOST")]
 
 LOGGING = {
     "version": 1,

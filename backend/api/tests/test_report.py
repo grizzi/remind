@@ -15,7 +15,7 @@ class SendMonthlyReportTest(TestCase):
             user=self.user, title="Test Subscription"
         )
 
-        self.today = datetime(2025, 4, 26).date()
+        self.today = datetime.now().date()
         self.last_date_last_month = self.today.replace(day=1) - timedelta(days=1)
 
     def test_no_plans(self):

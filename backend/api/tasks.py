@@ -1,3 +1,4 @@
+import os
 from datetime import date, timedelta
 
 from celery import shared_task
@@ -125,6 +126,7 @@ def create_plans_alert(user_id):
     # Send email with all the plans to remind
     user = User.objects.get(id=user_id)
     context = {
+        "BACKEND_HOST": os.environ.get("BACKEND_HOST", "http://localhost:8000"),
         "username": user.username,
         "plans_to_remind": plans_to_remind,
         "remind_within_days": user_settings.remind_within_days,
@@ -161,14 +163,16 @@ def renew_plans(user_id):
                 plan.end_date = plan.start_date + plan_duration
                 plan.renewed = True
             else:
-                plan.exprired = True
+                plan.expired = True
                 logger.info("Plan expired!")
             plans_to_update.append(plan)
         else:
             logger.info("Plan is not expired yet!")
 
     if plans_to_update:
-        Plan.objects.bulk_update(plans_to_update, ["start_date", "end_date"])
+        Plan.objects.bulk_update(
+            plans_to_update, ["start_date", "end_date", "renewed", "expired"]
+        )
 
 
 def created_last_month(user_id):
@@ -195,8 +199,9 @@ def renewed_last_month(user_id):
     renewed = Plan.objects.filter(
         subscription__user_id=user_id,
         start_date__month=last_date_last_month.month,
+        start_date__year=last_date_last_month.year,
         renewed=True,
-    ).exclude(end_date__month=last_date_last_month.month)
+    )
 
     return list(renewed)
 
@@ -208,6 +213,7 @@ def expired_last_month(user_id):
     # Expired plans are those that do not renew and have an end date in the last month
     expired = Plan.objects.filter(
         subscription__user_id=user_id,
+        end_date__year__lte=last_date_last_month.year,
         end_date__month=last_date_last_month.month,
         renewed=False,
     )
@@ -229,7 +235,9 @@ def send_monthly_report(user_id):
     if not settings.monthly_report_active:
         return
 
+    logger.info(f"Expired last month: {expired}")
     context = {
+        "BACKEND_HOST": os.environ.get("BACKEND_HOST", "http://localhost:8000"),
         "username": user.username,
         "report_month": last_date_last_month.strftime("%B %Y"),
         "current_year": today.year,

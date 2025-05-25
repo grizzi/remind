@@ -3,10 +3,10 @@ import { Plan } from '../../api/schema'
 const PlanCard = ({ plan }: { plan: Plan }) => {
   return (
     <div>
-      <div className='flex justify-between items-center mb-2'>
+      <div className='flex flex-row items-center mb-2'>
         <h2 className='text-lg font-semibold'>{plan.name}</h2>
         {plan.renewed && (
-          <span className='text-green-600 text-sm font-medium'>Renewed</span>
+          <span className='text-green-600 text-sm font-medium ml-4'>Renewed</span>
         )}
       </div>
       <p className='text-sm text-gray-600 mb-1'>
