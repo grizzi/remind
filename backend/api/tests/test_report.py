@@ -15,7 +15,7 @@ class SendMonthlyReportTest(TestCase):
             user=self.user, title="Test Subscription"
         )
 
-        self.today = datetime(2025, 4, 26).date()
+        self.today = datetime.now().date()
         self.last_date_last_month = self.today.replace(day=1) - timedelta(days=1)
 
     def test_no_plans(self):
@@ -35,6 +35,14 @@ class SendMonthlyReportTest(TestCase):
             end_date=self.last_date_last_month.replace(day=15) + timedelta(days=30),
             renewed=False,
         )
+
+        # print all plans
+        print(self.last_date_last_month)
+        plans = Plan.objects.all()
+        for plan in plans:
+            print(
+                f"Plan: {plan.name}, Start Date: {plan.start_date}, End Date: {plan.end_date}"
+            )
 
         created = created_last_month(self.user.id)
         renewed = renewed_last_month(self.user.id)
