@@ -17,7 +17,7 @@ const DateField = (props: {
   const selectedDate = field.value ? new Date(field.value) : null
 
   return (
-    <div className='flex flex-col w-full relative'>
+    <div className='flex flex-col w-full relative overflow-visible'>
       {props.label && (
         <label htmlFor={props.id} className='text-sm font-medium mb-1'>
           {props.label}

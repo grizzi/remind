@@ -1,6 +1,6 @@
 import SubscriptionForm from '../components/forms/SubscriptionForm'
 import { Api } from '../api/api'
-import { Navigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
@@ -13,17 +13,15 @@ import {
   Plan,
 } from '../api/schema'
 import { useAppContext } from '../context'
-import EditablePlanTable from '../components/views/EditableTablePlan'
 
 const SubscriptionEditPage = () => {
   const context = useAppContext()
   const { subId } = useParams()
   const [subscription, setSubscription] = useState<Subscription>()
   const [labels, setLabels] = useState<Label[]>([])
-  const [plans, setPlans] = useState<Plan[]>([])
+  const [_, setPlans] = useState<Plan[]>([])
   const [settings, setSettings] = useState<UserSettings>()
   const [currencies, setCurrencies] = useState<Currency[]>([])
-  const [editing, setEditing] = useState<boolean>(true)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -80,7 +78,7 @@ const SubscriptionEditPage = () => {
     if (id === undefined || isNaN(id)) {
       Api.createSubscription(subscription)
         .then(subscription => {
-          navigate(`/subscriptions/${subscription.id}/edit/`)
+          navigate(`/subscriptions/${subscription.id}`)
         })
         .catch(error => {
           console.error(
@@ -90,7 +88,7 @@ const SubscriptionEditPage = () => {
     } else {
       Api.updateSubscription(id, subscription)
         .then(() => {
-          setEditing(false)
+          navigate(`/subscriptions/${subId}`)
         })
         .catch(error => {
           console.error(
@@ -102,8 +100,14 @@ const SubscriptionEditPage = () => {
     }
   }
 
-  if (!editing) {
-    return <Navigate to={'/subscriptions'} />
+  const onDelete = async (): Promise<void> => {
+    Api.deleteSubscription(Number(subId!))
+      .then(() => {
+        navigate('/subscriptions')
+      })
+      .catch(error => {
+        console.error(`Failed to delete subscription!: ${error.message}`)
+      })
   }
 
   if (!settings || !currencies) {
@@ -122,24 +126,9 @@ const SubscriptionEditPage = () => {
           currencies={currencies}
           subscription={subscription}
           onSubmit={onSubmit}
+          onDelete={onDelete}
           labels={labels}
         />
-      </div>
-      <div className='flex flex-col w-full'>
-        {subscription?.id && (
-          <div>
-            <EditablePlanTable
-              subscription={subscription}
-              plans={plans}
-              settings={settings}
-              currencies={currencies}
-              onUpdate={async plan => {
-                await Api.updatePlan(subscription!.id, plan)
-              }}
-              onDelete={plan => Api.deletePlan(subscription!.id, plan)}
-            />
-          </div>
-        )}
       </div>
     </div>
   )

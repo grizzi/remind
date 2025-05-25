@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAppContext } from '../context'
 
 import { UserSettings } from '../api/schema'
-import UserSettingsView from '../components/views/UserSettingsView'
+import UserSettingsTable from '../components/shared/UserSettingsTable'
 import { Navigate } from 'react-router'
 import { Api } from '../api/api'
 import { useAuth } from '../hooks/auth'
@@ -45,7 +45,7 @@ const UserSettingsPage = () => {
 
   return (
     <div>
-      <UserSettingsView
+      <UserSettingsTable
         settings={settings}
         onDelete={() => deleteUser()}
         onEdit={() => setEditing(true)}

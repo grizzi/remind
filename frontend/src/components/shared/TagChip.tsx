@@ -11,9 +11,12 @@ const TagChip = ({
   return (
     <div
       onClick={onClick}
-      className={`flex m-1 min-w-14 rounded-sm shadow-md px-3 justify-center ${color}`}
+      className={`flex m-1 rounded-sm shadow-md justify-center
+              px-1 py-0.5 text-sm min-w-[2.5rem]
+              sm:px-3 sm:py-1.5 sm:text-base sm:min-w-14
+              ${color}`}
     >
-      <p className='m-0 p-0'>{name}</p>
+      <p className='text-xs'>{name}</p>
     </div>
   )
 }

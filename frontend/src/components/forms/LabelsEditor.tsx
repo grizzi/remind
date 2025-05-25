@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Label, Subscription } from '../../api/schema'
 import TagChip from '../shared/TagChip'
+import { FaPlus } from 'react-icons/fa'
 
 const LabelEditor = ({
   subscription,
@@ -57,12 +58,12 @@ const LabelEditor = ({
   }
 
   return (
-    <div>
-      <div className='flex flex-col'>
-        <p className='text-xl mb-2'>Labels</p>
-        <div className='flex flex-wrap flex-row items-center w-full mt-4'>
+    <div className='w-full flex flex-col'>
+      <label>Labels</label>
+      <div className='flex flex-wrap flex-col items-center w-full'>
+        <div className='flex flex-row items-center w-full'>
           <input
-            className='max-w-48 pl-2'
+            className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm'
             type='text'
             value={newLabel?.name ?? ''}
             onChange={e =>
@@ -74,12 +75,15 @@ const LabelEditor = ({
             placeholder='Add new label here'
           />
           <button
-            className='m-1 min-w-14 rounded-lg shadow-md px-3 justify-center transition-all'
-            onClick={() => onAddLabel()}
+            type='button'
+            className='m-1 ml-4 p-2 w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 shadow-md transition-all'
+            onClick={onAddLabel}
+            aria-label='Add label'
           >
-            Add label
+            <FaPlus className='text-gray-600 hover:text-gray-800' />
           </button>
-
+        </div>
+        <div className='w-full flex flex-row mt-4'>
           {/* Labels of current subscription */}
           {subLabels
             .sort((a, b) => sortLabelByName(a, b))

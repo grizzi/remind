@@ -35,7 +35,17 @@ export const PlanSchema = z.object({
   auto_renew: z.boolean(),
   start_date: z.string().date(),
   end_date: z.string().date().nullable(),
-  cost: z.coerce.number().gte(0, 'Insert a non negative amount'),
+  cost: z.coerce
+    .number()
+    .gte(0, 'Insert a non negative amount')
+    .refine(
+      val => {
+        return Number.isFinite(val) && Math.floor(val * 100) === val * 100
+      },
+      {
+        message: 'Must have at most 2 decimal places',
+      },
+    ),
   cost_currency: z.string(),
   billing_frequency: BillingFrequencySchema.optional(),
   expired: z.boolean().optional(),

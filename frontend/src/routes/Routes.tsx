@@ -1,9 +1,9 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import App from '../App'
 import ProtectedRoute from './ProtectedRoute'
 
-import SubscriptionsPage from '../pages/SubscriptionsPage'
-import SubscriptionViewPage from '../pages/SubscriptionViewPage'
+import SubscriptionsPage from '../pages/OverviewPage'
+import SubscriptionViewPage from '../pages/SubscriptionPage'
 import SubscriptionEditPage from '../pages/SubscriptionEditPage'
 import UserSettingsPage from '../pages/UserSettingsPage'
 import UserSettingsEditPage from '../pages/UserSettingsEditPage'
@@ -11,16 +11,32 @@ import NotFound from '../pages/NotFound'
 import LoginPage from '../pages/LoginPage'
 import LogoutPage from '../pages/LogoutPage'
 import RegisterPage from '../pages/RegisterPage'
+import PlanEditPage from '../pages/PlanEditPage'
+import SiteLayout from '../components/SiteLayout'
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
+      // Public routes
+      {
+        path: 'login',
+        element: <LoginPage />,
+      },
+      {
+        path: 'register',
+        element: <RegisterPage />,
+      },
+      {
+        path: 'logout',
+        element: <LogoutPage />,
+      },
+      // Protected routes with SiteLayout
       {
         element: (
           <ProtectedRoute>
-            <Outlet />
+            <SiteLayout />
           </ProtectedRoute>
         ),
         children: [
@@ -37,6 +53,10 @@ export const router = createBrowserRouter([
             element: <SubscriptionEditPage />,
           },
           {
+            path: 'subscriptions/:subId/plans/:planId/edit',
+            element: <PlanEditPage />,
+          },
+          {
             path: 'settings',
             element: <UserSettingsPage />,
           },
@@ -44,27 +64,15 @@ export const router = createBrowserRouter([
             path: 'settings/edit',
             element: <UserSettingsEditPage />,
           },
+          {
+            path: '',
+            element: <Navigate to='/subscriptions' replace />,
+          },
         ],
-      },
-      {
-        path: '/login',
-        element: <LoginPage />,
-      },
-      {
-        path: '/register',
-        element: <RegisterPage />,
-      },
-      {
-        path: '/logout',
-        element: <LogoutPage />,
       },
       {
         path: '*',
         element: <NotFound />,
-      },
-      {
-        path: '/',
-        element: <Navigate to='/subscriptions' replace />,
       },
     ],
   },

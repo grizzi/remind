@@ -16,11 +16,9 @@ import {
   SubscriptionSchema,
 } from './schema'
 
-
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 })
-
 
 export namespace Api {
   interface Result {
@@ -119,6 +117,16 @@ export namespace Api {
 
     const response = await api.get(url)
     const result = PlansListSchema.safeParse(response.data)
+    return throwOnError(result)
+  }
+
+  export const getPlan = async (
+    subscription: string,
+    plan: string,
+  ): Promise<z.infer<typeof PlanSchema>> => {
+    let url = `/api/subscriptions/${subscription}/plans/${plan}/`
+    const response = await api.get(url)
+    const result = PlanSchema.safeParse(response.data)
     return throwOnError(result)
   }
 

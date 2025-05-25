@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Label, Plan, Subscription } from '../../api/schema'
-import TagChip from '../shared/TagChip'
 import { Api } from '../../api/api'
+import TagDisplay from './TagDisplay'
 
-const SubscriptionCardView = ({
+const SubscriptionCard = ({
   subscription,
   labels,
   onClick,
@@ -19,25 +19,24 @@ const SubscriptionCardView = ({
 
   return (
     <div
-      className='mx-auto mt-4 flex flex-row justify-between h-24 items-stretch gap-x-4 rounded-xl bg-white p-1 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10 hover:bg-blue-50'
+      className='mx-auto mt-4 flex h-24 flex-row justify-between items-stretch gap-x-4 rounded-xl bg-white p-1 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10 hover:bg-blue-50 overflow-hidden'
       key={subscription.title}
       onClick={onClick}
     >
-      <div className='flex flex-col justify-around p-1'>
-        <p className='text-2xl'>{subscription.title}</p>
-        <p className='text-sm text-gray-500'>
+      <div className='flex flex-col justify-around p-1 flex-shrink-0 max-w-[55%]'>
+        <p className='text-2xl truncate'>{subscription.title}</p>
+        <p className='text-sm text-gray-500 truncate'>
           {plans.length > 0
             ? `Plans: ${plans.map(p => p.name).join(', ')}`
             : 'No plans available'}
         </p>
       </div>
-      <div className='flex flex-wrap justify-end items-start p-2'>
-        {labels.map(l => (
-          <TagChip key={l.name} name={l.name} />
-        ))}
+
+      <div className='flex-shrink-0 flex-grow min-w-0 max-w-[45%]'>
+        <TagDisplay labels={labels} />
       </div>
     </div>
   )
 }
 
-export default SubscriptionCardView
+export default SubscriptionCard

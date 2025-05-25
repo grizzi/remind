@@ -1,6 +1,7 @@
 import { toFormikValidate } from '../../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
+import SimpleButton from '../buttons/SimpleButton'
 
 import {
   SubscriptionReadWrite,
@@ -13,18 +14,21 @@ import {
 
 import TextField from '../inputs/TextField'
 import LabelEditor from './LabelsEditor'
+import ConfirmDeleteModal from '../shared/ConfirmModal'
 
 const SubscriptionForm = ({
   subscription,
   settings,
   labels,
   onSubmit,
+  onDelete,
 }: {
   settings: UserSettings
   currencies: Currency[]
   subscription: Subscription | undefined
   labels: Label[]
   onSubmit: (subscription: SubscriptionReadWrite) => Promise<void>
+  onDelete: () => Promise<void>
 }) => {
   const [newLabels, setNewLabels] = useState<Label[]>([])
 
@@ -72,14 +76,19 @@ const SubscriptionForm = ({
         <Form className='w-full'>
           <TextField id='title' label='Title' />
           <TextField id='external_link' label='External Link' />
-          <div className='flex flex-col items-end'>
-            <button
-              className='flex items-center justify-center w-24 h-10 bg-purple-300 text-white rounded-2xl shadow-lg hover:bg-purple-600 transition-all'
-              aria-label='Add new entry'
-              type='submit'
-            >
-              Save
-            </button>
+
+          <div className='fixed bottom-8 right-6 flex flex-col items-end'>
+            <div className='flex flex-row items-center mb-2 gap-2'>
+              {subscription?.id && (
+                <ConfirmDeleteModal
+                  dialog_title='Confirm Subscription Deletion'
+                  prompt='Are you sure you want to delete this subscription? This action cannot be undone.'
+                  action='Delete Subscription'
+                  onDelete={onDelete}
+                />
+              )}
+              <SimpleButton text='Save' type='submit' />
+            </div>
           </div>
         </Form>
       </Formik>

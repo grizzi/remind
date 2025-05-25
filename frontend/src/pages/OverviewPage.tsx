@@ -5,11 +5,11 @@ import { useAppContext } from '../context'
 import { Label, Subscription, UserSettings } from '../api/schema'
 import FloatingActionButton from '../components/buttons/FloatingActionButton'
 
-import SubscriptionCardView from '../components/views/SubscriptionCardView'
+import SubscriptionCard from '../components/shared/SubscriptionCard'
 import { Api } from '../api/api'
 import TagChip from '../components/shared/TagChip'
 import { TbFilter } from 'react-icons/tb'
-import MetricCard from '../components/views/MetricCard'
+import MetricCard from '../components/shared/MetricCard'
 import { getTotalCost } from '../shared/TimeUtils'
 
 const SubscriptionsPage = () => {
@@ -101,7 +101,7 @@ const SubscriptionsPage = () => {
 
   return (
     <div>
-      <div className='flex flex-row justify-evenly w-full mb-4'>
+      <div className='flex flex-col sm:flex-row mb-4'>
         <MetricCard
           header='This month'
           loadingDetails={
@@ -125,8 +125,8 @@ const SubscriptionsPage = () => {
         />
       </div>
       <FloatingActionButton onClick={() => setAddSubscription(true)} />
-      <div className='pr-2 pl-2'>
-        <p className='text-4xl'>Subscriptions</p>
+      <div className='pr-2 pl-2 pb-36'>
+        <p className='text-3xl'>Subscriptions</p>
 
         <div className='flex flex-wrap gap-0 items-center justify-end mt-2 mb-2'>
           {getUniqueLabelNames(labels).map(ln => (
@@ -160,12 +160,12 @@ const SubscriptionsPage = () => {
         </div>
 
         {subscriptions
-          .filter(sub =>
-            sub.labels.some(
-              l =>
-                selectedLabels.find(ls => l.name === ls.name) ||
-                selectedLabels.length === 0,
-            ),
+          .filter(
+            sub =>
+              selectedLabels.length === 0 ||
+              sub.labels?.some(l =>
+                selectedLabels.find(ls => l.name === ls.name),
+              ),
           )
           .sort((a, b) => {
             if (a.created_at < b.created_at) {
@@ -183,7 +183,7 @@ const SubscriptionsPage = () => {
             return 0
           })
           .map(sub => (
-            <SubscriptionCardView
+            <SubscriptionCard
               subscription={sub}
               labels={labels.filter(l => l.subscription === sub.id)}
               key={sub.id}

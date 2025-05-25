@@ -1,33 +1,97 @@
-const ConfirmModal = ({
+import {
+  Dialog,
+  Transition,
+  TransitionChild,
+  DialogTitle,
+  DialogPanel,
+} from '@headlessui/react'
+import { Fragment, useState } from 'react'
+
+export default function ConfirmDeleteModal({
+  dialog_title,
+  action,
   prompt,
-  onOk,
-  onDiscard,
+  onDelete,
 }: {
+  dialog_title: string
+  action: string
   prompt: string
-  onOk: () => void
-  onDiscard: () => void
-}) => {
+  onDelete: () => void
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
-    <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 '>
-      <div className='flex flex-col items-center justify-center bg-purple-100 shadow-2xl rounded-xl bg-opacity-50 h-full'>
-        <div className='mb-2 text-center'>{prompt}</div>
-        <div className='flex flex-row justify-evenly items-center w-full'>
-          <button
-            className='m-2 border-0 shadow-lg w-22 bg-white hover:bg-gray-300 rounded-xl transition-all'
-            onClick={onOk}
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        type='button'
+        className='px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700'
+      >
+        {action}
+      </button>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as='div'
+          className='relative z-10'
+          onClose={() => setIsOpen(false)}
+        >
+          {/* Backdrop */}
+          <TransitionChild
+            as={Fragment}
+            enter='ease-out duration-700'
+            enterFrom='opacity-0'
           >
-            Ok
-          </button>
-          <button
-            className='m-2 border-0 shadow-lg w-22 bg-white hover:bg-gray-300 rounded-xl transition-all'
-            onClick={onDiscard}
-          >
-            Discard
-          </button>
-        </div>
-      </div>
-    </div>
+            <div className='fixed inset-0 bg-black opacity-70' />
+          </TransitionChild>
+
+          {/* Modal panel wrapper */}
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <TransitionChild
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-90 scale-100'
+              >
+                <DialogPanel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all opacity-100'>
+                  <DialogTitle
+                    as='h3'
+                    className='text-lg font-medium leading-6 text-gray-900'
+                  >
+                    {dialog_title}
+                  </DialogTitle>
+                  <div className='mt-2'>
+                    <p className='text-sm text-gray-500'>
+                      {prompt}
+                    </p>
+                  </div>
+
+                  <div className='mt-4 flex justify-end gap-2'>
+                    <button
+                      type='button'
+                      onClick={() => setIsOpen(false)}
+                      className='px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200'
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() => {
+                        onDelete()
+                        setIsOpen(false)
+                      }}
+                      className='px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700'
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </DialogPanel>
+              </TransitionChild>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
   )
 }
-
-export default ConfirmModal
