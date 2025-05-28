@@ -160,6 +160,18 @@ export namespace Api {
   ): Promise<void> => {
     await api.delete(`/api/subscriptions/${subscription}/plans/${plan.id}/`)
   }
+
+  export const activateAccount = async (
+    uid: string,
+    token: string,
+  ): Promise<void> => {
+    const response = await api.post(`/api/activate/${uid}/${token}`)
+
+    if (response.status !== 200) {
+      throw new Error(`Activation failed with status: ${response.status}`)
+    }
+    return response.data
+  }
 }
 
 export default api

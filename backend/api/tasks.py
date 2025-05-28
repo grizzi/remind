@@ -6,7 +6,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.encoding import force_bytes
 from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
 from loguru import logger
 
 from .models import (
@@ -16,18 +18,23 @@ from .models import (
     User,
     UserSettings,
 )
+from .tokens import account_activation_token
 
 
 @shared_task
-def send_welcome_email(username, user_email):
-    logger.info(f"Sending welcome email to {user_email}")
+def send_welcome_email(user_pk):
+    user = User.objects.get(pk=user_pk)
+    logger.info(f"Sending welcome email to {user.email}")
 
     welcome_message = "Welcome to reMind!"
-    link_app = "http://localhost:5173"
+    token = account_activation_token.make_token(user)
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    activation_link = f"http://localhost:5173/activate/{uidb64}/{token}"
+
     context = {
-        "username": username,
+        "username": user.username,
         "welcome_message": welcome_message,
-        "link_app": link_app,
+        "link_app": activation_link,
     }
 
     subject = "Welcome to reMind!"
@@ -38,7 +45,7 @@ def send_welcome_email(username, user_email):
         subject=subject,
         body=plain_message,
         from_email="info@remnd.co",
-        to=[user_email],
+        to=[user.email],
     )
     email.attach_alternative(html_message, "text/html")
     email.send()

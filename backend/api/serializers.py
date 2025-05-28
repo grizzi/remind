@@ -3,6 +3,7 @@ from django.core.validators import validate_email
 from django.db import transaction
 from loguru import logger
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer,
     TokenRefreshSerializer,
@@ -152,6 +153,10 @@ class UserTokenSerializer(serializers.ModelSerializer):
 class TokenObtainPairWithUserSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
+
+        if not self.user.is_active:
+            raise AuthenticationFailed("User account is not active.")
+
         data["user"] = UserTokenSerializer(self.user).data
 
         return data
@@ -165,6 +170,10 @@ class TokenRefreshWithUserSerializer(TokenRefreshSerializer):
 
         if user_id:
             user = User.objects.get(id=user_id)
+
+            if not self.user.is_active:
+                raise AuthenticationFailed("User account is not active.")
+
             data["user"] = UserTokenSerializer(user).data
         else:
             raise serializers.ValidationError("Invalid token: missing user_id")

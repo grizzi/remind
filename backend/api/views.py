@@ -1,6 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.http import Http404
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from django_filters.rest_framework import DjangoFilterBackend
 from djmoney.settings import CURRENCY_CHOICES
 from loguru import logger
@@ -20,6 +23,7 @@ from .serializers import (
     UserSettingsSerializer,
 )
 from .tasks import send_welcome_email
+from .tokens import account_activation_token
 
 
 class CurrencyChoicesView(views.APIView):
@@ -209,6 +213,9 @@ class CreateUserView(views.APIView):
 
                 if serializer.is_valid():
                     user = serializer.save()
+                    user.is_active = False
+                    user.save()
+                    logger.info(f"User {user.username} created successfully")
                 else:
                     logger.error(serializer.errors)
                     raise NameError("A user with that username already exists")
@@ -219,8 +226,7 @@ class CreateUserView(views.APIView):
 
                 # Send welcome email
                 logger.info("Sending welcome email")
-                send_welcome_email.delay(user.username, user.email)
-
+                send_welcome_email.delay(user_pk=user.pk)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         except Exception as exc:
@@ -292,3 +298,33 @@ class TokenObtainPairWithUserView(TokenObtainPairView):
 
 class TokenRefreshWithUserView(TokenRefreshView):
     serializer_class = TokenRefreshWithUserSerializer
+
+
+class ActivationView(views.APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, uidb64, token):
+        _ = request
+        User = get_user_model()
+
+        print(f"UID: {uidb64}, Token: {token}")
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+            if user is not None and account_activation_token.check_token(user, token):
+                user.is_active = True
+                user.save()
+            else:
+                raise ValueError("Invalid activation link")
+        except Exception as e:
+            logger.error(f"Activation failed: {e}")
+            return Response(
+                {"error": "Activation link is invalid"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {"message": "Account activated successfully"},
+            status=status.HTTP_200_OK,
+        )
