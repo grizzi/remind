@@ -82,6 +82,9 @@ export const AuthContextProvider = ({
             email: email,
           }
 
+          toast.success(
+            'Registration successful! We have sent you an activation link.',
+          )
           setUser(userObj)
           navigate('/login')
         }

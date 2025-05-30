@@ -170,8 +170,7 @@ class TokenRefreshWithUserSerializer(TokenRefreshSerializer):
 
         if user_id:
             user = User.objects.get(id=user_id)
-
-            if not self.user.is_active:
+            if not user.is_active:
                 raise AuthenticationFailed("User account is not active.")
 
             data["user"] = UserTokenSerializer(user).data
