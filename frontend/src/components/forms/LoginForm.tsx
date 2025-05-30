@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useAuth } from '../../hooks/auth'
 import { useNavigate } from 'react-router'
+import { toast } from 'react-toastify'
+import { Api } from '../../api/api'
 
 function LoginForm() {
   const [username, setUserName] = useState<string>('')
@@ -8,6 +10,25 @@ function LoginForm() {
 
   const { loginUser } = useAuth()
   const navigate = useNavigate()
+
+  const handlePasswordReset = () => {
+    if (username.trim() === '') {
+      toast.error('Please enter your username to reset your password.')
+      return
+    }
+
+    Api.resetPasswordRequest(username)
+      .then(() => {
+        toast.success(
+          'Password reset link sent to your email. Please check your inbox.',
+        )
+        navigate('/login')
+      })
+      .catch(error => {
+        console.error('Password reset request failed:', error)
+        toast.error('Failed to send password reset link. Please try again.')
+      })
+  }
 
   return (
     <div className='flex flex-col justify-center items-center'>
@@ -63,7 +84,7 @@ function LoginForm() {
         </div>
       </div>
 
-      <div className='mt-6'>
+      <div className='mt-6 flex flex-col items-center'>
         <p>
           Don’t have an account yet?{' '}
           <a
@@ -71,6 +92,15 @@ function LoginForm() {
             onClick={() => navigate('/register')}
           >
             Sign up for free!
+          </a>
+        </p>
+        <p className='mt-2'>
+          Password lost in the multiverse?{' '}
+          <a
+            className='text-purple-300 hover:cursor-pointer'
+            onClick={() => handlePasswordReset()}
+          >
+            Send me a reset link
           </a>
         </p>
       </div>

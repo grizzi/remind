@@ -44,7 +44,35 @@ def send_welcome_email(user_pk):
     email = EmailMultiAlternatives(
         subject=subject,
         body=plain_message,
-        from_email="info@remnd.co",
+        from_email="noreply@remnd.co",
+        to=[user.email],
+    )
+    email.attach_alternative(html_message, "text/html")
+    email.send()
+
+
+@shared_task
+def send_reset_email(user_pk):
+    user = User.objects.get(pk=user_pk)
+    logger.info(f"Sending password reset email to {user.email}")
+
+    token = account_activation_token.make_token(user)
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    reset_link = f"http://localhost:5173/password-reset/{uidb64}/{token}"
+
+    context = {
+        "username": user.username,
+        "reset_link": reset_link,
+    }
+
+    subject = "Password Reset Request"
+    html_message = render_to_string("password_reset_email.html", context=context)
+    plain_message = strip_tags(html_message)
+
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=plain_message,
+        from_email="noreply@remnd.co",
         to=[user.email],
     )
     email.attach_alternative(html_message, "text/html")

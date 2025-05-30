@@ -90,6 +90,7 @@ def add_tasks(sender, instance, created, **kwargs):
                 ),
             )
 
+            # TODO: change this to the beginning of the month
             report_schedule, _ = CrontabSchedule.objects.get_or_create(
                 minute="*",
                 hour="*",

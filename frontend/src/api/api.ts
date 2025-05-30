@@ -172,6 +172,30 @@ export namespace Api {
     }
     return response.data
   }
+
+  export const resetPassword = async (
+    uidb64: string,
+    token: string,
+    newPassword: string,
+  ): Promise<void> => {
+    const response = await api.post(`/api/password-reset/${uidb64}/${token}/`, {
+      new_password: newPassword,
+    })
+
+    if (response.status !== 200) {
+      throw new Error(`Password reset failed with status: ${response.status}`)
+    }
+  }
+
+  export const resetPasswordRequest = async (
+    username: string,
+  ): Promise<void> => {
+    const response = await api.post(`/api/password-reset/`, { username })
+
+    if (response.status !== 200) {
+      throw new Error(`Password reset request failed with status: ${response.status}`)
+    }
+  }
 }
 
 export default api

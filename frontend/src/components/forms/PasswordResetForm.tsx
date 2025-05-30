@@ -1,8 +1,22 @@
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 
-function PasswordResetForm() {
+function PasswordResetForm({
+  onSubmit,
+}: {
+  onSubmit: (password: string) => void
+}) {
   const [password, setPassword] = useState<string>('')
   const [password2, setPassword2] = useState<string>('')
+
+  const handleSubmit = async () => {
+    if (password !== password2) {
+      toast('Passwords do not match')
+      return
+    }
+
+    onSubmit(password)
+  }
 
   return (
     <div className='flex flex-col justify-center items-center'>
@@ -15,6 +29,7 @@ function PasswordResetForm() {
             className='flex flex-col items-center mb-10'
             onSubmit={e => {
               e.preventDefault()
+              handleSubmit()
             }}
           >
             <label
@@ -51,7 +66,7 @@ function PasswordResetForm() {
               className='m-4 p-2 w-full w-min-12 border-0 shadow-lg rounded-md'
               type='submit'
             >
-              Login
+              Submit
             </button>
           </form>
         </div>

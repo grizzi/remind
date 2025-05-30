@@ -22,7 +22,7 @@ from .serializers import (
     UserSerializer,
     UserSettingsSerializer,
 )
-from .tasks import send_welcome_email
+from .tasks import send_welcome_email, send_reset_email
 from .tokens import account_activation_token
 
 
@@ -328,3 +328,62 @@ class ActivationView(views.APIView):
             {"message": "Account activated successfully"},
             status=status.HTTP_200_OK,
         )
+
+
+class PasswordResetView(views.APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, uidb64, token):
+        _ = request
+        User = get_user_model()
+
+        print(f"UID: {uidb64}, Token: {token}")
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+
+            if user is not None and account_activation_token.check_token(user, token):
+                new_password = request.data.get("new_password")
+                if not new_password:
+                    raise ValueError("New password is required")
+                user.set_password(new_password)
+                user.save()
+            else:
+                raise ValueError("Invalid reset link")
+        except Exception as e:
+            logger.error(f"Activation failed: {e}")
+            return Response(
+                {"error": e},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {"message": "Password has been reset successfully"},
+            status=status.HTTP_200_OK,
+        )
+
+
+class PasswordResetRequestView(views.APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get("username")
+        if not username:
+            return Response(
+                {"error": "Username is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        User = get_user_model()
+        try:
+            user = User.objects.get(username=username)
+            send_reset_email(user.pk)
+            return Response(
+                {"message": "Password reset link sent to your email"},
+                status=status.HTTP_200_OK,
+            )
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
