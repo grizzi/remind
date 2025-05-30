@@ -40,7 +40,7 @@ function PasswordResetForm({
             </label>
             <input
               className='mb-2 border-1 border-gray-200 p-1'
-              type='text'
+              type='password'
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder=''
@@ -55,7 +55,7 @@ function PasswordResetForm({
             </label>
             <input
               className='mb-2 border-1 border-gray-200 p-1'
-              type='text'
+              type='password'
               value={password2}
               onChange={e => setPassword2(e.target.value)}
               placeholder=''
