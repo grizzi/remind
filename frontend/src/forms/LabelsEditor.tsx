@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Label, Subscription } from '../../api/schema'
-import TagChip from '../shared/TagChip'
+import { Label, Subscription } from '../api/schema'
+import TagChip from '../components/shared/TagChip'
 import { FaPlus } from 'react-icons/fa'
 
 const LabelEditor = ({

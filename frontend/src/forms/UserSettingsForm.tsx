@@ -1,4 +1,4 @@
-import { toFormikValidate } from '../../shared/zod_utilities'
+import { toFormikValidate } from '../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
 
@@ -7,11 +7,11 @@ import {
   UserSettingsSchema,
   Currency,
   RemindFrequencySchema,
-} from '../../api/schema'
-import SelectField, { SelectOption } from '../inputs/SelectField'
-import NumericField from '../inputs/NumericField'
-import CheckboxField from '../inputs/CheckboxField'
-import SimpleButton from '../buttons/SimpleButton'
+} from '../api/schema'
+import SelectField, { SelectOption } from '../components/inputs/SelectField'
+import NumericField from '../components/inputs/NumericField'
+import CheckboxField from '../components/inputs/CheckboxField'
+import SimpleButton from '../components/buttons/SimpleButton'
 
 const UserSettingsForm = ({
   currentSettings,

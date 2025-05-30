@@ -1,5 +1,5 @@
 import { Navigate, useParams } from 'react-router'
-import PasswordResetForm from '../components/forms/PasswordResetForm'
+import PasswordResetForm from '../forms/PasswordResetForm'
 import Logo from '../components/shared/Logo'
 import { toast } from 'react-toastify'
 import { Api } from '../api/api'

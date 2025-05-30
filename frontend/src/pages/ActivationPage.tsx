@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 import { Api } from '../api/api'
 import { Link } from 'react-router-dom'
 import Logo from '../components/shared/Logo'
-import { set } from 'date-fns'
 
 const ActivationPage = () => {
   const { uidb64, token } = useParams()

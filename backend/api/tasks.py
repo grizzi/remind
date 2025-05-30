@@ -29,9 +29,11 @@ def send_welcome_email(user_pk):
     welcome_message = "Welcome to reMind!"
     token = account_activation_token.make_token(user)
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-    activation_link = f"http://localhost:5173/activate/{uidb64}/{token}"
+    endpoint = os.environ.get("WEBAPP_ENDPOINT", "http://localhost:5173")
+    activation_link = f"{endpoint}/activate/{uidb64}/{token}"
 
     context = {
+        "backend_endpoint": os.environ.get("BACKEND_ENDPOINT", "http://localhost:8000"),
         "username": user.username,
         "welcome_message": welcome_message,
         "link_app": activation_link,
@@ -58,9 +60,11 @@ def send_reset_email(user_pk):
 
     token = account_activation_token.make_token(user)
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-    reset_link = f"http://localhost:5173/password-reset/{uidb64}/{token}"
+    endpoint = os.environ.get("WEBAPP_ENDPOINT", "http://localhost:5173")
+    reset_link = f"{endpoint}/password-reset/{uidb64}/{token}"
 
     context = {
+        "backend_endpoint": os.environ.get("BACKEND_ENDPOINT", "http://localhost:8000"),
         "username": user.username,
         "reset_link": reset_link,
     }
@@ -161,7 +165,7 @@ def create_plans_alert(user_id):
     # Send email with all the plans to remind
     user = User.objects.get(id=user_id)
     context = {
-        "BACKEND_HOST": os.environ.get("BACKEND_HOST", "http://localhost:8000"),
+        "backend_endpoint": os.environ.get("BACKEND_ENDPOINT", "http://localhost:8000"),
         "username": user.username,
         "plans_to_remind": plans_to_remind,
         "remind_within_days": user_settings.remind_within_days,
@@ -272,7 +276,7 @@ def send_monthly_report(user_id):
 
     logger.info(f"Expired last month: {expired}")
     context = {
-        "BACKEND_HOST": os.environ.get("BACKEND_HOST", "http://localhost:8000"),
+        "backend_endpoint": os.environ.get("BACKEND_ENDPOINT", "http://localhost:8000"),
         "username": user.username,
         "report_month": last_date_last_month.strftime("%B %Y"),
         "current_year": today.year,

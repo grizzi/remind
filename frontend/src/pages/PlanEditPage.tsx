@@ -5,7 +5,7 @@ import { Api } from '../api/api'
 import { useNavigate, useParams } from 'react-router'
 import { useAppContext } from '../context'
 
-import PlanForm from '../components/forms/PlanForm'
+import PlanForm from '../forms/PlanForm'
 
 const PlanEditPage = () => {
   const [plan, setPlan] = useState<Plan | null>(null)

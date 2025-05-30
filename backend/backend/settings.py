@@ -5,6 +5,9 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# PRINT ALL THE ENVIRONMENT VARIABLES
+for key, value in os.environ.items():
+    print(f"{key}: {value}")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -142,9 +145,9 @@ STATICFILES_DIRS = []
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # TODO: understand these variables
-CORS_ALLOWED_ORIGINS = [os.environ.get("FRONTEND_HOST")]
+CORS_ALLOWED_ORIGINS = [os.environ.get("WEBAPP_ENDPOINT")]
 CORS_ALLOWS_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = [os.environ.get("BACKEND_HOST")]
+CSRF_TRUSTED_ORIGINS = [os.environ.get("BACKEND_ENDPOINT")]
 
 LOGGING = {
     "version": 1,

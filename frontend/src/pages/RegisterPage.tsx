@@ -1,4 +1,4 @@
-import RegisterForm from '../components/forms/RegisterForm'
+import RegisterForm from '../forms/RegisterForm'
 import Logo from '../components/shared/Logo'
 
 export const RegisterPage = () => {

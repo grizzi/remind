@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAuth } from '../../hooks/auth'
+import { useAuth } from '../hooks/auth'
 import { useNavigate } from 'react-router'
 
 function RegisterForm() {

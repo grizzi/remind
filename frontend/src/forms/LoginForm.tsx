@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useAuth } from '../../hooks/auth'
+import { useAuth } from '../hooks/auth'
 import { useNavigate } from 'react-router'
 import { toast } from 'react-toastify'
-import { Api } from '../../api/api'
+import { Api } from '../api/api'
 
 function LoginForm() {
   const [username, setUserName] = useState<string>('')
