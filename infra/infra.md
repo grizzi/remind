@@ -62,3 +62,18 @@ rm -f install-opentofu.sh
 ```bash
 tofu init
 ```
+
+## Setup the backend
+
+## Create certificate for backend server
+
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot -d api.remnd.co
+```
+
+Test autorenewal
+
+```bash
+sudo certbot renew --dry-run
+```
