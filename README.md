@@ -1,22 +1,21 @@
-<img src="./docs/reMind_Logo_transparent.png" alt="logo" width="200"/>
+<div style="text-align: center;" >
+  <img src="./docs/reMind_Logo_transparent.png" alt="logo" width="200"/>
+</div>
 
 An app to remind users about their online purchase and auto-renewing
 subscriptions.
 
 # How it works
 
-1. A simple `react` webapp with JWT based authentication
-2. A `django` backend to store data in a postgres database
-3. A combination of `celery` workers and recurring schedule to perform
-   asynchronous tasks like sending reminders and emails.
-4. A `redis` server to allow communication between `celery` workers and `django`
+<div style="text-align: center;" >
+  <img src="./docs/system.drawio.png">
+</div>
 
-# Running the app
+# Local Development
 
 ## Run locally
 
-- Install
-  [`docker compose`](https://docs.docker.com/compose/install/standalone/)
+- Install [`docker compose`](https://docs.docker.com/compose/install/standalone/)
 - In the root of directory of this repository run:
 
   ```bash
@@ -32,8 +31,8 @@ subscriptions.
 ## Run tests
 
 ```bash
-docker compose run --rm django python manage.py test
-docker compose run --rm django python manage.py test --pattern="tests_*.py" # to run specific tests
+docker compose run --rm backend python manage.py test
+docker compose run --rm backend python manage.py test --pattern="tests_*.py" # to run specific tests
 
 ```
 
@@ -48,7 +47,7 @@ docker compose run --rm django python manage.py test --pattern="tests_*.py" # to
 - Log in to the admin panel at
   [http://localhost:8000/admin](http://localhost:8000/admin)
 
-# Contributing
+## Contributing
 
 We use pre-commit hooks to ensure code quality. Install all the required
 dependencies for the hook to run.
@@ -62,10 +61,6 @@ dependencies for the hook to run.
   infrastructure. Integration instructions are available at the
   [official page](https://www.checkov.io/2.Basics/Installing%20Checkov.html)
 
-- `infracost-breakdown` is run as a precommit hook to check for cost changes in
-  the infrastructure. Integration instructions are available at the
-  [official page](https://www.infracost.io/docs/#2-get-api-key)
-
 ```bash
 pipx install pre-commit
 pipx install checkov
@@ -78,16 +73,15 @@ infracost configure set currency CHF
 
 # Deployment workflow
 
-Install aws cli
-
-Make sure you have the following in your `~/.aws/config` file:
+1. Install aws cli
+2. Make sure you have the following in your `~/.aws/config` file:
 
 ```
 [profile app-admin]
 region = eu-central-1
 ```
 
-Export the aws credentials set in the `~/.aws/credentials` file:
+3. Export the aws credentials set in the `~/.aws/credentials` file:
 
 ```bash
 
@@ -96,13 +90,11 @@ aws_access_key_id = xxx
 aws_secret_access_key = xxx
 ```
 
-Export the aws profile:
-
 ```bash
 export AWS_PROFILE=app-admin
 ```
 
-Sync webapp
+4. Build and upload the webapp to AWS S3
 
 ```bash
 cd frontend
@@ -111,21 +103,8 @@ npm run build
 aws s3 cp dist/ s3://remind-webapp-static/ --recursive
 ```
 
-Running the backend in the EC2 instance
+5. Run the backend in the EC2 instance. This assumes that the required infrastructure has already been provisioned. See the [infrastructure documentation](./infra/infra.md) for more info.
 
 ```bash
 docker compose -f compose.deploy.yaml up
-```
-
-## Create certificate for backend server
-
-```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot -d api.remnd.co
-```
-
-Test autorenewal
-
-```bash
-sudo certbot renew --dry-run
 ```
