@@ -6,7 +6,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.encoding import force_bytes
 from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
 from loguru import logger
 
 from .models import (
@@ -16,18 +18,25 @@ from .models import (
     User,
     UserSettings,
 )
+from .tokens import account_activation_token
 
 
 @shared_task
-def send_welcome_email(username, user_email):
-    logger.info(f"Sending welcome email to {user_email}")
+def send_welcome_email(user_pk):
+    user = User.objects.get(pk=user_pk)
+    logger.info(f"Sending welcome email to {user.email}")
 
     welcome_message = "Welcome to reMind!"
-    link_app = "http://localhost:5173"
+    token = account_activation_token.make_token(user)
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    endpoint = os.environ.get("WEBAPP_ENDPOINT", "http://localhost:5173")
+    activation_link = f"{endpoint}/activate/{uidb64}/{token}"
+
     context = {
-        "username": username,
+        "backend_endpoint": os.environ.get("BACKEND_ENDPOINT", "http://localhost:8000"),
+        "username": user.username,
         "welcome_message": welcome_message,
-        "link_app": link_app,
+        "link_app": activation_link,
     }
 
     subject = "Welcome to reMind!"
@@ -37,8 +46,38 @@ def send_welcome_email(username, user_email):
     email = EmailMultiAlternatives(
         subject=subject,
         body=plain_message,
-        from_email="info@remnd.co",
-        to=[user_email],
+        from_email="noreply@remnd.co",
+        to=[user.email],
+    )
+    email.attach_alternative(html_message, "text/html")
+    email.send()
+
+
+@shared_task
+def send_reset_email(user_pk):
+    user = User.objects.get(pk=user_pk)
+    logger.info(f"Sending password reset email to {user.email}")
+
+    token = account_activation_token.make_token(user)
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    endpoint = os.environ.get("WEBAPP_ENDPOINT", "http://localhost:5173")
+    reset_link = f"{endpoint}/password-reset/{uidb64}/{token}"
+
+    context = {
+        "backend_endpoint": os.environ.get("BACKEND_ENDPOINT", "http://localhost:8000"),
+        "username": user.username,
+        "reset_link": reset_link,
+    }
+
+    subject = "Password Reset Request"
+    html_message = render_to_string("password_reset_email.html", context=context)
+    plain_message = strip_tags(html_message)
+
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=plain_message,
+        from_email="noreply@remnd.co",
+        to=[user.email],
     )
     email.attach_alternative(html_message, "text/html")
     email.send()
@@ -126,7 +165,7 @@ def create_plans_alert(user_id):
     # Send email with all the plans to remind
     user = User.objects.get(id=user_id)
     context = {
-        "BACKEND_HOST": os.environ.get("BACKEND_HOST", "http://localhost:8000"),
+        "backend_endpoint": os.environ.get("BACKEND_ENDPOINT", "http://localhost:8000"),
         "username": user.username,
         "plans_to_remind": plans_to_remind,
         "remind_within_days": user_settings.remind_within_days,
@@ -237,7 +276,7 @@ def send_monthly_report(user_id):
 
     logger.info(f"Expired last month: {expired}")
     context = {
-        "BACKEND_HOST": os.environ.get("BACKEND_HOST", "http://localhost:8000"),
+        "backend_endpoint": os.environ.get("BACKEND_ENDPOINT", "http://localhost:8000"),
         "username": user.username,
         "report_month": last_date_last_month.strftime("%B %Y"),
         "current_year": today.year,

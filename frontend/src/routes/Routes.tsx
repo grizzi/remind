@@ -11,8 +11,10 @@ import NotFound from '../pages/NotFound'
 import LoginPage from '../pages/LoginPage'
 import LogoutPage from '../pages/LogoutPage'
 import RegisterPage from '../pages/RegisterPage'
+import ActivationPage from '../pages/ActivationPage'
 import PlanEditPage from '../pages/PlanEditPage'
 import SiteLayout from '../components/SiteLayout'
+import PasswordResetPage from '../pages/PasswordResetPage'
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +29,14 @@ export const router = createBrowserRouter([
       {
         path: 'register',
         element: <RegisterPage />,
+      },
+      {
+        path: 'activate/:uidb64/:token',
+        element: <ActivationPage />,
+      },
+      {
+        path: 'password-reset/:uidb64/:token',
+        element: <PasswordResetPage />,
       },
       {
         path: 'logout',

@@ -1,4 +1,4 @@
-import SubscriptionForm from '../components/forms/SubscriptionForm'
+import SubscriptionForm from '../forms/SubscriptionForm'
 import { Api } from '../api/api'
 import { useParams } from 'react-router'
 import { useEffect, useState } from 'react'

@@ -140,6 +140,14 @@ const SubscriptionViewPage = () => {
           </div>
         ))}
 
+        {plans.length === 0 && (
+          <div className='col-span-1 sm:col-span-2 lg:col-span-3 p-6 bg-gray-100 rounded-lg text-center'>
+            <p className='text-gray-600'>
+              No plans available for this subscription.
+            </p>
+          </div>
+        )}
+
         <div className='fixed bottom-8 right-6'>
           <button
             className='items-center justify-center w-24 h-10 bg-purple-600 md:bg-purple-300 text-white rounded-sm shadow-lg hover:bg-purple-600 transition-all'

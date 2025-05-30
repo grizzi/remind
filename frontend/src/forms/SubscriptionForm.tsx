@@ -1,7 +1,7 @@
-import { toFormikValidate } from '../../shared/zod_utilities'
+import { toFormikValidate } from '../shared/zod_utilities'
 import { Formik, Form } from 'formik'
 import { useEffect, useState } from 'react'
-import SimpleButton from '../buttons/SimpleButton'
+import SimpleButton from '../components/buttons/SimpleButton'
 
 import {
   SubscriptionReadWrite,
@@ -10,11 +10,11 @@ import {
   UserSettings,
   Currency,
   Label,
-} from '../../api/schema'
+} from '../api/schema'
 
-import TextField from '../inputs/TextField'
+import TextField from '../components/inputs/TextField'
 import LabelEditor from './LabelsEditor'
-import ConfirmDeleteModal from '../shared/ConfirmModal'
+import ConfirmDeleteModal from '../components/shared/ConfirmModal'
 
 const SubscriptionForm = ({
   subscription,

@@ -1,18 +1,32 @@
 import { useEffect, useState } from 'react'
-import { useAuth } from '../../hooks/auth'
+import { useAuth } from '../hooks/auth'
 import { useNavigate } from 'react-router'
 
 function RegisterForm() {
   const [username, setUserName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const { logout, registerUser } = useAuth()
+  const [confirmPassword, setConfirmPassword] = useState<string>('')
+  const [error, setError] = useState<string | null>(null)
 
+  const { logout, registerUser } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
     logout()
   }, [])
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
+    setError(null)
+    registerUser(username, password, email)
+  }
 
   return (
     <div className='flex flex-col justify-center items-center'>
@@ -23,10 +37,7 @@ function RegisterForm() {
           </div>
           <form
             className='flex flex-col items-center mb-10'
-            onSubmit={e => {
-              e.preventDefault()
-              registerUser(username, password, email)
-            }}
+            onSubmit={handleSubmit}
           >
             <label
               className='w-full text-left text-gray-600'
@@ -42,18 +53,23 @@ function RegisterForm() {
               id='username'
               placeholder=''
             />
+
             <label className='w-full text-left text-gray-600' htmlFor='email'>
               Email
             </label>
             <input
               className='mb-2 border-1 border-gray-200 p-1'
-              type='text'
+              type='email'
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder=''
               id='email'
+              placeholder=''
             />
-            <label className='w-full text-left text-gray-600' htmlFor='email'>
+
+            <label
+              className='w-full text-left text-gray-600'
+              htmlFor='password'
+            >
               Password
             </label>
             <input
@@ -61,9 +77,26 @@ function RegisterForm() {
               type='password'
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder=''
               id='password'
+              placeholder=''
             />
+
+            <label
+              className='w-full text-left text-gray-600'
+              htmlFor='confirmPassword'
+            >
+              Repeat Password
+            </label>
+            <input
+              className='mb-2 border-1 border-gray-200 p-1'
+              type='password'
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              id='confirmPassword'
+              placeholder=''
+            />
+
+            {error && <p className='text-red-500 mb-2'>{error}</p>}
 
             <button
               type='submit'

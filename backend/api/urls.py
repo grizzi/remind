@@ -13,4 +13,5 @@ urlpatterns = [
     path("settings/", views.UserSettingsDetails.as_view()),
     path("currencies/", views.CurrencyChoicesView.as_view()),
     path("labels/", views.LabelsList.as_view()),
+    path("password-reset/", views.PasswordResetRequestView.as_view()),
 ]

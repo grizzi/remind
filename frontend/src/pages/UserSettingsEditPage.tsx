@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom'
 
 import { Api } from '../api/api'
 import { Currency, UserSettings } from '../api/schema'
-import UserSettingsForm from '../components/forms/UserSettingsForm'
+import UserSettingsForm from '../forms/UserSettingsForm'
 
 const UserSettingsEditPage = () => {
   const context = useAppContext()
