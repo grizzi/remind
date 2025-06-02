@@ -151,9 +151,15 @@ export const AuthContextProvider = ({
 
   const refreshUser = (from: string) => {
     api
-      .post<AuthResponse>('/api/token/refresh/', {
-        refresh: refreshToken,
-      })
+      .post<AuthResponse>(
+        '/api/token/refresh/',
+        {
+          refresh: refreshToken,
+        },
+        {
+          timeout: 1000,
+        },
+      )
       .then((res: AxiosResponse<AuthResponse>) => {
         if (res.status === 200) {
           const userObj = {
