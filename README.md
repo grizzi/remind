@@ -5,6 +5,8 @@
 An app to remind users about their online purchase and auto-renewing
 subscriptions.
 
+[![CI](https://github.com/grizzi/remind/actions/workflows/ci.yml/badge.svg)](https://github.com/grizzi/remind/actions/workflows/ci.yml)
+
 # How it works
 
 <p align="center">
