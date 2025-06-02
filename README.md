@@ -1,15 +1,15 @@
-<div style="text-align: center;" >
+<p align="center">
   <img src="./docs/reMind_Logo_transparent.png" alt="logo" width="200"/>
-</div>
+</p>
 
 An app to remind users about their online purchase and auto-renewing
 subscriptions.
 
 # How it works
 
-<div style="text-align: center;" >
+<p align="center">
   <img src="./docs/system.drawio.png">
-</div>
+</p>
 
 # Local Development
 
