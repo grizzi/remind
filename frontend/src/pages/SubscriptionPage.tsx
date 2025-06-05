@@ -31,7 +31,6 @@ const SubscriptionViewPage = () => {
       try {
         const subs = await getSubscriptions(forceUpdate)
         setSubscription(subs.find(sub => sub.id === id))
-        setLoading(false)
 
         const labels_ = await getLabels()
         setLabels(labels_)
