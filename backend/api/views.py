@@ -419,7 +419,7 @@ class SyncPlans(views.APIView):
         try:
             alert_and_update.delay(user_id=request.user.pk)
             return Response(
-                {"message": "Monthly report sent successfully"},
+                {"message": "Sync completed successfully"},
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
