@@ -302,6 +302,7 @@ def send_monthly_report(user_id):
         "renewed_subscriptions": [
             {
                 "title": plan.subscription.title,
+                "plan_name": plan.name,
                 "old_end": plan.start_date - timedelta(days=1),
                 "new_start": plan.start_date,
                 "new_end": plan.end_date,

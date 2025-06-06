@@ -8,9 +8,10 @@ import FloatingActionButton from '../components/buttons/FloatingActionButton'
 import SubscriptionCard from '../components/shared/SubscriptionCard'
 import { Api } from '../api/api'
 import TagChip from '../components/shared/TagChip'
-import { TbFilter } from 'react-icons/tb'
+import { TbFilter, TbRefresh } from 'react-icons/tb'
 import MetricCard from '../components/shared/MetricCard'
 import { getTotalCost } from '../shared/TimeUtils'
+import { toast } from 'react-toastify'
 
 const SubscriptionsPage = () => {
   const context = useAppContext()
@@ -99,6 +100,15 @@ const SubscriptionsPage = () => {
     return Array.from(uniqueLabels)
   }
 
+  const syncSubscriptions = () => {
+    Api.doSync().then(() => {
+      context.getSubscriptions(true).then(subs => {
+        setSubscriptions(subs)
+        toast.success('Subscriptions synced successfully!')
+      })
+    })
+  }
+
   return (
     <div>
       <div className='flex flex-col sm:flex-row mb-4'>
@@ -126,8 +136,14 @@ const SubscriptionsPage = () => {
       </div>
       <FloatingActionButton onClick={() => setAddSubscription(true)} />
       <div className='pr-2 pl-2 pb-36'>
-        <p className='text-3xl'>Subscriptions</p>
-
+        <div className='flex flex-row items-center justify-between mb-2'>
+          <p className='text-3xl'>Subscriptions</p>
+          <div className='p-2 text-gray-500 transition-transform duration-300 ease-in-out hover:text-gray-700 md:hover:rotate-180'>
+            <button onClick={() => syncSubscriptions()}>
+              <TbRefresh className='size-5' />
+            </button>
+          </div>
+        </div>
         <div className='flex flex-wrap gap-0 items-center justify-end mt-2 mb-2'>
           {getUniqueLabelNames(labels).map(ln => (
             <div className='text-xs hover:cursor-pointer' key={ln}>

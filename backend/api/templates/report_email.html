@@ -133,6 +133,7 @@
           <thead>
             <tr>
               <th>Subscription</th>
+              <th>Plan</th>
               <th>Old Plan End</th>
               <th>New Plan Start</th>
               <th>New Plan End</th>
@@ -143,6 +144,7 @@
             {% for sub in renewed_subscriptions %}
             <tr>
               <td>{{ sub.title }}</td>
+              <td>{{ sub.plan_name}}</td>
               <td>{{ sub.old_end }}</td>
               <td>{{ sub.new_start }}</td>
               <td>{{ sub.new_end }}</td>

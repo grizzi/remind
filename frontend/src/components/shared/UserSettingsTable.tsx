@@ -16,12 +16,16 @@ interface UserSettingsViewProps {
   settings: UserSettings
   onEdit: () => void
   onDelete: () => void
+  onSendReport?: () => void
 }
 
 const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
   settings,
   onEdit,
   onDelete,
+  onSendReport = () => {
+    console.warn('onSendReport function not implemented')
+  },
 }) => {
   const {
     remind_within_days,
@@ -99,6 +103,18 @@ const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
           </p>
         </div>
       </div>
+
+      <div className='fixed border-0 bottom-8 left-6 flex flex-col items-end'>
+        <button
+          className='p-2 items-center justify-center bg-purple-600 text-white rounded-sm shadow-lg md:bg-purple-300 hover:bg-purple-600 transition-all'
+          aria-label={`Button: Send Monthly Report`}
+          onClick={() => onSendReport()}
+          type='button'
+        >
+          Send Monthly Report
+        </button>
+      </div>
+
       <div className='fixed border-0 bottom-8 right-6 flex flex-col items-end'>
         <ConfirmDeleteModal
           dialog_title='Confirm Account Deletion'
