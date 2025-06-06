@@ -8,6 +8,7 @@ import { HiDotsVertical } from 'react-icons/hi'
 import { TbEdit } from 'react-icons/tb'
 import PlanCard from '../components/shared/PlanCard'
 import DropDownMenu from '../components/shared/DropDownMenu'
+import { planExpiredFromDate } from '../shared/TimeUtils'
 
 const SubscriptionViewPage = () => {
   const [plans, setPlans] = useState<Plan[]>([])
@@ -31,7 +32,6 @@ const SubscriptionViewPage = () => {
       try {
         const subs = await getSubscriptions(forceUpdate)
         setSubscription(subs.find(sub => sub.id === id))
-        setLoading(false)
 
         const labels_ = await getLabels()
         setLabels(labels_)
@@ -88,7 +88,7 @@ const SubscriptionViewPage = () => {
           <div
             key={plan.id}
             className={`relative rounded-2xl shadow-md p-5 transition-transform transform hover:scale-105 hover:shadow-lg ${
-              plan.expired
+              plan.expired || planExpiredFromDate(plan)
                 ? 'bg-red-50 border border-red-200'
                 : 'bg-white border border-gray-200'
             }`}

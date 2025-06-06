@@ -6,6 +6,7 @@ import UserSettingsTable from '../components/shared/UserSettingsTable'
 import { Navigate } from 'react-router'
 import { Api } from '../api/api'
 import { useAuth } from '../hooks/auth'
+import { toast } from 'react-toastify'
 
 const UserSettingsPage = () => {
   const { getUserSettings } = useAppContext()
@@ -38,6 +39,18 @@ const UserSettingsPage = () => {
       .catch(error => console.error(error?.response?.message))
   }
 
+  const sendMonthlyReport = () => {
+    Api.sendMonthlyReport()
+      .then(() => {
+        console.log('Monthly report sent successfully.')
+        toast.success('Monthly report sent successfully.')
+      })
+      .catch(error => {
+        console.error('Failed to send monthly report:', error)
+        toast.error('Failed to send monthly report. Please try again later.')
+      })
+  }
+
   if (userDeleted) {
     logout()
     return <Navigate to='/' />
@@ -49,6 +62,7 @@ const UserSettingsPage = () => {
         settings={settings}
         onDelete={() => deleteUser()}
         onEdit={() => setEditing(true)}
+        onSendReport={() => sendMonthlyReport()}
       />
     </div>
   )

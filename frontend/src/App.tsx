@@ -10,11 +10,12 @@ function App() {
         <AppContextProvider>
           <Outlet />
           <ToastContainer
-            position='bottom-center'
+            position='top-center'
             pauseOnHover={false}
             transition={Flip}
             autoClose={2000}
             hideProgressBar={true}
+            theme='colored'
             toastStyle={{
               margin: '10px',
               maxWidth: '300px',

@@ -93,6 +93,14 @@ export namespace Api {
     await api.delete(`/api/delete/`)
   }
 
+  export const sendMonthlyReport = async (): Promise<void> => {
+    await api.post(`/api/send-monthly-report/`)
+  }
+
+  export const doSync = async (): Promise<void> => {
+    await api.post(`/api/sync/`)
+  }
+
   export const getLabels = async (): Promise<
     z.infer<typeof LabelsListSchema>
   > => {
@@ -193,7 +201,9 @@ export namespace Api {
     const response = await api.post(`/api/password-reset/`, { username })
 
     if (response.status !== 200) {
-      throw new Error(`Password reset request failed with status: ${response.status}`)
+      throw new Error(
+        `Password reset request failed with status: ${response.status}`,
+      )
     }
   }
 }

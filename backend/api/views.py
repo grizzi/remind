@@ -22,7 +22,12 @@ from .serializers import (
     UserSerializer,
     UserSettingsSerializer,
 )
-from .tasks import send_welcome_email, send_reset_email
+from .tasks import (
+    alert_and_update,
+    send_monthly_report,
+    send_reset_email,
+    send_welcome_email,
+)
 from .tokens import account_activation_token
 
 
@@ -386,4 +391,40 @@ class PasswordResetRequestView(views.APIView):
             return Response(
                 {"error": "User does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+
+class SendMonthlyReportView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            send_monthly_report.delay(user_id=request.user.pk)
+            return Response(
+                {"message": "Monthly report sent successfully"},
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            logger.error(f"Error sending monthly report: {e}")
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class SyncPlans(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            alert_and_update.delay(user_id=request.user.pk)
+            return Response(
+                {"message": "Sync completed successfully"},
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            logger.error(f"Error sending monthly report: {e}")
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

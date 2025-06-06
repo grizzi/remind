@@ -14,4 +14,6 @@ urlpatterns = [
     path("currencies/", views.CurrencyChoicesView.as_view()),
     path("labels/", views.LabelsList.as_view()),
     path("password-reset/", views.PasswordResetRequestView.as_view()),
+    path("send-monthly-report/", views.SendMonthlyReportView.as_view()),
+    path("sync/", views.SyncPlans.as_view()),
 ]

@@ -67,3 +67,8 @@ export const getTotalCost = (
     .reduce((acc, cost) => acc + cost, 0.0)
   return totalCost
 }
+
+export const planExpiredFromDate = (plan: Plan): boolean => {
+  if (!plan.start_date || !plan.end_date) return false
+  return new Date() > new Date(plan.end_date)
+}
