@@ -17,7 +17,7 @@ subscriptions.
 
 ## Run locally
 
-- Install [`docker compose`](https://docs.docker.com/compose/install/standalone/)
+- Install [`docker compose`](https://docs.docker.com/compose/install/standalone/) (tested with Docker Compose version v2.34.0)
 - In the root of directory of this repository run:
 
   ```bash
