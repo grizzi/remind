@@ -2,8 +2,10 @@ import { Plan } from '../../api/schema'
 import { planExpiredFromDate } from '../../shared/TimeUtils'
 
 const PlanCard = ({ plan }: { plan: Plan }) => {
+  const expired = plan.expired || planExpiredFromDate(plan)
+
   return (
-    <div>
+    <div className={` ${expired ? 'dark:text-red-800' : 'dark:text-white'}`}>
       <div className='flex flex-row items-center mb-2'>
         <h2 className='text-lg font-semibold'>{plan.name}</h2>
         {plan.renewed && (
@@ -12,13 +14,13 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
           </span>
         )}
       </div>
-      <p className='text-sm text-gray-600 mb-1'>
+      <p className='text-sm  mb-1'>
         {plan.start_date} → {plan.end_date || 'Ongoing'}
       </p>
-      <p className='text-sm text-gray-600 mb-2'>
+      <p className='text-sm  mb-2'>
         {plan.cost} {plan.cost_currency} / {plan.billing_frequency ?? '—'}
       </p>
-      <div className='flex justify-between items-center'>
+      <div className='flex justify-between items-center text-gray-600 dark:text-gray-300'>
         <span
           className={`text-xs font-medium px-2 py-1 rounded-full ${
             plan.auto_renew

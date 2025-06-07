@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Label, Subscription } from '../api/schema'
 import TagChip from '../components/shared/TagChip'
 import { FaPlus } from 'react-icons/fa'
+import { input_style } from '../shared/styles'
 
 const LabelEditor = ({
   subscription,
@@ -63,7 +64,7 @@ const LabelEditor = ({
       <div className='flex flex-wrap flex-col items-center w-full'>
         <div className='flex flex-row items-center w-full'>
           <input
-            className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm'
+            className={`${input_style}`}
             type='text'
             value={newLabel?.name ?? ''}
             onChange={e =>

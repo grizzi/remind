@@ -3,6 +3,8 @@ import { TbLogout, TbSettings, TbHome } from 'react-icons/tb'
 import Logo from './shared/Logo'
 import MenuIcon from './shared/MenuIcon'
 import { Link } from 'react-router-dom'
+import DarkModeToggle from './buttons/DarkModeToggle'
+
 
 const SiteLayout = () => {
   return (
@@ -11,7 +13,8 @@ const SiteLayout = () => {
         <Link to='/subscriptions'>
           <Logo />
         </Link>
-        <div className='flex flex-row w-max-40 '>
+        <div className='flex flex-row items-center gap-2'>
+          <DarkModeToggle />
           <MenuIcon to='/subscriptions' Icon={TbHome} />
           <MenuIcon to='/settings' Icon={TbSettings} />
           <MenuIcon to='/logout' Icon={TbLogout} />

@@ -138,7 +138,7 @@ const SubscriptionsPage = () => {
       <div className='pr-2 pl-2 pb-36'>
         <div className='flex flex-row items-center justify-between mb-2'>
           <p className='text-3xl'>Subscriptions</p>
-          <div className='p-2 text-gray-500 transition-transform duration-300 ease-in-out hover:text-gray-700'>
+          <div className='p-2 text-gray-500 dark:text-white transition-transform duration-300 ease-in-out hover:text-gray-700 dark:hover:text-gray-300'>
             <button onClick={() => syncSubscriptions()}>
               <TbRefresh className='size-5' />
             </button>
@@ -166,8 +166,8 @@ const SubscriptionsPage = () => {
               className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-150
       ${
         selectedLabels.length > 0
-          ? 'text-purple-600 hover:bg-blue-100'
-          : 'text-gray-500 hover:bg-gray-200'
+          ? 'text-purple-600 dark:text-pink-300 hover:bg-blue-100'
+          : 'text-gray-500 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
       }`}
             >
               <TbFilter className='text-lg' />
