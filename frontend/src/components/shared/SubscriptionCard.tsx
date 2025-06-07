@@ -19,7 +19,11 @@ const SubscriptionCard = ({
 
   return (
     <div
-      className='mx-auto mt-4 flex h-24 flex-row justify-between items-stretch gap-x-4 rounded-xl bg-white p-1 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10 hover:bg-blue-50 overflow-hidden'
+      className='mx-auto mt-4 flex h-24 flex-row justify-between items-stretch gap-x-4 rounded-xl bg-white p-4 shadow-lg outline outline-black/5
+         dark:bg-slate-900 dark:text-slate-100 dark:shadow-xl dark:shadow-black/20 dark:outline-offset-0 dark:outline-white/5
+         hover:bg-blue-50 hover:text-blue-900 hover:shadow-md hover:shadow-blue-200 hover:outline-blue-200/50
+         dark:hover:bg-slate-700 dark:hover:text-white dark:hover:shadow-lg dark:hover:shadow-black/40 dark:hover:outline-white/10
+         overflow-hidden'
       key={subscription.title}
       onClick={onClick}
     >
@@ -27,7 +31,7 @@ const SubscriptionCard = ({
         <p className='text-2xl truncate'>{subscription.title}</p>
         <p className='text-sm text-gray-500 truncate'>
           {plans.length > 0
-            ? `Plans: ${plans.map(p => p.name).join(', ')}`
+            ? `${plans.map(p => p.name).join(', ')}`
             : 'No plans available'}
         </p>
       </div>

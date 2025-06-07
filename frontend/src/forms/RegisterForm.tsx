@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../hooks/auth'
 import { useNavigate } from 'react-router'
+import { input_style } from '../shared/styles'
 
 function RegisterForm() {
   const [username, setUserName] = useState<string>('')
@@ -40,13 +41,13 @@ function RegisterForm() {
             onSubmit={handleSubmit}
           >
             <label
-              className='w-full text-left text-gray-600'
+              className='w-full text-left text-gray-600 dark:text-gray-50'
               htmlFor='username'
             >
               Username
             </label>
             <input
-              className='mb-2 border-1 border-gray-200 p-1'
+              className={`${input_style}`}
               type='text'
               value={username}
               onChange={e => setUserName(e.target.value)}
@@ -54,11 +55,14 @@ function RegisterForm() {
               placeholder=''
             />
 
-            <label className='w-full text-left text-gray-600' htmlFor='email'>
+            <label
+              className='w-full text-left text-gray-600  dark:text-gray-50'
+              htmlFor='email'
+            >
               Email
             </label>
             <input
-              className='mb-2 border-1 border-gray-200 p-1'
+              className={`${input_style}`}
               type='email'
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -67,13 +71,13 @@ function RegisterForm() {
             />
 
             <label
-              className='w-full text-left text-gray-600'
+              className='w-full text-left text-gray dark:text-gray-50'
               htmlFor='password'
             >
               Password
             </label>
             <input
-              className='mb-2 border-1 border-gray-200 p-1'
+              className={`${input_style}`}
               type='password'
               value={password}
               onChange={e => setPassword(e.target.value)}
@@ -82,13 +86,13 @@ function RegisterForm() {
             />
 
             <label
-              className='w-full text-left text-gray-600'
+              className='w-full text-left text-gray-600 dark:text-gray-50'
               htmlFor='confirmPassword'
             >
               Repeat Password
             </label>
             <input
-              className='mb-2 border-1 border-gray-200 p-1'
+              className={`${input_style}`}
               type='password'
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
@@ -110,7 +114,9 @@ function RegisterForm() {
 
       <div className='w-full flex items-center my-6'>
         <div className='flex-grow h-px bg-gray-400' />
-        <span className='mx-4 text-gray-600 whitespace-nowrap'>or</span>
+        <span className='mx-4 text-gray-600 whitespace-nowrap dark:text-gray-50'>
+          or
+        </span>
         <div className='flex-grow h-px bg-gray-400' />
       </div>
 

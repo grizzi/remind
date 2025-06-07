@@ -1,0 +1,2 @@
+export const input_style =
+  'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-pink-400 dark:focus:border-pink-400 disabled:opacity-50 disabled:cursor-not-allowed dark:disabled:bg-gray-800 dark:disabled:border-gray-700'

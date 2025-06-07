@@ -79,7 +79,7 @@ const SubscriptionViewPage = () => {
       <div className='mb-6 flex flex-row justify-between items-center'>
         <p className='text-2xl mb-6'>{`${subscription?.title}`}</p>
         <button onClick={() => navigate(`/subscriptions/${subId}/edit`)}>
-          <TbEdit className='px-2 size-10 text-purple-700 hover:text-purple-200 transition-all' />
+          <TbEdit className='px-2 size-10 text-purple-700 dark:text-white hover:text-purple-200 transition-all' />
         </button>
       </div>
 
@@ -89,8 +89,8 @@ const SubscriptionViewPage = () => {
             key={plan.id}
             className={`relative rounded-2xl shadow-md p-5 transition-transform transform hover:scale-105 hover:shadow-lg ${
               plan.expired || planExpiredFromDate(plan)
-                ? 'bg-red-50 border border-red-200'
-                : 'bg-white border border-gray-200'
+                ? 'bg-red-50 dark:bg-gray-100 border border-red-200 dark:border-red-300'
+                : 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-900'
             }`}
           >
             {/* Dropdown Trigger */}

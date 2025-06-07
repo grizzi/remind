@@ -1,4 +1,5 @@
 import { ErrorMessage, Field } from 'formik'
+import { input_style } from '../../shared/styles'
 
 const TextField = (props: {
   label?: string
@@ -7,16 +8,23 @@ const TextField = (props: {
 }) => {
   return (
     <div className='flex flex-col justify-start min-w-24'>
-      {props.label ?? <label htmlFor={props.id}></label>}
+      {props.label && ( // Only render label if it exists
+        <label
+          htmlFor={props.id}
+          className='mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium'
+        >
+          {props.label}
+        </label>
+      )}
       <Field
         id={props.id}
         name={props.id}
         placeholder={props.label}
         disabled={props.disabled}
-        className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm'
+        className={`${input_style}`}
       />
       {/* Reserve space for error */}
-      <div className='min-h-[1.25rem] text-red-500 text-xs mt-1'>
+      <div className='min-h-[1.25rem] text-red-500 text-xs mt-1 dark:text-red-400'>
         <ErrorMessage name={props.id} />
       </div>
     </div>

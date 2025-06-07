@@ -37,17 +37,23 @@ const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
     budget_currency,
   } = settings
 
+  const SettingIcon = ({ Icon }: { Icon: React.ElementType }) => (
+    <div className='w-12 h-12 dark:text-white dark:bg-gradient-to-br dark:from-blue-400 dark:to-purple-500 flex justify-center items-center rounded-full'>
+      <Icon className='text-purple-700 dark:text-white size-8' />
+    </div>
+  )
+
   return (
-    <div className='bg-white'>
+    <div>
       <div className='mb-6 flex flex-row justify-between items-center'>
         <p className='text-3xl'>User Settings</p>
         <button onClick={() => onEdit()}>
-          <TbEdit className='px-2 size-10 text-purple-700 hover:text-purple-200 transition-all' />
+          <TbEdit className='px-2 size-10 text-purple-700 dark:text-white hover:text-purple-200 transition-all' />
         </button>
       </div>
 
-      <div className='grid grid-cols-[1.5rem_auto] gap-4'>
-        <TbCalendarBolt className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+      <div className='grid grid-cols-[3.5rem_auto] gap-4'>
+        <SettingIcon Icon={TbCalendarBolt} />
         <div className='flex flex-row items-center gap-2'>
           <p>
             Remind me
@@ -56,7 +62,7 @@ const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
           </p>
         </div>
 
-        <TbCalendarRepeat className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <SettingIcon Icon={TbCalendarRepeat} />
         <div className='flex flex-row items-center gap-2'>
           <p>
             Remind me every
@@ -67,7 +73,7 @@ const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
           </p>
         </div>
 
-        <TbTimeDuration5 className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <SettingIcon Icon={TbTimeDuration5} />
         <div className='flex flex-row items-center gap-2'>
           <p>
             Remind me at most
@@ -76,14 +82,14 @@ const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
           </p>
         </div>
 
-        <TbMoneybag className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <SettingIcon Icon={TbMoneybag} />
         <div className='flex flex-row items-center gap-2'>
           <p className='font-extrabold'>
             {budget.toFixed(2)} {budget_currency}
           </p>
         </div>
 
-        <TbBell className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <SettingIcon Icon={TbBell} />
         <div className='flex flex-row items-center gap-2'>
           <p>
             Reminders:{' '}
@@ -93,7 +99,7 @@ const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
           </p>
         </div>
 
-        <TbReport className='text-purple-700 flex flex-auto justify-center items-center size-8' />
+        <SettingIcon Icon={TbReport} />
         <div className='flex flex-row items-center gap-2'>
           <p>
             Monthly Report:{' '}
@@ -106,7 +112,7 @@ const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
 
       <div className='fixed border-0 bottom-8 left-6 flex flex-col items-end'>
         <button
-          className='p-2 items-center justify-center bg-purple-600 text-white rounded-sm shadow-lg md:bg-purple-300 hover:bg-purple-600 transition-all'
+          className='p-2 items-center justify-center bg-purple-600 dark:bg-gradient-to-br dark:from-blue-400 dark:to-purple-500  text-white rounded-sm shadow-lg md:bg-purple-300 hover:bg-purple-600 transition-all'
           aria-label={`Button: Send Monthly Report`}
           onClick={() => onSendReport()}
           type='button'

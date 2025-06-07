@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/auth'
 import { useNavigate } from 'react-router'
 import { toast } from 'react-toastify'
 import { Api } from '../api/api'
+import { input_style } from '../shared/styles'
 
 function LoginForm() {
   const [username, setUserName] = useState<string>('')
@@ -46,13 +47,13 @@ function LoginForm() {
             }}
           >
             <label
-              className='w-full text-left text-gray-600'
+              className='w-full text-left text-gray-600 dark:text-gray-50'
               htmlFor='username'
             >
               Username
             </label>
             <input
-              className='mb-2 border-1 border-gray-200 p-1'
+              className={`${input_style}`}
               type='text'
               value={username}
               onChange={e => setUserName(e.target.value)}
@@ -60,13 +61,13 @@ function LoginForm() {
               id='username'
             />
             <label
-              className='w-full text-left text-gray-600'
+              className='w-full text-left text-gray dark:text-gray-50'
               htmlFor='password'
             >
               Password
             </label>
             <input
-              className='mb-2 border-1 border-gray-200 p-1'
+              className={`${input_style}`}
               type='password'
               value={password}
               id='password'

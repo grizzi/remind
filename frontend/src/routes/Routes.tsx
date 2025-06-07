@@ -19,7 +19,11 @@ import PasswordResetPage from '../pages/PasswordResetPage'
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: (
+      <div className='bg-white dark:text-white dark:bg-gray-800 min-h-screen'>
+        <App />
+      </div>
+    ),
     children: [
       // Public routes
       {

@@ -9,6 +9,8 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
     font-family: "Poppins";
     background: white;

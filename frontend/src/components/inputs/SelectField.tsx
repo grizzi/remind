@@ -1,4 +1,5 @@
 import { ErrorMessage, Field } from 'formik'
+import { input_style } from '../../shared/styles'
 
 export type SelectOption = {
   value: string
@@ -20,10 +21,14 @@ const SelectField = (props: {
           id={props.id}
           name={props.id}
           disabled={props?.disabled}
-          className='px-3 py-2 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm'
+          className={`${input_style}`}
         >
           {props.options.map(opt => (
-            <option key={opt.value} value={opt.value}>
+            <option
+              key={opt.value}
+              value={opt.value}
+              className='dark:bg-gray-800 dark:text-gray-200'
+            >
               {opt.label}
             </option>
           ))}

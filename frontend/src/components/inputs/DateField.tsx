@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 import { registerLocale } from 'react-datepicker'
 import { de } from 'date-fns/locale/de'
+import { input_style } from '../../shared/styles'
 registerLocale('de-CH', de)
 
 const DateField = (props: {
@@ -32,7 +33,7 @@ const DateField = (props: {
         }}
         locale='de-CH'
         dateFormat='dd.MM.yyyy' // Swiss format
-        className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm'
+        className={`${input_style}`}
         disabled={props.disabled}
         placeholderText='Select a date'
       />
