@@ -142,15 +142,8 @@ export namespace Api {
     subscription: number,
     plan: Plan,
   ): Promise<void> => {
-    console.log('Updating plan')
     const result = PlanSchema.safeParse(plan)
     const validated = throwOnError(result)
-
-    // const planDateAdjusted = {
-    //   ...validated,
-    //   start_date: validated.start_date,
-    //   end_date: validated.end_date?,
-    // }
 
     if (validated.id) {
       await api.put(

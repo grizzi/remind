@@ -29,16 +29,12 @@ const SubscriptionEditPage = () => {
 
     const forceUpdate = true
     context.getSubscriptions(forceUpdate).then(subs => {
-      console.log(JSON.stringify(subs))
       setSubscription(subs.find(sub => sub.id === id))
-      console.log('Subscription is now set!')
     })
 
     context.getLabels().then(l => setLabels(l))
 
-    console.log('Sub Id is: ', subId)
     if (subId !== 'new') {
-      console.log('Fetching plans!!!')
       Api.getPlans(subId!)
         .then(plans => setPlans(plans))
         .catch(error =>

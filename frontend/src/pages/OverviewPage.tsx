@@ -34,7 +34,28 @@ const SubscriptionsPage = () => {
     const forceUpdate = true
     context
       .getSubscriptions(forceUpdate)
-      .then(subs => setSubscriptions(subs))
+      .then(subs => {
+        setSubscriptions(subs)
+        const now = new Date()
+        const startOfYear = new Date(now.getFullYear(), 0, 1)
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+        // Promise.all(
+        //   subs
+        //     .filter(sub => !sub.archieved)
+        //     .map(sub => {
+        //       return Api.getPlans(sub.id.toString())
+        //     }),
+        // ).then(data => {
+        //   const allPlans = data.flat()
+        //   setYearlyCost(
+        //     getTotalCost(startOfYear.getTime(), now.getTime(), allPlans),
+        //   )
+        //   setMonthlyCost(
+        //     getTotalCost(startOfMonth.getTime(), now.getTime(), allPlans),
+        //   )
+        // })
+      })
       .catch(err =>
         console.error(`Failed to get subscriptions: ${err.message}`),
       )
@@ -44,30 +65,6 @@ const SubscriptionsPage = () => {
     setTimeout(() => setLoading(false), 1000)
   }, [])
 
-  useEffect(() => {
-    if (subscriptions) {
-      const now = new Date()
-      const startOfYear = new Date(now.getFullYear(), 0, 1)
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-
-      Promise.all(
-        subscriptions
-          .filter(sub => !sub.archieved)
-          .map(sub => {
-            console.log('Retrieving expenses for sub ', sub.id)
-            return Api.getPlans(sub.id.toString())
-          }),
-      ).then(data => {
-        const allPlans = data.flat()
-        setYearlyCost(
-          getTotalCost(startOfYear.getTime(), now.getTime(), allPlans),
-        )
-        setMonthlyCost(
-          getTotalCost(startOfMonth.getTime(), now.getTime(), allPlans),
-        )
-      })
-    }
-  }, [subscriptions])
 
   if (!subscriptions) {
     return <div></div>

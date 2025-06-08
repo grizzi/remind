@@ -41,11 +41,6 @@ const LabelEditor = ({
       subLabels.filter(l => l.name === newLabel.name).length === 0
     ) {
       setSubLabels([newLabel, ...subLabels])
-      console.log(
-        'Setting new labels:',
-        JSON.stringify([newLabel, ...subLabels]),
-      )
-
       setNewLabels([newLabel, ...subLabels])
     }
     setNewLabel(undefined)

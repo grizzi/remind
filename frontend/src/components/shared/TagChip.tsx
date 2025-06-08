@@ -7,7 +7,7 @@ const TagChip = ({
   disabled?: boolean
   onClick?: () => void
 }) => {
-  const color = disabled ? 'bg-gray-300 text-white' : 'bg-purple-500 text-white'
+  const color = disabled ? 'bg-gray-300 text-white dark:text-gray-600' : 'bg-purple-500 text-white'
   return (
     <div
       onClick={onClick}

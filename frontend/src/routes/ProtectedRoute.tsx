@@ -9,7 +9,6 @@ const ProtectedRoute = ({ children }: Props) => {
   const { isLoggedIn, refreshUser } = useAuth()
 
   if (!isLoggedIn()) {
-    console.log('Not logged in, trying to refresh token')
     refreshUser(location.pathname)
   } else {
     return <>{children}</>

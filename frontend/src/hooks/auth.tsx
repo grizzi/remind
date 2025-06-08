@@ -50,7 +50,6 @@ export const AuthContextProvider = ({
       setAccessToken(access)
       setRefreshToken(refresh)
       setIsReady(true)
-      console.log('User is ready')
     }
 
     setIsReady(true)
@@ -58,11 +57,9 @@ export const AuthContextProvider = ({
 
   useEffect(() => {
     if (accessToken) {
-      console.log('Setting access token authentication', accessToken)
       api.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken
       setLoggedIn(true)
     } else {
-      console.log('Removing access token authentication')
       delete api.defaults.headers.common['Authorization']
       setLoggedIn(false)
     }
@@ -98,7 +95,6 @@ export const AuthContextProvider = ({
             errorMessage += ' ' + JSON.stringify(error.response.data)
           }
         }
-        console.log(errorMessage)
         toast.error(errorMessage)
       })
   }
@@ -179,7 +175,7 @@ export const AuthContextProvider = ({
         }
       })
       .catch((e: Error) => {
-        console.log('Failed to refresh the token', e.message)
+        console.error('Failed to refresh the token', e.message)
         navigate('/login')
       })
   }

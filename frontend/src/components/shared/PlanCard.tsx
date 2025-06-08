@@ -13,6 +13,9 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
             Renewed
           </span>
         )}
+        {(plan.expired || planExpiredFromDate(plan)) && (
+          <span className='text-sm font-medium ml-4 text-red-600'>Expired</span>
+        )}
       </div>
       <p className='text-sm  mb-1'>
         {plan.start_date} → {plan.end_date || 'Ongoing'}
@@ -30,10 +33,6 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
         >
           {plan.auto_renew ? 'Auto-renew ON' : 'Manual Renewal'}
         </span>
-        {plan.expired ||
-          (planExpiredFromDate(plan) && (
-            <span className='text-xs font-semibold text-red-600'>Expired</span>
-          ))}
       </div>
     </div>
   )

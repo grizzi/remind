@@ -61,9 +61,6 @@ export default function AppContextProvider({
       return subscriptions
     }
 
-    console.log('Getting all subscriptions!')
-    // print the axios bearer token
-    console.log(axios.defaults.headers.common['Authorization'])
     const subs = await Api.getSubscriptions()
     setSubscriptions(subs)
     return subs

@@ -42,7 +42,6 @@ const UserSettingsPage = () => {
   const sendMonthlyReport = () => {
     Api.sendMonthlyReport()
       .then(() => {
-        console.log('Monthly report sent successfully.')
         toast.success('Monthly report sent successfully.')
       })
       .catch(error => {

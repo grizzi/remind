@@ -65,10 +65,6 @@ const SubscriptionForm = ({
               l.subscription = subscription.id
             }
           })
-          console.log(
-            'Submitting the following labels: ',
-            JSON.stringify(values.labels),
-          )
           await onSubmit(values)
         }}
         validate={toFormikValidate(SubscriptionReadWriteSchema)}

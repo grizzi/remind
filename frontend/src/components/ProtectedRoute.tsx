@@ -22,7 +22,6 @@ const ProtectedRoute = () => {
 
   useEffect(() => {
     auth().catch(() => {
-      console.log("User is not authorized. Will be redirected to login.")
       setIsAuthorized(false)
     })
   }, [])
@@ -34,12 +33,11 @@ const ProtectedRoute = () => {
         refresh: refreshToken,
       })
       if (res.status === 200) {
-        console.log('Token refreshed')
         localStorage.setItem(ACCESS_TOKEN, res.data.access)
         setIsAuthorized(true)
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
       setIsAuthorized(false)
     }
   }

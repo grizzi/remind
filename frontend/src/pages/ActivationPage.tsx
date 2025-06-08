@@ -24,7 +24,6 @@ const ActivationPage = () => {
 
     activateAccount()
       .then(() => {
-        console.log('Account activation completed')
         setActivationStatus('success')
       })
       .catch(error => {
