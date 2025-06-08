@@ -40,21 +40,21 @@ const SubscriptionsPage = () => {
         const startOfYear = new Date(now.getFullYear(), 0, 1)
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
-        // Promise.all(
-        //   subs
-        //     .filter(sub => !sub.archieved)
-        //     .map(sub => {
-        //       return Api.getPlans(sub.id.toString())
-        //     }),
-        // ).then(data => {
-        //   const allPlans = data.flat()
-        //   setYearlyCost(
-        //     getTotalCost(startOfYear.getTime(), now.getTime(), allPlans),
-        //   )
-        //   setMonthlyCost(
-        //     getTotalCost(startOfMonth.getTime(), now.getTime(), allPlans),
-        //   )
-        // })
+        Promise.all(
+          subs
+            .filter(sub => !sub.archieved)
+            .map(sub => {
+              return Api.getPlans(sub.id.toString())
+            }),
+        ).then(data => {
+          const allPlans = data.flat()
+          setYearlyCost(
+            getTotalCost(startOfYear.getTime(), now.getTime(), allPlans),
+          )
+          setMonthlyCost(
+            getTotalCost(startOfMonth.getTime(), now.getTime(), allPlans),
+          )
+        })
       })
       .catch(err =>
         console.error(`Failed to get subscriptions: ${err.message}`),
@@ -134,7 +134,7 @@ const SubscriptionsPage = () => {
       <FloatingActionButton onClick={() => setAddSubscription(true)} />
       <div className='pr-2 pl-2 pb-36'>
         <div className='flex flex-row items-center justify-between mb-2'>
-          <p className='text-3xl'>Subscriptions</p>
+          <p className='text-3xl font-bold'>Subscriptions</p>
           <div className='p-2 text-gray-500 dark:text-white transition-transform duration-300 ease-in-out hover:text-gray-700 dark:hover:text-gray-300'>
             <button onClick={() => syncSubscriptions()}>
               <TbRefresh className='size-5' />

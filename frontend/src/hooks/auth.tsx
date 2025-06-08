@@ -117,12 +117,6 @@ export const AuthContextProvider = ({
           setAccessToken(res?.data.access!)
           setRefreshToken(res?.data.refresh!)
           setUser(userObj!)
-          console.info(
-            'Logged in with user',
-            userObj,
-            res?.data.access,
-            res?.data.refresh,
-          )
           navigate('/subscriptions', { replace: true })
         }
       })

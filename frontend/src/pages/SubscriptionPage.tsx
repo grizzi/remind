@@ -77,7 +77,7 @@ const SubscriptionViewPage = () => {
   return (
     <div>
       <div className='mb-6 flex flex-row justify-between items-center'>
-        <p className='text-2xl mb-6'>{`${subscription?.title}`}</p>
+        <p className='text-2xl font-bold mb-6'>{`${subscription?.title}`}</p>
         <button onClick={() => navigate(`/subscriptions/${subId}/edit`)}>
           <TbEdit className='px-2 size-10 text-purple-700 dark:text-white hover:text-purple-200 transition-all' />
         </button>

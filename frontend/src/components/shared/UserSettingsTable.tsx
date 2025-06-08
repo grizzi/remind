@@ -46,7 +46,7 @@ const UserSettingsTable: React.FC<UserSettingsViewProps> = ({
   return (
     <div>
       <div className='mb-6 flex flex-row justify-between items-center'>
-        <p className='text-3xl'>User Settings</p>
+        <p className='text-3xl font-bold'>User Settings</p>
         <button onClick={() => onEdit()}>
           <TbEdit className='px-2 size-10 text-purple-700 dark:text-white hover:text-purple-200 transition-all' />
         </button>

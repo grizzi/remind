@@ -112,7 +112,7 @@ const SubscriptionEditPage = () => {
 
   return (
     <div>
-      <p className='mb-4 text-3xl'>
+      <p className='mb-4 text-3xl font-bold'>
         {subscription?.title || 'Add Subscription'}
       </p>
       <div>
